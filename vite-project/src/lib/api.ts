@@ -33,6 +33,9 @@ telegram: `${API_URL}/telegram/send`,
 };
 
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
+
+        console.log("Full Request URL:", url); // <--- Добавьте это
+
     return fetch(url, {
         ...options,
         headers: {
