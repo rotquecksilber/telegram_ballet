@@ -1,0 +1,421 @@
+/* Контейнер */
+.profile-view, .registration-container {
+    padding: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--tg-theme-text-color);
+}
+
+.hint-text {
+    font-size: 14px;
+    color: var(--tg-theme-hint-color);
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+/* --- КАРТОЧКА ПРОФИЛЯ --- */
+.info-card {
+    background: var(--tg-theme-bg-color);
+    border-radius: 16px;
+    padding: 4px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item .label {
+    font-size: 14px;
+    color: var(--tg-theme-hint-color);
+}
+
+.info-item .value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.status-badge {
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color) !important;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- ФОРМА РЕГИСТРАЦИИ --- */
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tg-theme-hint-color);
+    margin-left: 4px;
+}
+
+.form-group input {
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: var(--tg-theme-button-color);
+}
+
+.submit-btn {
+    margin-top: 12px;
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    border: none;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Адаптация под темную тему Telegram */
+@media (prefers-color-scheme: dark) {
+    .info-card {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+    .form-group input {
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+}
+.subscription-card {
+    background: linear-gradient(135deg, #34c759 0%, #28a745 100%);
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(52, 199, 89, 0.2);
+}
+
+.sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.sub-header h3 { margin: 0; font-size: 16px; opacity: 0.9; }
+
+.sub-status {
+    font-size: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.sub-status.frozen { background: #ffcc00; color: #000; }
+
+.sub-lessons {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.sub-lessons .count { font-size: 32px; font-weight: 800; }
+.sub-lessons .total { opacity: 0.8; font-size: 14px; }
+
+.sub-progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #fff;
+    transition: width 0.5s ease-out;
+}
+
+.sub-footer { font-size: 12px; opacity: 0.9; }
+
+.no-sub-card {
+    background: var(--tg-theme-bg-color);
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    border: 2px dashed var(--tg-theme-hint-color);
+    color: var(--tg-theme-hint-color);
+    margin-bottom: 20px;
+}
+
+/* Блок, когда абонемент не найден */
+.no-subscription {
+    background: var(--tg-theme-bg-color);
+    border: 2px dashed var(--tg-theme-hint-color);
+    border-radius: 16px;
+    padding: 24px 16px;
+    text-align: center;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.8;
+}
+
+.no-subscription p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.no-sub-hint {
+    font-size: 13px;
+    color: var(--tg-theme-hint-color);
+    line-height: 1.4;
+}
+
+/* Улучшение существующей карточки абонемента (для контраста) */
+.subscription-card {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+}
+
+.sub-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.sub-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sub-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.8;
+}
+
+.sub-count {
+    font-size: 32px;
+    font-weight: 900;
+    margin-top: 4px;
+}
+
+.sub-status-tag {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.sub-status-tag.frozen {
+    background: #ffcc00;
+    color: #000;
+}
+
+.sub-progress {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.sub-progress-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 10px;
+    transition: width 0.8s ease-out;
+}
+
+.sub-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.book-btn.disabled {
+    background: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+/* Если хочешь выделить именно состояние "Записан" */
+.lesson-card.booked {
+    border-left: 4px solid #4CAF50; /* Зеленая полоска сбоку */
+}
+/* Группировка по месяцам */
+.month-group {
+    margin-bottom: 20px;
+}
+
+.month-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #8e8e93;
+    margin-bottom: 8px;
+    padding-left: 4px;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Карточка записи */
+.booking-mini-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #f0f0f0;
+}
+
+.book-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.book-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1c1c1e;
+}
+
+.book-date {
+    font-size: 0.85rem;
+    color: #007aff;
+    background: rgba(0, 122, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.book-time {
+    font-size: 0.85rem;
+    color: #8e8e93;
+}
+
+/* Кнопка отмены */
+.cancel-txt-btn {
+    background: none;
+    border: none;
+    color: #ff3b30;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.cancel-txt-btn:active {
+    opacity: 0.6;
+}
+
+/* Статусы */
+.status-hint {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #f2f2f7;
+    color: #8e8e93;
+}
+
+.status-hint.red {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+}
+
+.status-hint.green {
+    background: rgba(52, 199, 89, 0.1);
+    color: #28cd41;
+}
+
+/* Состояние отмененной карточки */
+.booking-mini-card.cancelled {
+    opacity: 0.6;
+    background: #f9f9f9;
+}
+.empty-text {
+    margin-bottom: 10px;
+}
+
+.status-hint.locked {
+    color: #a0a0a0;
+    background: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: not-allowed;
+    border: 1px solid #e0e0e0;
+}
+
+.booking-mini-card.confirmed {
+    border-left: 4px solid #4CAF50; /* Зеленая полоска для подтвержденных */
+}

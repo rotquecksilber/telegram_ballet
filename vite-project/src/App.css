@@ -1,0 +1,113 @@
+/* src/App.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* Используем системные цвета Telegram */
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #222222);
+  min-height: 100vh;
+}
+
+.app-container {
+  min-height: 100vh;
+  /* Убираем градиент, оставляем прозрачным, чтобы видеть фон body */
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 16px;
+  /* Добавляем отступ снизу, равный высоте меню + запас для Telegram */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Плавный скролл на iPhone */
+}
+
+/* Спиннер под цвет основной кнопки Telegram */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loader-container {
+  display: flex;
+  flex-direction: column; /* Чтобы текст был под спиннером */
+  align-items: center;    /* Центрирование по горизонтали */
+  justify-content: center; /* Центрирование по вертикали */
+  width: 100%;
+  height: 100vh;          /* Важно: на всю высоту экрана */
+  position: fixed;        /* Фиксируем, чтобы не дергалось */
+  top: 0;
+  left: 0;
+  background-color: var(--tg-theme-bg-color, #ffffff);
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--tg-theme-secondary-bg-color, #efeff3);
+  border-top: 4px solid var(--tg-theme-button-color, #2481cc);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-text {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--tg-theme-hint-color, #999999);
+  font-family: sans-serif;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.admin-card {
+  background: var(--tg-theme-secondary-bg-color);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-form-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-form-row input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tag {
+  background: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+  border: 1px solid var(--tg-theme-hint-color);
+  margin-bottom: 10px;
+}

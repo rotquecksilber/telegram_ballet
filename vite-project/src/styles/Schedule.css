@@ -1,0 +1,384 @@
+:root {
+    --card-bg: var(--tg-theme-bg-color, #ffffff);
+    --accent: #007aff;
+    --hint: var(--tg-theme-hint-color, #999999);
+}
+
+.schedule-container {
+    padding: 20px 16px;
+    background: var(--tg-theme-secondary-bg-color);
+    min-height: 100vh;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 25px;
+    padding-left: 4px;
+}
+
+/* Дата */
+.date-header {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 30px 0 15px 4px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+}
+
+.date-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0,122,255,0.2), transparent);
+    margin-left: 15px;
+}
+
+/* Карточка */
+.lesson-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Блок времени */
+.time-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 55px;
+}
+
+.time-text {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--tg-theme-text-color);
+}
+
+.time-decorator {
+    width: 12px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-top: 4px;
+    opacity: 0.6;
+}
+
+/* Инфо */
+.info-block {
+    flex: 1;
+}
+
+.lesson-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--tg-theme-text-color);
+    margin-bottom: 4px;
+}
+
+.teacher-name {
+    font-size: 13px;
+    color: var(--hint);
+    margin-bottom: 8px;
+}
+
+/* Теги */
+.tags-row {
+    display: flex;
+    gap: 6px;
+}
+
+.l-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 8px;
+    text-transform: uppercase;
+}
+
+.tag-any { background: rgba(0, 122, 255, 0.08); color: #007aff; }
+.tag-beginners { background: rgba(52, 199, 89, 0.08); color: #34c759; }
+.tag-advanced { background: rgba(175, 82, 222, 0.08); color: #af52de; }
+.tag-age { background: rgba(255, 149, 0, 0.08); color: #ff9500; }
+
+/* Кнопка */
+.book-btn {
+    background: var(--tg-theme-button-color, #007aff);
+    color: var(--tg-theme-button-text-color, #ffffff);
+    border: none;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.book-btn:active {
+    transform: scale(0.95);
+}
+
+/* Загрузка */
+.loader-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(0,122,255,0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+/* Обновленная карточка */
+.lesson-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column; /* Элементы теперь друг под другом */
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Верхний ряд: Время + Инфо */
+.card-main-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+}
+
+.time-block {
+    min-width: 60px;
+    text-align: center;
+}
+
+.info-block {
+    flex: 1;
+    min-width: 0; /* Важно, чтобы текст не распирал флекс */
+}
+
+.lesson-name {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Если название слишком длинное, оно сократится (...) */
+}
+
+/* Кнопка на всю ширину */
+.book-btn {
+    background: var(--tg-theme-button-color, #007aff);
+    color: var(--tg-theme-button-text-color, #ffffff);
+    border: none;
+    width: 100%; /* Кнопка теперь широкая и удобная для пальца */
+    padding: 12px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.book-btn:active {
+    transform: scale(0.98);
+}
+
+/* Адаптив для тегов */
+.tags-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap; /* Если теги не влезают, они перенесутся на вторую строку */
+}
+.schedule-container {
+    padding: 16px;
+    background: var(--tg-theme-secondary-bg-color, #f0f0f2);
+    min-height: 100vh;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 10px 0 20px 0;
+}
+
+.date-header {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color);
+    margin: 25px 0 10px 4px;
+    letter-spacing: 0.5px;
+}
+
+/* Карточка */
+.lesson-card {
+    background: var(--tg-theme-bg-color, #ffffff);
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column; /* Вертикальный стек */
+    gap: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+/* Верхняя часть карточки */
+.card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.time-col {
+    min-width: 50px;
+}
+
+.time-text {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.info-col {
+    flex: 1;
+    min-width: 0;
+}
+
+.lesson-name {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.teacher-name {
+    font-size: 13px;
+    color: var(--tg-theme-hint-color);
+    margin-bottom: 8px;
+}
+
+/* Тэги */
+.tags-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap; /* Если всё же не влезет — перенесется */
+}
+
+.compact-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tag-beginners { background: rgba(52, 199, 89, 0.1); color: #28a745; }
+.tag-advanced { background: rgba(175, 82, 222, 0.1); color: #8e44ad; }
+.tag-any { background: rgba(0, 122, 255, 0.1); color: #007aff; }
+.tag-age { background: rgba(255, 149, 0, 0.1); color: #e67e22; }
+
+/* Кнопка во всю ширину */
+.book-btn {
+    background: var(--tg-theme-button-color, #007aff);
+    color: var(--tg-theme-button-text-color, #ffffff);
+    border: none;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform 0.1s ease;
+}
+
+.book-btn:active {
+    transform: scale(0.98);
+}
+
+/* Спиннер */
+.loader-container {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(0,122,255,0.1);
+    border-top-color: #007aff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Состояние отмененного занятия */
+/* Стили для отмененного занятия у клиента */
+.lesson-card.cancelled {
+    filter: grayscale(1);
+    opacity: 0.6;
+    border: 1px dashed var(--tg-theme-hint-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.cancelled-label {
+    position: absolute;
+    top: 20px;
+    right: -30px;
+    background: #ff3b30;
+    color: white;
+    padding: 2px 35px;
+    font-size: 10px;
+    font-weight: bold;
+    transform: rotate(45deg);
+    z-index: 5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.lesson-card.cancelled .book-btn.disabled {
+    background: #555 !important;
+    color: #aaa !important;
+    cursor: not-allowed;
+}
+.lesson-card.cancelled {
+    filter: grayscale(1);
+    opacity: 0.6;
+    pointer-events: none; /* Блокирует любые клики по карточке */
+}
+.time-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* по центру колонки */
+    font-weight: bold;
+}
+
+
+
+.time-end {
+    color: #e81a4f;
+    font-size: 0.7em;
+}

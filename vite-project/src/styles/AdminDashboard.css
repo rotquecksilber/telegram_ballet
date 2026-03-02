@@ -1,0 +1,1589 @@
+/* --- ОСНОВНОЙ КОНТЕЙНЕР --- */
+.admin-container {
+    padding: 20px 16px 120px;
+    background: var(--tg-theme-secondary-bg-color);
+    min-height: 100vh;
+}
+
+.admin-header {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: var(--tg-theme-text-color);
+}
+
+/* --- СЕКЦИИ И АККОРДЕОН --- */
+.admin-section {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    padding: 10px 4px;
+    cursor: pointer;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-left h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color);
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.arrow {
+    font-size: 18px;
+    color: var(--tg-theme-hint-color);
+    transition: transform 0.3s ease;
+}
+
+.card-content {
+    overflow: hidden;
+}
+
+/* --- КАРТОЧКИ (ФОРМЫ) --- */
+.admin-card {
+    background: var(--tg-theme-bg-color);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Цветные границы блоков */
+.teacher-border { border-left: 4px solid #ff9500 !important; }
+.class-border { border-left: 4px solid #af52de !important; }
+.schedule-border { border-left: 4px solid #34c759 !important; }
+
+.divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.06);
+    margin: 16px 0;
+    width: 100%;
+}
+
+/* --- ПОЛЯ ВВОДА --- */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.field label {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+    margin-left: 4px;
+    font-weight: 600;
+}
+
+.date-input, .time-input, .main-form select, select, input {
+    background: var(--tg-theme-bg-color) !important;
+    color: var(--tg-theme-text-color) !important;
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 16px;
+    width: 100%;
+    min-height: 48px;
+    display: block;
+    box-sizing: border-box;
+}
+
+.form-row-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 12px;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.input-group select, .input-group input {
+    flex: 1;
+}
+
+/* --- КНОПКИ --- */
+.confirm-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color, white);
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.action-btn {
+    background: var(--tg-theme-button-color);
+    color: white;
+    border: none;
+    padding: 0 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    height: 45px;
+}
+
+.btn-secondary {
+    width: 100%;
+    background: transparent;
+    color: var(--tg-theme-hint-color);
+    border: 1px solid var(--tg-theme-hint-color);
+    padding: 10px;
+    border-radius: 12px;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+/* --- СПИСОК ЗАНЯТИЙ (SCHEDULE LIST) --- */
+.admin-schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 10px;
+}
+
+.admin-date-group {
+    border-left: 2px solid var(--tg-theme-button-color, #007aff);
+    padding-left: 12px;
+}
+
+.admin-date-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.admin-item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--tg-theme-secondary-bg-color, #f0f0f2);
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+}
+
+.admin-item-card.is-cancelled {
+    background: rgba(255, 59, 48, 0.08) !important;
+    border: 1px dashed #ff3b30;
+    border-left: 4px solid #ff3b30 !important;
+    opacity: 0.8;
+}
+
+.admin-item-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.admin-item-time {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--tg-theme-text-color);
+    min-width: 45px;
+}
+
+.admin-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.admin-item-text strong {
+    font-size: 15px;
+    color: var(--tg-theme-text-color);
+}
+
+.admin-item-teacher {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+.badge-cancelled {
+    background: #ff3b30;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+/* --- ИКОНКИ ДЕЙСТВИЙ --- */
+.admin-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    background: var(--tg-theme-bg-color, #fff);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.btn-icon.edit { color: var(--tg-theme-button-color); }
+.btn-icon.cancel { color: #ff9500; }
+.btn-icon.delete { color: #ff3b30; }
+
+.btn-icon:active { transform: scale(0.9); }
+
+/* --- ТЭГИ И ЧИПСЫ --- */
+.tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.modern-tag {
+    background: var(--tg-theme-button-color);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.teacher-chip {
+    background: var(--tg-theme-secondary-bg-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--tg-theme-text-color);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.duration-tabs {
+    display: flex;
+    gap: 8px;
+    background: var(--tg-theme-secondary-bg-color);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+}
+
+.duration-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--tg-theme-text-color);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.duration-tab.active {
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-button-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.end-time-display {
+    font-size: 13px;
+    color: var(--tg-theme-hint-color);
+    margin-top: -8px;
+    margin-bottom: 14px;
+    padding-left: 4px;
+}
+
+
+
+/* --- ТЕМНАЯ ТЕМА --- */
+@media (prefers-color-scheme: dark) {
+    .admin-card { border: 1px solid rgba(255, 255, 255, 0.1); }
+    .divider { background: rgba(255, 255, 255, 0.1); }
+}
+
+
+/* Контейнер всего блока длительности */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+/* Маленький заголовок над табами */
+.field-label-mini {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color);
+    letter-spacing: 0.5px;
+    margin-left: 4px;
+}
+
+/* Обертка для табов (подложка) */
+.duration-tabs-segmented {
+    display: flex;
+    background: rgba(0, 0, 0, 0.05); /* Темный фон в светлой теме */
+    padding: 2px;
+    border-radius: 10px;
+    gap: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* Сами кнопки-сегменты */
+.duration-segment {
+    flex: 1;
+    border: none;
+    padding: 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    background: transparent;
+    color: var(--tg-theme-text-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+/* Активный сегмент (выбранный) */
+.duration-segment.active {
+    background: var(--tg-theme-bg-color); /* Белый или фоновый цвет темы */
+    color: var(--tg-theme-button-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Подсказка со временем окончания */
+.end-time-hint {
+    font-size: 13px;
+    color: var(--tg-theme-hint-color);
+    text-align: center;
+    margin-top: 4px;
+    padding: 4px;
+    background: rgba(52, 199, 89, 0.05); /* Легкий зеленый оттенок */
+    border-radius: 8px;
+}
+
+.end-time-hint b {
+    color: var(--tg-theme-text-color);
+    font-weight: 700;
+}
+
+/* Темная тема (для Telegram Desktop или ночного режима) */
+@media (prefers-color-scheme: dark) {
+    .duration-tabs-segmented {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .duration-segment.active {
+        background: #2c2c2e; /* Более светлый серый для темной темы */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Контейнер карточки */
+.admin-item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px; /* Расстояние между текстом и кнопками */
+    padding: 12px;
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--tg-theme-button-color);
+}
+
+/* Левая часть: Время + Текст */
+.admin-item-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1; /* Занимает всё свободное место */
+    min-width: 0; /* Важно для обрезания текста внутри flex-элемента */
+}
+
+/* Блок времени */
+.admin-item-time-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 45px;
+    flex-shrink: 0;
+}
+
+.admin-item-time {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--tg-theme-text-color);
+}
+
+.admin-item-endtime {
+    font-size: 10px;
+    color: var(--tg-theme-hint-color);
+    margin-top: -2px;
+}
+
+/* Текстовый блок (название и учитель) */
+.admin-item-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0; /* Позволяет тексту сжиматься */
+}
+
+.class-name {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Если название слишком длинное — будет три точки */
+}
+
+.teacher-name {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color);
+}
+
+/* Правая часть: Кнопки */
+.admin-item-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0; /* ЗАПРЕЩАЕМ кнопкам уменьшаться или уезжать */
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: var(--tg-theme-bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.btn-icon:active {
+    transform: scale(0.95);
+}
+
+/* Специальные цвета для кнопок (опционально) */
+.btn-icon.edit { background: rgba(52, 199, 89, 0.1); }
+.btn-icon.cancel { background: rgba(255, 149, 0, 0.1); }
+.btn-icon.delete { background: rgba(255, 59, 48, 0.1); }
+
+/* Обертка для времени старта и конца */
+.admin-item-time-wrapper {
+    display: flex;
+    flex-direction: column; /* Вертикальное расположение для компактности */
+    align-items: flex-start;
+    min-width: 55px; /* Чуть увеличили, чтобы время влезло */
+    flex-shrink: 0;
+}
+
+.admin-item-time {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--tg-theme-text-color);
+    line-height: 1.1;
+}
+
+.admin-item-endtime {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--tg-theme-hint-color);
+    margin-top: 2px;
+}
+
+/* Если хочешь, чтобы время было в одну строку (10:00 — 11:30) */
+/*
+.admin-item-time-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 4px;
+    min-width: 85px;
+}
+*/
+
+/* Бейдж отмены стал аккуратнее */
+.badge-cancelled {
+    font-size: 9px;
+    background: #ff3b30;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: fit-content;
+    margin-top: 4px;
+    font-weight: 700;
+}
+.subscription-border { border-left: 5px solid #a855f7; }
+
+.admin-search-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    margin-bottom: 12px;
+}
+
+.user-list-mini {
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 10px;
+    background: var(--tg-theme-secondary-bg-color);
+}
+
+.user-row {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.user-row:active { background: rgba(0,0,0,0.05); }
+
+.user-phone-hint { font-size: 11px; color: var(--tg-theme-hint-color); }
+
+.selected-user-badge {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--tg-theme-secondary-bg-color);
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.btn-text { background: none; border: none; color: var(--tg-theme-button-color); font-weight: 600; }
+
+/* Сетка занятий: 5 колонок, текст по центру */
+.lessons-grid-smart {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.opt-btn {
+    background: var(--tg-theme-secondary-bg-color);
+    border: 1px solid rgba(0,0,0,0.05);
+    color: var(--tg-theme-text-color);
+    padding: 10px 0;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.opt-btn.active {
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+}
+
+.opt-input {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: var(--tg-theme-bg-color);
+    text-align: center;
+    font-weight: 700;
+    color: var(--tg-theme-text-color);
+}
+
+/* Быстрые табы для дат и заморозки */
+.quick-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 6px 0;
+    font-size: 12px;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 6px;
+    color: var(--tg-theme-hint-color);
+}
+
+.tab-btn.active {
+    border-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-color);
+    background: transparent;
+}
+
+.admin-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+}
+
+/* Секция заморозки */
+.freeze-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+
+.animate-fade {
+    animation: fadeIn 0.3s ease;
+}
+/* Сегментированные табы (как в iOS) */
+.segmented-control {
+    display: flex;
+    background: var(--tg-theme-secondary-bg-color);
+    padding: 3px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.segment-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tg-theme-hint-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.segment-btn.active, .segment-btn:focus {
+    background: var(--tg-theme-bg-color);
+    color: var(--tg-theme-button-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Красивый тоггл (Switch) */
+.toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.toggle-label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--tg-theme-button-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Сетка занятий (более "кнопочный" вид) */
+.lessons-grid-smart {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.opt-btn {
+    flex: 1;
+    aspect-ratio: 1/1; /* делаем их квадратными */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border: 2px solid transparent;
+}
+
+.opt-input {
+    width: 50px;
+    height: 46px;
+    border-radius: 8px;
+    border: 2px solid var(--tg-theme-secondary-bg-color);
+    font-size: 16px;
+}
+.sub-footer-info {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+}
+
+.freeze-hint {
+    font-size: 12px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.freeze-hint b {
+    font-weight: 800;
+}
+
+.freeze-hint.no-freeze {
+    opacity: 0.6;
+    background: transparent;
+    font-style: italic;
+}
+/* Скелетон - пульсирующий блок на месте абонемента */
+.subscription-skeleton {
+    width: 100%;
+    height: 160px; /* Примерная высота твоей карточки */
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.subscription-skeleton::after {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    animation: skeleton-sweep 1.5s infinite;
+}
+
+@keyframes skeleton-sweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Плавное появление контента */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.lesson-booking-group {
+    background: var(--tg-theme-bg-color);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+.lesson-mini-header {
+    padding: 10px 12px;
+    background: var(--tg-theme-secondary-bg-color);
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    border-radius: 11px 11px 0 0;
+}
+.booking-admin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.user-info { display: flex; flex-direction: column; }
+.user-name { font-weight: 600; font-size: 14px; }
+.user-phone { font-size: 12px; color: var(--tg-theme-hint-color); }
+
+.debit-btn {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #34c759;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+.debit-btn.no-sub { background: #ff9500; }
+.status-ok { color: #34c759; font-weight: bold; font-size: 13px; }
+.cancelled-section {
+    border-top: 1px dashed rgba(0,0,0,0.1);
+    margin-top: 5px;
+    padding: 10px;
+}
+
+.toggle-cancelled {
+    background: none;
+    border: none;
+    color: var(--tg-theme-hint-color);
+    font-size: 11px;
+    text-decoration: underline;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.booking-admin-row.cancelled {
+    opacity: 0.5;
+    background: rgba(0,0,0,0.02);
+}
+
+.booking-admin-row.cancelled .user-name {
+    text-decoration: line-through;
+}
+
+.status-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color);
+}
+.cancelled-divider {
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.05);
+    font-size: 11px;
+    color: var(--tg-theme-hint-color);
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.cancelled-row {
+    opacity: 0.6;
+    background: var(--tg-theme-bg-color);
+}
+
+.debit-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #34c759;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    transition: 0.2s;
+}
+
+.debit-btn.no-sub {
+    background: #ff9500;
+}
+.history-item {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 3px solid #ddd;
+}
+
+.history-main {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.history-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.status-tag.attended { color: #2ecc71; font-weight: bold; }
+.status-tag.confirmed { color: #f1c40f; }
+.status-tag.cancelled { color: #e74c3c; text-decoration: line-through; }
+
+.info-sub-item {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+/* Подсказка для выбора юзера */
+.tg-hint {
+    padding: 30px;
+    text-align: center;
+    color: var(--tg-theme-hint-color);
+    font-size: 14px;
+    font-style: italic;
+}
+
+/* Настройка лоадера под твой скелетон */
+.admin-loader-container {
+    padding: 10px;
+}
+
+/* Для красоты: если запись отменена, делаем её чуть менее заметной */
+.booking-admin-row.cancelled {
+    background: var(--tg-theme-secondary-bg-color);
+    opacity: 0.6;
+}
+
+/* Метка билета под статусом */
+.status-label {
+    letter-spacing: 0.5px;
+}
+/* Цвета строк в зависимости от статуса */
+.booking-admin-row.bg-attended {
+    background-color: rgba(52, 199, 89, 0.1); /* Мягкий зеленый */
+    border-left: 4px solid #34c759;
+}
+
+.booking-admin-row.bg-missed {
+    background-color: rgba(255, 59, 48, 0.1); /* Мягкий красный */
+    border-left: 4px solid #ff3b30;
+}
+
+/* Стили кнопок */
+.mini-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.05);
+    background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s;
+}
+
+.mini-btn:active { transform: scale(0.9); }
+
+.btn-attended { background: #34c759 !important; color: white; }
+.btn-missed { background: #ff3b30 !important; color: white; }
+
+.status-ok {
+    font-size: 18px;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+}
+.action-zone {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+    z-index: 5; /* Явно выше контента */
+    pointer-events: auto !important; /* Разрешаем клики, даже если родитель запрещает */
+}
+
+.user-info {
+    flex: 1; /* Инфо занимает всё место слева */
+    min-width: 0;
+    overflow: hidden;
+    margin-right: 10px; /* Даем кнопкам "воздух" */
+}
+
+.debit-btn-fixed {
+    /* Чтобы не было случайного выделения текста при частом нажатии */
+    user-select: none;
+    -webkit-user-select: none;
+    /* Увеличим отклик */
+    cursor: pointer !important;
+}
+
+/* Общий контейнер менеджера */
+.bookings-manager {
+    padding: 10px 0;
+}
+
+/* Группа одного занятия */
+.lesson-booking-group {
+    background: var(--tg-theme-bg-color, #ffffff);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* Заголовок занятия (Время — Направление) */
+.lesson-mini-header {
+    background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.lesson-mini-header strong {
+    font-size: 16px;
+    color: var(--tg-theme-text-color, #222);
+}
+
+.count-badge {
+    background: var(--tg-theme-button-color, #007aff);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Строка ученика */
+.booking-admin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    transition: background 0.2s;
+}
+
+.booking-admin-row:last-child {
+    border-bottom: none;
+}
+
+/* Информация об ученике */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user-name {
+    font-size: 15px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.user-phone {
+    font-size: 13px;
+    color: #8e8e93;
+}
+
+/* Кнопки посещаемости (учитель) */
+.mini-att-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: none;
+    background: #f2f2f7;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mini-att-btn:active {
+    transform: scale(0.9);
+}
+
+.mini-att-btn.is-green {
+    background: #34c759 !important;
+    box-shadow: 0 2px 6px rgba(52, 199, 89, 0.3);
+}
+
+.mini-att-btn.is-red {
+    background: #ff3b30 !important;
+    box-shadow: 0 2px 6px rgba(255, 59, 48, 0.3);
+}
+
+/* Кнопка списания (админ) */
+.debit-btn {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #007aff;
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 122, 255, 0.2);
+    transition: all 0.2s;
+}
+
+.debit-btn:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.debit-btn.no-sub {
+    background: #ff9500;
+    box-shadow: 0 2px 6px rgba(255, 149, 0, 0.2);
+}
+
+/* Статус "Списано" */
+.status-ok {
+    font-size: 13px;
+    color: #34c759;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(52, 199, 89, 0.1);
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+/* Календарь сверху */
+.admin-input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    font-family: inherit;
+    background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+    color: var(--tg-theme-text-color);
+    outline: none;
+}
+.freeze-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+}
+
+.freeze-user-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.freeze-user-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
+}
+
+.sub-freeze-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    background: #f9f9f9;
+}
+
+.sub-freeze-row.is-frozen {
+    background: #e1f5fe;
+    border: 1px dashed #03a9f4;
+}
+
+.freeze-toggle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.btn-freeze { background: #f0f0f0; }
+.btn-unfreeze { background: #4cd964; color: white; }
+
+.sub-title { font-weight: 600; font-size: 14px; display: block; }
+.sub-date { font-size: 12px; color: #666; }
+.freeze-manager-container {
+    padding: 16px;
+    background-color: var(--tg-theme-bg-color, #fff);
+    min-height: 100vh;
+}
+
+/* Заголовки секций в стиле Telegram (как в настройках) */
+.section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color, #999);
+    margin: 20px 0 8px 8px;
+    font-weight: 500;
+}
+
+/* Карточка пользователя */
+.freeze-user-card {
+    background-color: var(--tg-theme-secondary-bg-color, #efeff4);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 0.5px solid rgba(0, 0, 0, 0.05);
+}
+
+.user-fio {
+    color: var(--tg-theme-text-color, #000);
+    font-size: 16px;
+    font-weight: 600;
+    display: block;
+}
+
+.user-phone-sub {
+    color: var(--tg-theme-hint-color, #707579);
+    font-size: 13px;
+}
+
+/* Строка абонемента внутри карточки */
+.sub-freeze-row {
+    background-color: var(--tg-theme-bg-color, #fff);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Стиль для замороженного состояния */
+.sub-freeze-row.is-frozen {
+    background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
+    outline: 1.5px solid var(--tg-theme-button-color, #2481cc);
+}
+
+.sub-title {
+    color: var(--tg-theme-text-color, #000);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.sub-date {
+    color: var(--tg-theme-hint-color, #707579);
+    font-size: 12px;
+    display: block;
+}
+
+.used-days-tag {
+    font-size: 11px;
+    background-color: var(--tg-theme-secondary-bg-color, #f4f4f7);
+    color: var(--tg-theme-hint-color, #707579);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+/* Кнопки в стиле Telegram */
+.freeze-toggle-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-freeze {
+    background-color: var(--tg-theme-secondary-bg-color, #ebedf0);
+    color: var(--tg-theme-button-color, #2481cc);
+}
+
+.btn-unfreeze {
+    background-color: var(--tg-theme-button-color, #2481cc);
+    color: var(--tg-theme-button-text-color, #fff);
+}
+
+/* Поле поиска */
+.admin-search-input {
+    width: 100%;
+    background-color: var(--tg-theme-secondary-bg-color, #efeff4);
+    color: var(--tg-theme-text-color, #000);
+    border: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+}
+
+.admin-search-input::placeholder {
+    color: var(--tg-theme-hint-color, #999);
+}
+.freeze-manager-tg {
+    padding: 8px 16px 30px 16px;
+    background-color: var(--tg-theme-bg-color, #fff);
+}
+
+.tg-section-label {
+    font-size: 13px;
+    color: var(--tg-theme-hint-color, #8e8e93);
+    margin: 24px 8px 8px 8px;
+    font-weight: 500;
+}
+
+.tg-user-card {
+    background-color: var(--tg-theme-secondary-bg-color, #f0f0f2);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.tg-card-header {
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+.tg-text-main {
+    color: var(--tg-theme-text-color, #000);
+    font-weight: 600;
+}
+
+.tg-text-hint {
+    color: var(--tg-theme-hint-color, #8e8e93);
+    display: block;
+}
+
+.tg-sub-row {
+    background-color: var(--tg-theme-bg-color, #fff);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.tg-sub-row.is-frozen {
+    border: 1px solid var(--tg-theme-button-color, #2481cc);
+    background-color: var(--tg-theme-bg-color);
+}
+
+.sub-top-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tg-freeze-badge {
+    font-size: 10px;
+    background-color: var(--tg-theme-secondary-bg-color, #f0f0f2);
+    color: var(--tg-theme-hint-color);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.tg-action-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: transform 0.1s;
+}
+
+.tg-action-button:active { transform: scale(0.9); }
+
+.tg-action-button.freeze {
+    background-color: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-button-color);
+}
+
+.tg-action-button.unfreeze {
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color, #fff);
+}
+
+.tg-empty-hint {
+    text-align: center;
+    padding: 40px;
+    color: var(--tg-theme-hint-color);
+    font-size: 14px;
+}
+
+/* Контейнер всей вкладки */
+.freeze-manager-tg {
+    padding: 10px 0;
+    background-color: var(--tg-theme-bg-color, #ffffff);
+}
+
+/* Заголовки секций (СЕЙЧАС НА ПАУЗЕ и т.д.) */
+.tg-section-label {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color, #707579);
+    margin: 20px 16px 8px;
+}
+
+/* Карточка ученика */
+.tg-user-card {
+    background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 0 16px 12px;
+}
+
+.tg-card-header {
+    margin-bottom: 8px;
+}
+
+.tg-text-main {
+    color: var(--tg-theme-text-color, #000000);
+    font-weight: 600;
+    display: block;
+}
+
+.tg-text-hint {
+    color: var(--tg-theme-hint-color, #707579);
+    display: block;
+}
+
+/* Строка с абонементом */
+.tg-sub-row {
+    background-color: var(--tg-theme-bg-color, #ffffff);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.tg-sub-row.is-frozen {
+    border: 1px solid var(--tg-theme-button-color, #2481cc);
+}
+
+/* Кнопка действия */
+.tg-action-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.tg-action-button.freeze {
+    background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+    color: var(--tg-theme-button-color, #2481cc);
+}
+
+.tg-action-button.unfreeze {
+    background-color: var(--tg-theme-button-color, #2481cc);
+    color: var(--tg-theme-button-text-color, #ffffff);
+}
+
+/* Маленький бейдж с днями (0/7 дн.) */
+.tg-freeze-badge {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+    color: var(--tg-theme-hint-color, #707579);
+    font-weight: bold;
+}
+
+.form-row-grid-1 {
+    display: flex;
+    flex-direction: column;
+}
+.confirm-btn-small {
+    background: var(--tg-theme-button-color, #2481cc);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+.btn-delete-icon {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.tg-empty-hint {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--tg-theme-hint-color);
+    font-style: italic;
+}
+
+.template-manager-container {
+    animation: fadeIn 0.3s ease;
+}
