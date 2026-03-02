@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import {SupabaseService} from "src/supabase/supabase.service";
+import {SupabaseService} from "../supabase/supabase.service";
 
 @Injectable()
 export class TelegramService {

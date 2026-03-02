@@ -9,9 +9,9 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { ScheduleTemplatesModule } from './schedule-templates/schedule-templates.module';
 import {TelegrafModule} from "nestjs-telegraf";
-import {BotUpdate} from "src/telegram/bot.update";
-import { TelegramModule } from 'src/telegram/telegram.module';
-import {SupabaseService} from "src/supabase/supabase.service";
+import {BotUpdate} from "./telegram/bot.update";
+import { TelegramModule } from './telegram/telegram.module';
+import {SupabaseService} from "./supabase/supabase.service";
 
 @Module({
   imports: [

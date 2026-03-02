@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
-import {TelegramService} from "src/telegram/telegram.service";
+import {TelegramService} from "../telegram/telegram.service";
 
 @Injectable()
 export class BookingsService {
