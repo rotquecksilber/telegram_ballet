@@ -30,7 +30,7 @@ export class BotUpdate {
             // Можно сразу добавить кнопку открытия WebApp, если хочешь
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: "🩰 Открыть расписание", web_app: { url:this.configService.get<string>('WEBAPP_URL') } }]
+                    [{ text: "🩰 Открыть расписание", web_app: { url:'https://telegram-ballet-n8wm.vercel.app' } }]
                 ]
             }
         });
