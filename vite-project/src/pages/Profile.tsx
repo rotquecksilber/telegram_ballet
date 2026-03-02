@@ -246,7 +246,7 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                 </div>
                 <div className="form-group">
                     <label>Телефон</label>
-                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+7..." />
+                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="" />
                 </div>
                 <button className="submit-btn" onClick={handleRegister} disabled={loading}>
                     {loading ? 'Создаем профиль...' : 'Зарегистрироваться'}
