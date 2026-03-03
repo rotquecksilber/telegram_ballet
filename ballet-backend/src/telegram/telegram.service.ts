@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import {SupabaseService} from "../supabase/supabase.service";
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class TelegramService {
-  constructor(@InjectBot() private readonly bot: Telegraf<any>,
-              private readonly supabaseService: SupabaseService) {}
+  constructor(
+      @InjectBot() private readonly bot: Telegraf<any>,
+      private readonly supabaseService: SupabaseService,
+  ) {}
 
   async sendNotification(chatId: string | number, text: string) {
     try {
@@ -16,28 +18,33 @@ export class TelegramService {
       console.error('Ошибка отправки сообщения:', e);
     }
   }
+
+  // Уведомления за час до занятия
   @Cron(CronExpression.EVERY_MINUTE)
   async handleHourlyReminders() {
     const now = new Date();
 
+    // Целевое время через час
+    let targetTime = new Date(now.getTime() + 60 * 60 * 1000);
 
-    const targetTime = new Date(now.getTime() + 60 * 60 * 1000);
-
+    // Компенсируем часовой пояс UTC+4
+    targetTime = new Date(targetTime.getTime() + 4 * 60 * 60 * 1000);
 
     targetTime.setSeconds(0);
     targetTime.setMilliseconds(0);
 
-    const dateStr = targetTime.toISOString().split('T')[0];
-    const timeStr = targetTime.toTimeString().slice(0, 5) + ':00';
+    // Формат даты и времени для базы
+    const dateStr = targetTime.toISOString().split('T')[0]; // YYYY-MM-DD
+    const timeStr = targetTime.toTimeString().slice(0, 8);  // HH:MM:SS
 
-
+    console.log(`[Reminder] Проверяем записи на ${dateStr} ${timeStr}`);
 
     const { data: bookings, error } = await this.supabaseService.getClient()
         .from('bookings')
         .select(`
-      user_id,
-      schedule!inner(date, time, classes:class_id(name))
-    `)
+        user_id,
+        schedule!inner(date, time, classes:class_id(name))
+      `)
         .eq('schedule.date', dateStr)
         .eq('schedule.time', timeStr)
         .eq('status', 'confirmed');
@@ -48,10 +55,11 @@ export class TelegramService {
     }
 
     if (!bookings || bookings.length === 0) {
-      return; // Записей на эту минуту нет
+      console.log('[Reminder] Записей нет.');
+      return;
     }
 
-    console.log(`[Reminder Success] Найдено записей: ${bookings.length}`);
+    console.log(`[Reminder] Найдено записей: ${bookings.length}`);
 
     for (const b of bookings) {
       const className = (b.schedule as any).classes?.name || 'Занятие';
@@ -59,26 +67,24 @@ export class TelegramService {
 
       await this.sendNotification(b.user_id, msg);
     }
-
-
   }
-  // Добавьте CronExpression.EVERY_DAY_AT_NOON или другое время
+
+  // Напоминание для неактивных пользователей
   @Cron('0 12 * * *') // Каждый день в 12:00
   async handleInactiveUsersReminders() {
-
-
     const now = new Date();
     const eightDaysAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000);
 
-    // 1. Берем всех пользователей + их дату регистрации
     const { data: users, error: userError } = await this.supabaseService.getClient()
         .from('users')
         .select('telegram_id, first_name, created_at');
 
-    if (userError || !users) return;
+    if (userError || !users) {
+      console.error('[Inactive Reminder] Ошибка получения пользователей:', userError?.message);
+      return;
+    }
 
     for (const user of users) {
-      // 2. Ищем последнее посещение
       const { data: lastBooking } = await this.supabaseService.getClient()
           .from('bookings')
           .select('schedule(date)')
@@ -89,19 +95,13 @@ export class TelegramService {
           .maybeSingle();
 
       let lastActivityDate: Date;
-
       if (lastBooking) {
-        // Если посещения были — берем дату последнего занятия
         lastActivityDate = new Date((lastBooking.schedule as any).date);
       } else {
-        // Если посещений НЕТ — берем дату регистрации
         lastActivityDate = new Date(user.created_at);
       }
 
-      // 3. Если затишье больше 8 дней
       if (lastActivityDate < eightDaysAgo) {
-
-        // Проверяем, нет ли записей на будущее (чтобы не беспокоить тех, кто уже записался)
         const { data: futureBooking } = await this.supabaseService.getClient()
             .from('bookings')
             .select('id')
@@ -111,7 +111,6 @@ export class TelegramService {
             .limit(1);
 
         if (!futureBooking || futureBooking.length === 0) {
-          // Выбираем текст в зависимости от того, был человек или нет
           const msgText = lastBooking
               ? `Вы не заглядывали к нам больше недели. Мы всегда рады видеть вас на занятиях! ✨`
               : `Вы зарегистрировались у нас больше недели назад, но так и не записались на первое занятие. Пора это исправить! 💃`;
@@ -119,7 +118,6 @@ export class TelegramService {
           const msg = `👋 **${user.first_name}, скучаем по вам!**\n\n${msgText}\n\nПосмотрите расписание, там много интересного! 🩰`;
 
           await this.sendNotification(user.telegram_id, msg);
-
         }
       }
     }

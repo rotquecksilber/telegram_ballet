@@ -208,7 +208,7 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                     <span className="book-title">
                         {isScheduleCancelled ? <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
                     </span>
-                                                {displayStatus === 'confirmed' && !book.subscription_id && (
+                                                {displayStatus === 'confirmed' && !book.subscription_id && subscriptions.length === 0 && (
                                                     <span className="status-hint red">Оплата на месте</span>
                                                 )}
                                             </div>
