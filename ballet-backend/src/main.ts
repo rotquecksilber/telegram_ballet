@@ -6,23 +6,23 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
-  const originsEnv = process.env.ORIGINS;
-  const allowedOrigins = originsEnv.split(',').map(o => o.trim()).filter(o => o !== '');
+
+  const allowedOrigin = process.env.ALLOWED_ORIGINS || 'https://telegram-ballet.vercel.app';
 
   app.enableCors({
-
-    origin: allowedOrigins.length > 0 ? allowedOrigins : [/\.vercel\.app$/],
+    origin: allowedOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
+  // Порт для продакшена
   const port = process.env.PORT || 3000;
 
-
+  // 0.0.0.0 — критично для деплоя (Render, Railway и др.)
   await app.listen(port, '0.0.0.0');
 
-  logger.log(`Server started on port ${port}`);
-  logger.log(`Allowed Origins: ${allowedOrigins.length > 0 ? allowedOrigins.join(', ') : 'Vercel Regex'}`);
+  logger.log(`CORS allowed for: ${allowedOrigin}`);
+  logger.log(`Server is listening on port ${port}`);
 }
 bootstrap();
