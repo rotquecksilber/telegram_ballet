@@ -2,29 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "ballet-backend/src/main.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "vite-project/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": { "distDir": "dist" }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "ballet-backend/src/main.ts"
-    },
-    {
       "src": "/(.*)",
-      "dest": "vite-project/$1",
-      "check": true
-    },
-    {
-      "src": "/(.*)",
-      "status": 200,
-      "dest": "vite-project/index.html"
+      "dest": "/index.html"
     }
   ]
 }
