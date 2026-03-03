@@ -36,7 +36,7 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
         const diffMins = diffMs / (1000 * 60);
 
         // Блокируем, если осталось 60 минут или меньше
-        return diffMins <= 60;
+        return diffMins <= 180;
     };
 
     const loadUserData = useCallback(async (tgId: number) => {
@@ -175,24 +175,34 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         <div key={month} className="month-group">
                             <div className="month-label">{month}</div>
                             {items.map((book: any) => {
-                                // Проверяем время отмены для каждой записи
                                 const isTooLateToCancel = isCancelationClosed(book.schedule?.date, book.schedule?.time);
 
+                                // ПРОВЕРКА: Отменил ли админ всё занятие целиком
+                                const isScheduleCancelled = book.schedule?.status === 'cancelled';
+
+                                // Финальный статус для отображения
+                                const displayStatus = isScheduleCancelled ? 'cancelled' : book.status;
+
                                 return (
-                                    <div key={book.id} className={`booking-mini-card ${book.status}`}>
+                                    <div key={book.id} className={`booking-mini-card ${displayStatus}`}>
                                         <div className="book-info">
                                             <div className="book-row">
-                                                <span className="book-title">{book.schedule?.classes?.name}</span>
-                                                {book.status === 'confirmed' && !book.subscription_id && subscriptions.length === 0 && (
+                    <span className="book-title">
+                        {isScheduleCancelled ? <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
+                    </span>
+                                                {displayStatus === 'confirmed' && !book.subscription_id && (
                                                     <span className="status-hint red">Оплата на месте</span>
                                                 )}
                                             </div>
                                             <span className="book-time">
-                                                {new Date(book.schedule?.date).toLocaleDateString()} • {book.schedule?.time?.slice(0, 5)}
-                                            </span>
+                    {new Date(book.schedule?.date).toLocaleDateString()} • {book.schedule?.time?.slice(0, 5)}
+                </span>
                                         </div>
 
-                                        {book.status === 'confirmed' ? (
+                                        {/* Логика кнопок и плашек статуса */}
+                                        {isScheduleCancelled ? (
+                                            <span className="status-hint red">Занятие отменено админом</span>
+                                        ) : book.status === 'confirmed' ? (
                                             isTooLateToCancel ? (
                                                 <span className="status-hint locked">Отмена закрыта</span>
                                             ) : (
@@ -202,8 +212,9 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                                             )
                                         ) : (
                                             <span className={`status-hint ${book.status === 'attended' ? 'green' : ''}`}>
-                                                {book.status === 'attended' ? 'Посещено' : 'Отменено'}
-                                            </span>
+                    {book.status === 'attended' ? 'Посещено' :
+                        book.status === 'late_cancelled' ? 'Поздняя отмена' : 'Отменено'}
+                </span>
                                         )}
                                     </div>
                                 )

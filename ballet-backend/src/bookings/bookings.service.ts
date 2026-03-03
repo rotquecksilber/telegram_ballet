@@ -120,7 +120,7 @@ export class BookingsService {
     const diffHours = (lessonTime.getTime() - Date.now()) / (1000 * 60 * 60);
 
     // Если меньше часа до занятия — поздняя отмена
-    const newStatus = diffHours >= 1 ? 'cancelled' : 'late_cancelled';
+    const newStatus = diffHours >= 3 ? 'cancelled' : 'late_cancelled';
 
     const { data, error: upError } = await client
         .from('bookings')
@@ -132,7 +132,7 @@ export class BookingsService {
     if (upError) throw new Error(upError.message);
 
     return {
-      message: diffHours >= 1 ? 'Успешно отменено' : 'Поздняя отмена (списание занятия)',
+      message: diffHours >= 3 ? 'Успешно отменено' : 'Поздняя отмена (списание занятия)',
       data
     };
   }

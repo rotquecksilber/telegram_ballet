@@ -111,3 +111,75 @@ select {
   border: 1px solid var(--tg-theme-hint-color);
   margin-bottom: 10px;
 }
+/* Состояние, когда всё занятие отменено админом */
+.booking-mini-card.cancelled {
+  opacity: 0.7;
+  background-color: #f9f9f9;
+  border-left: 4px solid #ff4d4f; /* Красная полоса сбоку */
+}
+
+/* Перечеркнутый текст названия */
+.booking-mini-card.cancelled .book-title s {
+  color: #8c8c8c;
+  text-decoration: line-through;
+}
+
+/* Подсказки статусов */
+.status-hint {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.status-hint.red {
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.status-hint.green {
+  color: #52c41a;
+  background: rgba(82, 196, 26, 0.1);
+}
+
+.status-hint.locked {
+  color: #8c8c8c;
+  background: #f0f0f0;
+  cursor: not-allowed;
+}
+
+/* Стили для поздней отмены (списания) */
+.booking-mini-card.late_cancelled {
+  border-left: 4px solid #faad14; /* Оранжевый — предупреждение */
+  opacity: 0.8;
+}
+
+/* Кнопка отмены */
+.cancel-txt-btn {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.cancel-txt-btn:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 480px) {
+  .booking-mini-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cancel-txt-btn {
+    align-self: flex-end;
+  }
+}
