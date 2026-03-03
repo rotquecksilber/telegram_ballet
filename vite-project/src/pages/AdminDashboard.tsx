@@ -38,8 +38,6 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
     const [classes, setClasses] = useState<any[]>([])
     const [allUsers, setAllUsers] = useState<any[]>([])
     const [groupedSchedule, setGroupedSchedule] = useState<Record<string, ScheduleItem[]>>({})
-    const [isAuthorized, setIsAuthorized] = useState(false);
-    const [authChecking, setAuthChecking] = useState(true);
 
     const [loading, setLoading] = useState(false)
     const [expanded, setExpanded] = useState<string | null>('bookings')
@@ -88,49 +86,6 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
             }
         } catch { toast.error("Ошибка обновления данных") }
     }
-    useEffect(() => {
-        // 1. Проверяем, запущены ли мы внутри Telegram
-        const tg = (window as any).Telegram?.WebApp;
-        const user = tg?.initDataUnsafe?.user;
-
-        if (!user || !user.id) {
-            // Если зашли просто через Chrome/Safari без TG
-            setIsAuthorized(false);
-        } else {
-            setIsAuthorized(true);
-        }
-    }, []);
-
-    useEffect(() => {
-        // 1. Проверяем Telegram
-        const tg = (window as any).Telegram?.WebApp;
-        const user = tg?.initDataUnsafe?.user;
-
-        if (user && user.id) {
-            setIsAuthorized(true);
-        } else {
-            setIsAuthorized(false);
-        }
-        setAuthChecking(false);
-
-        loadInitialData();
-    }, []);
-
-    // 2. Если еще проверяем — показываем лоадер (чтобы не моргало "Доступ ограничен")
-    if (authChecking) {
-        return <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>;
-    }
-
-    // 3. Если НЕ авторизован — показываем заглушку
-    if (!isAuthorized) {
-        return (
-            <div style={{textAlign: 'center', padding: '50px'}}>
-                <h1>🚫 Доступ ограничен</h1>
-                <p>Это приложение работает только через официальный Telegram-бот школы балета.</p>
-            </div>
-        )
-    }
-
 
     const handleSaveSchedule = async () => {
         // 1. Базовая валидация
