@@ -15,8 +15,7 @@ export class CronController {
 
         console.log('Cron job ran at:', new Date().toISOString());
 
-        // Вызываем методы сервиса
-        await this.telegramService.handleHourlyReminders();
+        // Только неактивные пользователи
         await this.telegramService.handleInactiveUsersReminders();
 
         return { status: 200, message: 'Task complete' };

@@ -18,52 +18,7 @@ export class TelegramService {
     }
   }
 
-  // Публичный метод для Cron
-  async handleHourlyReminders() {
-    const now = new Date();
-    let targetTime = new Date(now.getTime() + 60 * 60 * 1000);
-
-    // UTC+4 для твоего пояса
-    targetTime = new Date(targetTime.getTime() + 4 * 60 * 60 * 1000);
-
-    targetTime.setSeconds(0);
-    targetTime.setMilliseconds(0);
-
-    const dateStr = targetTime.toISOString().split('T')[0]; // YYYY-MM-DD
-    const timeStr = targetTime.toTimeString().slice(0, 8);  // HH:MM:SS
-
-    console.log(`[Reminder] Проверяем записи на ${dateStr} ${timeStr}`);
-
-    const { data: bookings, error } = await this.supabaseService.getClient()
-        .from('bookings')
-        .select(`
-        user_id,
-        schedule!inner(date, time, classes:class_id(name))
-      `)
-        .eq('schedule.date', dateStr)
-        .eq('schedule.time', timeStr)
-        .eq('status', 'confirmed');
-
-    if (error) {
-      console.error('[Reminder Error] Ошибка Supabase:', error.message);
-      return;
-    }
-
-    if (!bookings || bookings.length === 0) {
-      console.log('[Reminder] Записей нет.');
-      return;
-    }
-
-    console.log(`[Reminder] Найдено записей: ${bookings.length}`);
-
-    for (const b of bookings) {
-      const className = (b.schedule as any).classes?.name || 'Занятие';
-      const msg = `⏰ **Напоминание!**\n\nЧерез час начнется занятие: **${className}**\nНачало в ${timeStr.slice(0, 5)}. Ждем вас! 🩰`;
-
-      await this.sendNotification(b.user_id, msg);
-    }
-  }
-
+  // Только неактивные пользователи
   async handleInactiveUsersReminders() {
     const now = new Date();
     const eightDaysAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000);
@@ -94,6 +49,7 @@ export class TelegramService {
         lastActivityDate = new Date(user.created_at);
       }
 
+      // Если пользователь не был больше 8 дней
       if (lastActivityDate < eightDaysAgo) {
         const { data: futureBooking } = await this.supabaseService.getClient()
             .from('bookings')
