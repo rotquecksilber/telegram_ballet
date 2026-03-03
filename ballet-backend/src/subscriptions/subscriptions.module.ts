@@ -7,5 +7,6 @@ import {SupabaseService} from "../supabase/supabase.service";
 
   controllers: [SubscriptionsController],
   providers: [SubscriptionsService, SupabaseService],
+  exports: [SubscriptionsService]
 })
 export class SubscriptionsModule {}

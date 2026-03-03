@@ -65,7 +65,7 @@ export class TelegramService {
   // Добавьте CronExpression.EVERY_DAY_AT_NOON или другое время
   @Cron('0 12 * * *') // Каждый день в 12:00
   async handleInactiveUsersReminders() {
-    
+
 
     const now = new Date();
     const eightDaysAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000);

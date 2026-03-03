@@ -1,13 +1,17 @@
 import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import {TelegramService} from "../telegram/telegram.service";
+import {SubscriptionsService} from "src/subscriptions/subscriptions.service";
 
 @Injectable()
 export class BookingsService {
   private readonly logger = new Logger(BookingsService.name);
 
   constructor(private readonly supabase: SupabaseService,
-              private readonly telegramService: TelegramService,) {}
+              private readonly telegramService: TelegramService,
+              private readonly subscriptionsService: SubscriptionsService,) {
+
+  }
 
   /**
    * 1. Создание записи (поддерживает null в subscription_id)
@@ -146,14 +150,14 @@ export class BookingsService {
   async debitLesson(bookingId: number) {
     const client = this.supabase.getClient();
 
-    // 1. Получаем инфо о записи и пользователе с его абонементами
+    // 1. Получаем инфо о записи
     const { data: booking, error: fetchErr } = await client
         .from('bookings')
         .select(`
           *,
           user:user_id (
             id,
-            subscriptions (id, remaining_lessons)
+            subscriptions (id, remaining_lessons, status)
           )
         `)
         .eq('id', bookingId)
@@ -163,43 +167,36 @@ export class BookingsService {
     if (booking.is_debited) throw new BadRequestException('Занятие уже было списано ранее');
 
     let targetSubId = booking.subscription_id;
-    let currentRemaining = 0;
 
-    // 2. ЛОГИКА ПОДБОРА АБОНЕМЕНТА:
-    // Если в самой записи sub_id нет, ищем первый попавшийся активный абонемент у юзера
+    // 2. ПОДБОРА АБОНЕМЕНТА
     if (!targetSubId) {
-      const activeSub = booking.user?.subscriptions?.find(s => s.remaining_lessons > 0);
+      // Ищем абонемент, который не израсходован и не заморожен
+      const activeSub = booking.user?.subscriptions?.find(s =>
+          s.remaining_lessons > 0 && s.status !== 'frozen'
+      );
       if (activeSub) {
         targetSubId = activeSub.id;
-        currentRemaining = activeSub.remaining_lessons;
       }
-    } else {
-      // Если sub_id в записи был, находим его остаток
-      const sub = booking.user?.subscriptions?.find(s => s.id === targetSubId);
-      currentRemaining = sub?.remaining_lessons || 0;
     }
 
-    // 3. СПИСАНИЕ (если нашли какой-то абонемент)
+    // 3. СПИСАНИЕ через SubscriptionsService (ЗДЕСЬ ГЛАВНОЕ ИЗМЕНЕНИЕ)
     if (targetSubId) {
-      const { error: subError } = await client
-          .from('subscriptions')
-          .update({ remaining_lessons: currentRemaining - 1 })
-          .eq('id', targetSubId);
-
-      if (subError) {
-        this.logger.error(`Ошибка списания с абонемента ${targetSubId}: ${subError.message}`);
-        throw new Error('Не удалось обновить счетчик в абонементе');
+      try {
+        // Вызываем сервис, который сам проверит activation_date и обновит expiry_date
+        await this.subscriptionsService.spendLesson(targetSubId);
+      } catch (subError) {
+        this.logger.error(`Ошибка вызова spendLesson для ${targetSubId}: ${subError.message}`);
+        throw new BadRequestException('Не удалось списать занятие с абонемента');
       }
     }
 
     // 4. ОБНОВЛЯЕМ СТАТУС ЗАПИСИ
-    // Даже если абонемента не было (оплата наличными), помечаем как списано
     const { data, error: bookError } = await client
         .from('bookings')
         .update({
           is_debited: true,
           status: 'attended',
-          subscription_id: targetSubId // Сохраняем связь, если подобрали абонемент сейчас
+          subscription_id: targetSubId
         })
         .eq('id', bookingId)
         .select()
