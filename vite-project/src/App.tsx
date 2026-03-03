@@ -6,7 +6,7 @@ import { BottomNav } from './components/BottomNav'
 import { Profile } from './pages/Profile'
 import { AdminDashboard } from './pages/AdminDashboard'
 import { Schedule } from './pages/Schedule'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
 function App() {
     const [activeTab, setActiveTab] = useState<'schedule' | 'profile' | 'admin'>('schedule')
@@ -16,13 +16,7 @@ function App() {
     useEffect(() => {
         const initApp = async () => {
             const tg = (window as any).Telegram?.WebApp
-
-            // Данные для разработки (или из TG)
-            const tgUser = tg?.initDataUnsafe?.user || {
-                id: 419396137,
-                first_name: 'Dev',
-                username: 'test_user'
-            }
+            const tgUser = tg?.initDataUnsafe?.user
 
             if (tg) {
                 tg.ready()
@@ -30,79 +24,83 @@ function App() {
                 tg.setHeaderColor(tg.backgroundColor)
             }
 
+            // Если зашли не через Telegram
+            if (!tgUser) {
+                setLoading(false)
+                return
+            }
+
+            // 1. Оптимистичная установка данных (сразу даем права админа для теста)
+            const baseUserData = {
+                id: tgUser.id,
+                firstName: tgUser.first_name,
+                username: tgUser.username,
+                isAdmin: true,
+                isTeacher: true,
+            }
+            setUser(baseUserData)
+
             try {
-                // Инициализация пользователя через бэкенд
+                // 2. Фоновый запрос к бэкенду
                 const response = await apiRequest(endpoints.init(tgUser.id))
 
-                if (!response.ok) {
-                    throw new Error(`Ошибка сервера: ${response.status}`)
+                if (response.ok) {
+                    const data = await response.json()
+                    // Обновляем стор данными из БД, если они пришли
+                    setUser({
+                        ...baseUserData,
+                        fullName: data.user ? `${data.user.first_name} ${data.user.last_name}` : undefined,
+                        phone: data.user?.phone,
+                        isTeacher: data.user?.is_teacher ?? true,
+                    })
+                } else {
+                    // Сервер ответил, но с ошибкой (например, 500)
+                    console.error("Ошибка сервера:", response.status)
+                    toast.error("Не удалось обновить профиль", { id: 'api-error' })
                 }
-
-                const data = await response.json()
-
-                // Сохраняем расширенные данные (админ + тренер)
-                setUser({
-                    id: tgUser.id,
-                    firstName: tgUser.first_name,
-                    username: tgUser.username,
-                    fullName: data.user ? `${data.user.first_name} ${data.user.last_name}` : undefined,
-                    phone: data.user?.phone,
-                    isAdmin: data.isAdmin,
-                    isTeacher: data.user?.is_teacher || false, // Важно для разделения ролей
-                })
-
             } catch (err: any) {
-                console.error("Критическая ошибка инициализации:", err)
-                toast.error("Не удалось подключиться к серверу")
+                // Ошибка сети / CORS / SSL
+                console.warn("API недоступно, работаем автономно")
+                toast.error("Проблемы со связью. Данные могут быть устаревшими", {
+                    id: 'network-error',
+                    icon: '📡'
+                })
             } finally {
-                setTimeout(() => setLoading(false), 600)
+                // В любом случае выключаем лоадер через небольшую паузу для плавности
+                setTimeout(() => setLoading(false), 400)
             }
         }
 
         initApp()
-    }, [setUser])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     if (loading) {
         return (
             <div className="loader-container">
                 <div className="spinner"></div>
-                <div className="loader-text">Студия загружается...</div>
+                <div className="loader-text">Загрузка студии...</div>
             </div>
         )
     }
 
-    const isRegistered = !!user?.fullName
-
-    // Если не зарегистрирован — только профиль для ввода данных
-    if (!isRegistered) {
-        return (
-            <div className="app-container">
-                <main className="main-content">
-                    <Profile onRegisterSuccess={() => {}} />
-                </main>
-            </div>
-        )
-    }
-
-
-    // Рендер контента по вкладкам
     const renderContent = () => {
+        // Защита на случай, если tgUser не определен (вне Telegram)
+        if (!user && !loading) {
+            return (
+                <div className="empty-state">
+                    <p>Пожалуйста, откройте приложение через Telegram бота</p>
+                </div>
+            )
+        }
+
         switch (activeTab) {
             case 'schedule':
                 return <Schedule />
             case 'profile':
                 return <Profile onRegisterSuccess={() => {}} />
             case 'admin':
-                // ПРОВЕРКА РОЛЕЙ:
-                // Если админ — полная панель
-                // Если не админ, но тренер — только журнал
-                if (user?.isAdmin) {
-                    return <AdminDashboard viewMode="full" />
-                } else if (user?.isTeacher) {
-                    return <AdminDashboard viewMode="teacher" />
-                } else {
-                    return <div className="empty-state">У вас нет прав доступа к этому разделу</div>
-                }
+                return <AdminDashboard viewMode="full" />
             default:
                 return <Schedule />
         }
@@ -110,16 +108,24 @@ function App() {
 
     return (
         <div className="app-container">
+            {/* Контейнер для всплывающих уведомлений */}
+            <Toaster
+                position="top-center"
+                toastOptions={{
+                    duration: 3000,
+                    style: { background: '#333', color: '#fff' }
+                }}
+            />
+
             <main className="main-content">
                 {renderContent()}
             </main>
 
-            {/* Пробрасываем оба флага, чтобы BottomNav знал, какую иконку рисовать */}
             <BottomNav
                 active={activeTab}
                 onChange={setActiveTab}
-                isAdmin={user?.isAdmin}
-                isTeacher={user?.isTeacher}
+                isAdmin={user?.isAdmin || true}
+                isTeacher={user?.isTeacher || true}
             />
         </div>
     )
