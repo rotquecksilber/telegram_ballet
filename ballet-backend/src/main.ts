@@ -14,16 +14,13 @@ async function bootstrap() {
     transform: true,
   }));
 
-  // Разрезаем строку из .env по запятой.
-  // Если переменной нет, оставляем пустой массив (безопаснее, чем '*')
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-      ? process.env.ALLOWED_ORIGINS.split(',')
-      : [];
+
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'x-telegram-id'], // Важно явно разрешить заголовок
   });
 
   // Порт и хост для деплоя
