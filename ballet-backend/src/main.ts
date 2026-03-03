@@ -1,28 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
+
+// Переносим инициализацию в переменную, чтобы Vercel мог её подхватить
+let cachedServer: any;
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
-  const app = await NestFactory.create(AppModule);
+  if (!cachedServer) {
+    const app = await NestFactory.create(AppModule);
 
+    // Тот самый CORS, который мы правили
+    app.enableCors({
+      origin: process.env.ALLOWED_ORIGINS || 'https://telegram-ballet.vercel.app',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
+      allowedHeaders: 'Content-Type, Accept, Authorization',
+    });
 
-  const allowedOrigin = process.env.ALLOWED_ORIGINS || 'https://telegram-ballet.vercel.app';
-
-  app.enableCors({
-    origin: allowedOrigin,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Accept, Authorization',
-  });
-
-  // Порт для продакшена
-  const port = process.env.PORT || 3000;
-
-  // 0.0.0.0 — критично для деплоя (Render, Railway и др.)
-  await app.listen(port, '0.0.0.0');
-
-  logger.log(`CORS allowed for: ${allowedOrigin}`);
-  logger.log(`Server is listening on port ${port}`);
+    await app.init();
+    // Получаем экземпляр HTTP-сервера (Express под капотом)
+    cachedServer = app.getHttpAdapter().getInstance();
+  }
+  return cachedServer;
 }
-bootstrap();
+
+// ЭКСПОРТ ДЛЯ VERCEL (Критически важно!)
+export default async (req: any, res: any) => {
+  const server = await bootstrap();
+  return server(req, res);
+};
