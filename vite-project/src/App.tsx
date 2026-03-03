@@ -24,50 +24,44 @@ function App() {
                 tg.setHeaderColor(tg.backgroundColor)
             }
 
-            // Если зашли не через Telegram
             if (!tgUser) {
                 setLoading(false)
                 return
             }
 
-            // 1. Оптимистичная установка данных (сразу даем права админа для теста)
-            const baseUserData = {
+            // 1. Инициализируем пользователя базовыми данными (права по умолчанию false)
+            const initialData = {
                 id: tgUser.id,
                 firstName: tgUser.first_name,
                 username: tgUser.username,
-                isAdmin: true,
-                isTeacher: true,
+                isAdmin: false,
+                isTeacher: false,
             }
-            setUser(baseUserData)
+            setUser(initialData)
 
             try {
-                // 2. Фоновый запрос к бэкенду
+                // 2. Запрашиваем реальные роли и данные с сервера
                 const response = await apiRequest(endpoints.init(tgUser.id))
 
                 if (response.ok) {
                     const data = await response.json()
-                    // Обновляем стор данными из БД, если они пришли
+
+                    // Обновляем стор только теми правами, которые подтвердил сервер
                     setUser({
-                        ...baseUserData,
+                        ...initialData,
                         fullName: data.user ? `${data.user.first_name} ${data.user.last_name}` : undefined,
                         phone: data.user?.phone,
-                        isTeacher: data.user?.is_teacher ?? true,
+                        isAdmin: !!data.isAdmin,
+                        isTeacher: !!data.user?.is_teacher,
                     })
                 } else {
-                    // Сервер ответил, но с ошибкой (например, 500)
-                    console.error("Ошибка сервера:", response.status)
-                    toast.error("Не удалось обновить профиль", { id: 'api-error' })
+                    toast.error("Ошибка авторизации. Доступ ограничен.", { id: 'auth-error' })
                 }
             } catch (err: any) {
-                // Ошибка сети / CORS / SSL
-                console.warn("API недоступно, работаем автономно")
-                toast.error("Проблемы со связью. Данные могут быть устаревшими", {
-                    id: 'network-error',
-                    icon: '📡'
-                })
+                console.error("Ошибка связи с сервером:", err)
+                toast.error("Сервер недоступен. Проверьте соединение.", { id: 'net-error' })
             } finally {
-                // В любом случае выключаем лоадер через небольшую паузу для плавности
-                setTimeout(() => setLoading(false), 400)
+                setLoading(false)
             }
         }
 
@@ -79,20 +73,13 @@ function App() {
         return (
             <div className="loader-container">
                 <div className="spinner"></div>
-                <div className="loader-text">Загрузка студии...</div>
+                <div className="loader-text">Загрузка...</div>
             </div>
         )
     }
 
     const renderContent = () => {
-        // Защита на случай, если tgUser не определен (вне Telegram)
-        if (!user && !loading) {
-            return (
-                <div className="empty-state">
-                    <p>Пожалуйста, откройте приложение через Telegram бота</p>
-                </div>
-            )
-        }
+        if (!user) return <div className="empty-state">Пожалуйста, используйте Telegram</div>
 
         switch (activeTab) {
             case 'schedule':
@@ -100,7 +87,14 @@ function App() {
             case 'profile':
                 return <Profile onRegisterSuccess={() => {}} />
             case 'admin':
-                return <AdminDashboard viewMode="full" />
+                // Строгая проверка прав перед рендером админки
+                if (user.isAdmin) {
+                    return <AdminDashboard viewMode="full" />
+                } else if (user.isTeacher) {
+                    return <AdminDashboard viewMode="teacher" />
+                } else {
+                    return <div className="empty-state">Доступ запрещен</div>
+                }
             default:
                 return <Schedule />
         }
@@ -108,14 +102,7 @@ function App() {
 
     return (
         <div className="app-container">
-            {/* Контейнер для всплывающих уведомлений */}
-            <Toaster
-                position="top-center"
-                toastOptions={{
-                    duration: 3000,
-                    style: { background: '#333', color: '#fff' }
-                }}
-            />
+            <Toaster position="top-center" />
 
             <main className="main-content">
                 {renderContent()}
@@ -124,8 +111,8 @@ function App() {
             <BottomNav
                 active={activeTab}
                 onChange={setActiveTab}
-                isAdmin={user?.isAdmin || true}
-                isTeacher={user?.isTeacher || true}
+                isAdmin={user?.isAdmin}
+                isTeacher={user?.isTeacher}
             />
         </div>
     )
