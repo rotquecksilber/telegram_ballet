@@ -12,6 +12,7 @@ import {TelegrafModule} from "nestjs-telegraf";
 import {BotUpdate} from "./telegram/bot.update";
 import { TelegramModule } from './telegram/telegram.module';
 import {SupabaseService} from "./supabase/supabase.service";
+import { CronController } from './cron/cron.controller';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import {SupabaseService} from "./supabase/supabase.service";
     }),// Это подтянет .env во всё приложение
     UsersModule, ScheduleModule, ClassesModule, SubscriptionsModule, BookingsModule, ScheduleTemplatesModule, TelegramModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, CronController],
   providers: [AppService, BotUpdate, SupabaseService],
 
 })

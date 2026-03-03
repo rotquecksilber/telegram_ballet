@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
@@ -19,21 +18,17 @@ export class TelegramService {
     }
   }
 
-  // Уведомления за час до занятия
-  @Cron(CronExpression.EVERY_MINUTE)
+  // Публичный метод для Cron
   async handleHourlyReminders() {
     const now = new Date();
-
-    // Целевое время через час
     let targetTime = new Date(now.getTime() + 60 * 60 * 1000);
 
-    // Компенсируем часовой пояс UTC+4
+    // UTC+4 для твоего пояса
     targetTime = new Date(targetTime.getTime() + 4 * 60 * 60 * 1000);
 
     targetTime.setSeconds(0);
     targetTime.setMilliseconds(0);
 
-    // Формат даты и времени для базы
     const dateStr = targetTime.toISOString().split('T')[0]; // YYYY-MM-DD
     const timeStr = targetTime.toTimeString().slice(0, 8);  // HH:MM:SS
 
@@ -69,8 +64,6 @@ export class TelegramService {
     }
   }
 
-  // Напоминание для неактивных пользователей
-  @Cron('0 12 * * *') // Каждый день в 12:00
   async handleInactiveUsersReminders() {
     const now = new Date();
     const eightDaysAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000);
