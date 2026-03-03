@@ -17,7 +17,7 @@ async function bootstrap() {
 
 
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [],
+    origin: process.env.ALLOWED_ORIGINS,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'x-telegram-id'], // Важно явно разрешить заголовок
