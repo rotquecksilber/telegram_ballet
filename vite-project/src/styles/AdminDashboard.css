@@ -355,7 +355,17 @@
     gap: 2px;
     border: 1px solid rgba(0, 0, 0, 0.03);
 }
+.sub-status-tag.pending {
+    background: #fff7e6; /* Нежно-оранжевый */
+    color: #faad14;
+    border: 1px solid #ffe7ba;
+}
 
+.sub-status-tag.active {
+    background: #f6ffed; /* Нежно-зеленый */
+    color: #52c41a;
+    border: 1px solid #b7eb8f;
+}
 /* Сами кнопки-сегменты */
 .duration-segment {
     flex: 1;

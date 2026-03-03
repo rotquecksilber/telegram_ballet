@@ -135,31 +135,49 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                 {isSubLoading ? (
                     <div className="subscription-skeleton"></div>
                 ) : subscriptions.length > 0 ? (
-                    subscriptions.map((sub) => (
-                        <div key={sub.id} className="subscription-card">
-                            <div className="sub-main">
-                                <div className="sub-info">
-                                    <span className="sub-label">Осталось занятий</span>
-                                    <span className="sub-count">
-                                        {sub.remaining_lessons} <span className="total">/ {sub.total_lessons || 8}</span>
-                                    </span>
+                    subscriptions.map((sub) => {
+                        // Проверяем, был ли абонемент уже активирован (списано ли первое занятие)
+                        const isActivated = !!sub.activation_date;
+
+                        return (
+                            <div key={sub.id} className="subscription-card">
+                                <div className="sub-main">
+                                    <div className="sub-info">
+                                        <span className="sub-label">Осталось занятий</span>
+                                        <span className="sub-count">
+                            {sub.remaining_lessons} <span className="total">/ {sub.total_lessons || 8}</span>
+                        </span>
+                                    </div>
+                                    {/* Добавляем класс pending, если еще не активирован */}
+                                    <div className={`sub-status-tag ${sub.is_frozen ? 'frozen' : isActivated ? 'active' : 'pending'}`}>
+                                        {sub.is_frozen ? 'Заморожен' : isActivated ? 'Активен' : 'Ждет активации'}
+                                    </div>
                                 </div>
-                                <div className={`sub-status-tag ${sub.is_frozen ? 'frozen' : ''}`}>
-                                    {sub.is_frozen ? 'Заморожен' : 'Активен'}
+                                <div className="sub-progress">
+                                    <div
+                                        className="sub-progress-fill"
+                                        style={{ width: `${Math.min((sub.remaining_lessons / (sub.total_lessons || 1)) * 100, 100)}%` }}
+                                    ></div>
                                 </div>
+                                <div className="sub-details">
+                                    <span>Срок действия:</span>
+                                    {/* Логика отображения даты или подсказки */}
+                                    <span>
+                        {isActivated
+                            ? `до ${new Date(sub.expiry_date).toLocaleDateString('ru-RU')}`
+                            : 'Активируется при первом посещении'}
+                    </span>
+                                </div>
+
+                                {/* Дополнительная строка с информацией о длительности для неактивированных */}
+                                {!isActivated && (
+                                    <div className="sub-activation-info" style={{fontSize: '11px', marginTop: '4px', opacity: 0.7}}>
+                                        * Будет действовать {sub.duration_days} дней с момента начала
+                                    </div>
+                                )}
                             </div>
-                            <div className="sub-progress">
-                                <div
-                                    className="sub-progress-fill"
-                                    style={{ width: `${Math.min((sub.remaining_lessons / (sub.total_lessons || 1)) * 100, 100)}%` }}
-                                ></div>
-                            </div>
-                            <div className="sub-details">
-                                <span>Срок действия:</span>
-                                <span>до {new Date(sub.expiry_date).toLocaleDateString('ru-RU')}</span>
-                            </div>
-                        </div>
-                    ))
+                        );
+                    })
                 ) : (
                     <div className="no-subscription">
                         <div className="no-sub-icon">🎫</div>

@@ -12,16 +12,22 @@ export class SubscriptionsService {
   }
 
   async create(dto: CreateSubscriptionDto) {
-    const {data, error} = await this.client
+    const { data, error } = await this.client
         .from('subscriptions')
         .insert({
           user_id: dto.user_id,
           total_lessons: dto.total_lessons,
           remaining_lessons: dto.remaining_lessons,
           purchase_date: dto.purchase_date,
+          // Сохраняем длительность, переданную с фронтенда
+          duration_days: dto.duration_days,
+          // Можно передать dto.expiry_date как "плановый",
+          // но он перезапишется методом spendLesson при первом посещении
           expiry_date: dto.expiry_date,
-          freeze_limit_days: dto.freeze_limit_days || 0, // Передаем в БД
-          status: dto.status || 'active'
+          freeze_limit_days: dto.freeze_limit_days || 0,
+          status: dto.status || 'active',
+          // Убеждаемся, что при создании активация пустая
+          activation_date: null
         })
         .select()
         .single();
@@ -81,14 +87,44 @@ export class SubscriptionsService {
 
   // Метод для уменьшения кол-ва занятий (когда ученик пришел на урок)
   async spendLesson(id: number) {
-    const {data: sub} = await this.client.from('subscriptions').select('remaining_lessons').eq('id', id).single();
+    // 1. Получаем полные данные абонемента
+    const { data: sub, error: fetchError } = await this.client
+        .from('subscriptions')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (fetchError || !sub) throw new Error('Абонемент не найден');
 
     const newCount = sub.remaining_lessons - 1;
     const status = newCount <= 0 ? 'exhausted' : 'active';
 
-    const {data, error} = await this.client
+    let updateData: any = {
+      remaining_lessons: newCount,
+      status
+    };
+
+    // 2. ЛОГИКА АКТИВАЦИИ: если это самое первое списание
+    if (!sub.activation_date) {
+      const today = new Date();
+
+      // Берем длительность из БД (которую прислал фронт при создании)
+      // Если вдруг там пусто, ставим 30 по умолчанию
+      const daysToExpiration = sub.duration_days || 30;
+
+      const expiryDate = new Date(today);
+      expiryDate.setDate(expiryDate.getDate() + daysToExpiration);
+
+      updateData.activation_date = today.toISOString().split('T')[0];
+      updateData.expiry_date = expiryDate.toISOString().split('T')[0];
+
+      console.log(`Абонемент ${id} активирован сегодня. Годен до: ${updateData.expiry_date}`);
+    }
+
+    // 3. Обновляем запись в Supabase
+    const { data, error } = await this.client
         .from('subscriptions')
-        .update({remaining_lessons: newCount, status})
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();

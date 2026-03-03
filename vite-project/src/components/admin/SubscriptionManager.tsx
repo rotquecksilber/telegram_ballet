@@ -18,6 +18,9 @@ export const SubscriptionManager = ({ users }: Props) => {
     const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0])
     const [expiryDate, setExpiryDate] = useState('')
 
+    // НОВОЕ: Срок в днях для передачи на бэк
+    const [durationDays, setDurationDays] = useState(30)
+
     // Срок (для подсветки активного таба)
     const [activeMonthTab, setActiveMonthTab] = useState(1)
 
@@ -25,16 +28,38 @@ export const SubscriptionManager = ({ users }: Props) => {
     const [allowFreeze, setAllowFreeze] = useState(false)
     const [freezeDays, setFreezeDays] = useState(7)
 
-    // Инициализация даты окончания при первом рендере или смене даты покупки
+    // Инициализация при первом рендере или смене даты покупки
     useEffect(() => {
         updateExpiryDate(activeMonthTab)
     }, [purchaseDate])
 
     const updateExpiryDate = (months: number) => {
         setActiveMonthTab(months)
-        const date = new Date(purchaseDate)
-        date.setMonth(date.getMonth() + months)
-        setExpiryDate(date.toISOString().split('T')[0])
+        const dateStart = new Date(purchaseDate)
+        const dateEnd = new Date(purchaseDate)
+
+        dateEnd.setMonth(dateEnd.getMonth() + months)
+
+        // Вычисляем разницу в днях для duration_days
+        const diffTime = Math.abs(dateEnd.getTime() - dateStart.getTime())
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+        setDurationDays(diffDays)
+        setExpiryDate(dateEnd.toISOString().split('T')[0])
+    }
+
+    const handleCustomExpiryChange = (val: string) => {
+        setExpiryDate(val)
+        setActiveMonthTab(0)
+
+        // Если админ вручную выбрал дату, пересчитываем durationDays
+        const dateStart = new Date(purchaseDate)
+        const dateEnd = new Date(val)
+        if (dateEnd > dateStart) {
+            const diffTime = Math.abs(dateEnd.getTime() - dateStart.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            setDurationDays(diffDays)
+        }
     }
 
     const filteredUsers = useMemo(() => {
@@ -57,6 +82,9 @@ export const SubscriptionManager = ({ users }: Props) => {
                     total_lessons: finalLessons,
                     remaining_lessons: finalLessons,
                     purchase_date: purchaseDate,
+                    // Передаем duration_days для активации при первом посещении
+                    duration_days: durationDays,
+                    // Передаем expiry_date как предварительный (он пересчитается при списании)
                     expiry_date: expiryDate,
                     freeze_limit_days: allowFreeze ? freezeDays : 0,
                     status: 'active'
@@ -65,7 +93,6 @@ export const SubscriptionManager = ({ users }: Props) => {
 
             if (res.ok) {
                 toast.success(`Абонемент создан для ${selectedUser.last_name}`)
-                // Сброс формы
                 setSelectedUser(null)
                 setCustomLessons('')
                 setAllowFreeze(false)
@@ -107,7 +134,6 @@ export const SubscriptionManager = ({ users }: Props) => {
                         <button className="btn-text" onClick={() => setSelectedUser(null)}>Изменить</button>
                     </div>
 
-                    {/* Сетка занятий */}
                     <div className="field">
                         <label className="field-label-mini">Количество занятий</label>
                         <div className="lessons-grid-smart">
@@ -129,7 +155,6 @@ export const SubscriptionManager = ({ users }: Props) => {
                     </div>
 
                     <div className="form-row-grid-1">
-                        {/* Дата покупки — отдельная строка */}
                         <div className="field">
                             <label className="field-label-mini">Дата покупки</label>
                             <input
@@ -140,9 +165,8 @@ export const SubscriptionManager = ({ users }: Props) => {
                             />
                         </div>
 
-                        {/* Срок действия — отдельная строка с табами и инпутом ниже */}
                         <div className="field mt-12">
-                            <label className="field-label-mini">Действует до</label>
+                            <label className="field-label-mini">Срок (активируется при первом визите)</label>
                             <div className="segmented-control mb-8">
                                 {[1, 2, 3].map(m => (
                                     <button
@@ -153,19 +177,18 @@ export const SubscriptionManager = ({ users }: Props) => {
                                     >{m} мес</button>
                                 ))}
                             </div>
+                            <div className="expiry-hint" style={{fontSize: '12px', marginBottom: '4px', opacity: 0.7}}>
+                                Примерный срок: {durationDays} дн.
+                            </div>
                             <input
                                 type="date"
                                 className="admin-input"
                                 value={expiryDate}
-                                onChange={(e) => {
-                                    setExpiryDate(e.target.value);
-                                    setActiveMonthTab(0);
-                                }}
+                                onChange={(e) => handleCustomExpiryChange(e.target.value)}
                             />
                         </div>
                     </div>
 
-                    {/* Заморозка */}
                     <div className="freeze-section">
                         <div className="toggle-container">
                             <span className="toggle-label">Разрешить заморозку</span>
