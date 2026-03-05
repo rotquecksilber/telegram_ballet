@@ -653,3 +653,63 @@
 .booking-cell:last-child {
     border-bottom: none;
 }
+.booking-cell {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 0.5px solid var(--tg-theme-secondary-bg-color);
+}
+
+.booking-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.booking-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+}
+
+.booking-name s {
+    color: var(--tg-theme-hint-color);
+    text-decoration-color: #ff3b30;
+}
+
+.booking-date-text {
+    font-size: 14px;
+    color: var(--tg-theme-hint-color);
+    margin-top: 2px;
+}
+
+/* Красная метка отмены */
+.status-label-alert {
+    font-size: 10px;
+    font-weight: 800;
+    color: #ff3b30;
+    background: rgba(255, 59, 48, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.cancel-minimal-btn {
+    background: none;
+    border: none;
+    color: #ff3b30;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 4px 0;
+}
+
+.status-confirmed-text {
+    font-size: 14px;
+    color: #34c759;
+    font-weight: 600;
+}
+
+.is-cancelled {
+    opacity: 0.6;
+}

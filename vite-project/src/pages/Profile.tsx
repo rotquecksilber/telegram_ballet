@@ -15,6 +15,7 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
     const [isBookingsLoading, setIsBookingsLoading] = useState(true)
     const [subscriptions, setSubscriptions] = useState<any[]>([])
     const [bookings, setBookings] = useState<any[]>([])
+    const [schedules, setSchedules] = useState<any[]>([])
 
     // Поля регистрации
     const [firstName, setFirstName] = useState('')
@@ -43,11 +44,19 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
         setIsSubLoading(true);
         setIsBookingsLoading(true);
         try {
+            // 1. Грузим абонементы
             const subRes = await apiRequest(endpoints.userSubscription(tgId));
             if (subRes.ok) setSubscriptions(await subRes.json());
 
+            // 2. Грузим записи пользователя
             const bookRes = await apiRequest(endpoints.userBookings(tgId));
-            if (bookRes.ok) setBookings(await bookRes.json());
+            const bookData = await bookRes.json();
+            if (bookRes.ok) setBookings(bookData);
+
+            // 3. ГЛАВНОЕ: Грузим актуальное расписание, чтобы проверить статусы
+            const schedRes = await apiRequest(endpoints.schedule); // Убедись, что эндпоинт верный
+            if (schedRes.ok) setSchedules(await schedRes.json());
+
         } catch (e) {
             console.error('Ошибка загрузки данных профиля:', e);
         } finally {
@@ -193,46 +202,45 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         <div key={month} className="month-group">
                             <div className="month-label">{month}</div>
                             {items.map((book: any) => {
-                                // 1. Получаем статус занятия из расписания (приводим к нижнему регистру для верности)
-                                const scheduleStatus = book.schedule?.status?.toLowerCase().trim();
-                                const isScheduleCancelled = scheduleStatus === 'cancelled';
+                                // Находим это занятие в общем расписании по ID
+                                const currentSchedule = schedules.find(s => s.id === book.schedule_id);
 
-                                // 2. Проверка времени (за 60 мин)
+                                // Если в расписании статус 'cancelled', значит админ всё отменил
+                                const isScheduleCancelled = currentSchedule?.status === 'cancelled';
+
                                 const isTooLateToCancel = isCancelationClosed(book.schedule?.date, book.schedule?.time);
 
                                 return (
                                     <div key={book.id} className={`booking-cell ${isScheduleCancelled ? 'is-cancelled' : ''}`}>
-                                        <div className="booking-info-block">
+                                        <div className="booking-content">
                                             <div className="booking-title-row">
                     <span className="booking-name">
                         {isScheduleCancelled ? <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
                     </span>
-                                                {/* Показываем статус отмены админом ПЕРВЫМ делом */}
-                                                {isScheduleCancelled && <span className="admin-cancel-label">Отменено студией</span>}
+                                                {isScheduleCancelled && <span className="status-label-alert">ОТМЕНЕНО СТУДИЕЙ</span>}
                                             </div>
 
-                                            <div className="booking-subtext">
+                                            <div className="booking-date-text">
                                                 {new Date(book.schedule?.date).toLocaleDateString('ru-RU', {day: 'numeric', month: 'short'})} • {book.schedule?.time?.slice(0, 5)}
                                             </div>
                                         </div>
 
-                                        <div className="booking-controls">
-                                            {!isScheduleCancelled && (
-                                                <>
-                                                    {book.status === 'confirmed' ? (
-                                                        isTooLateToCancel ? (
-                                                            <span className="lock-icon">🔒</span>
-                                                        ) : (
-                                                            <button className="cancel-link" onClick={() => handleCancelBooking(book.id)}>
-                                                                Отменить
-                                                            </button>
-                                                        )
-                                                    ) : (
-                                                        <span className={`status-dot ${book.status === 'attended' ? 'attended' : 'user-cancelled'}`}>
-                                {book.status === 'attended' ? '✅' : 'Отменено'}
-                            </span>
-                                                    )}
-                                                </>
+                                        <div className="booking-side-action">
+                                            {!isScheduleCancelled && book.status === 'confirmed' && (
+                                                isTooLateToCancel ? (
+                                                    <span className="status-confirmed-text">Запись активна</span>
+                                                ) : (
+                                                    <button className="cancel-minimal-btn" onClick={() => handleCancelBooking(book.id)}>
+                                                        Отменить
+                                                    </button>
+                                                )
+                                            )}
+
+                                            {/* Если юзер сам отменил или посетил */}
+                                            {book.status !== 'confirmed' && !isScheduleCancelled && (
+                                                <span className="status-final-text">
+                        {book.status === 'attended' ? '✅ Посещено' : 'Отменено'}
+                    </span>
                                             )}
                                         </div>
                                     </div>
