@@ -556,3 +556,19 @@
     opacity: 0.6;
     filter: grayscale(0.4);
 }
+.booking-mini-card.cancelled {
+    opacity: 0.6;
+    background: #fdfdfd;
+    border-left: 3px solid #ff3b30; /* Четкий красный акцент */
+}
+
+.status-hint.red {
+    background: #fff0f0;
+    color: #ff3b30;
+    border: none;
+    font-weight: 700;
+}
+
+.book-title s {
+    color: #a0a0a0;
+}

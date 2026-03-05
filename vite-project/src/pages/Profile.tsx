@@ -193,47 +193,58 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         <div key={month} className="month-group">
                             <div className="month-label">{month}</div>
                             {items.map((book: any) => {
+                                // 1. Проверяем время (блокировка за 60 мин)
                                 const isTooLateToCancel = isCancelationClosed(book.schedule?.date, book.schedule?.time);
+
+                                // 2. СРАВНЕНИЕ: Проверяем статус самого занятия в расписании
+                                // Если в таблице 'schedule' статус 'cancelled', то запись считается отмененной админом
                                 const isScheduleCancelled = book.schedule?.status === 'cancelled';
-                                const displayStatus = isScheduleCancelled ? 'cancelled' : book.status;
+
+                                // 3. Определяем итоговый визуальный класс
+                                const cardStatusClass = isScheduleCancelled ? 'cancelled' : book.status;
 
                                 return (
-                                    <div key={book.id} className={`booking-item ${displayStatus}`}>
-                                        <div className="booking-body">
-                                            <div className="booking-main">
-                    <span className="booking-name">
+                                    <div key={book.id} className={`booking-mini-card ${cardStatusClass}`}>
+                                        <div className="book-info">
+                                            <div className="book-row">
+                    <span className="book-title">
+                        {/* Если админ отменил — перечеркиваем текст */}
                         {isScheduleCancelled ? <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
                     </span>
-                                                <span className="booking-meta">
-                        {new Date(book.schedule?.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} • {book.schedule?.time?.slice(0, 5)}
-                    </span>
-                                            </div>
 
-                                            <div className="booking-aside">
-                                                {isScheduleCancelled ? (
-                                                    <span className="badge badge-error">Отменено студией</span>
-                                                ) : book.status === 'confirmed' ? (
+                                                {/* Оплата на месте показывается только если занятие НЕ отменено */}
+                                                {!isScheduleCancelled && book.status === 'confirmed' && !book.subscription_id && subscriptions.length === 0 && (
+                                                    <span className="status-hint red">Оплата на месте</span>
+                                                )}
+                                            </div>
+                                            <span className="book-time">
+                    {new Date(book.schedule?.date).toLocaleDateString()} • {book.schedule?.time?.slice(0, 5)}
+                </span>
+                                        </div>
+
+                                        <div className="book-actions">
+                                            {/* ГЛАВНОЕ УСЛОВИЕ: Если в schedule статус 'cancelled' */}
+                                            {isScheduleCancelled ? (
+                                                    <span className="status-hint red">Занятие отменено админом</span>
+                                                ) :
+                                                /* Если юзер еще записан */
+                                                book.status === 'confirmed' ? (
                                                     isTooLateToCancel ? (
-                                                        <span className="badge badge-secondary">Запись активна</span>
+                                                        <span className="status-hint locked">Отмена закрыта</span>
                                                     ) : (
-                                                        <button className="text-action-btn" onClick={() => handleCancelBooking(book.id)}>
+                                                        <button className="cancel-txt-btn" onClick={() => handleCancelBooking(book.id)}>
                                                             Отменить
                                                         </button>
                                                     )
                                                 ) : (
-                                                    <span className={`badge ${book.status === 'attended' ? 'badge-success' : 'badge-secondary'}`}>
-                            {book.status === 'attended' ? 'Посещено' : 'Отменено'}
-                        </span>
+                                                    /* Если юзер сам отменил или уже посетил */
+                                                    <span className={`status-hint ${book.status === 'attended' ? 'green' : ''}`}>
+                        {book.status === 'attended' ? 'Посещено' : 'Отменено вами'}
+                    </span>
                                                 )}
-                                            </div>
                                         </div>
-
-                                        {/* Деликатная плашка оплаты, если нужно */}
-                                        {displayStatus === 'confirmed' && !book.subscription_id && !isScheduleCancelled && (
-                                            <div className="payment-footer">Оплата на месте</div>
-                                        )}
                                     </div>
-                                )
+                                );
                             })}
                         </div>
                     ))
