@@ -419,3 +419,40 @@
 .booking-mini-card.confirmed {
     border-left: 4px solid #4CAF50; /* Зеленая полоска для подтвержденных */
 }
+/* 1. Специфический стиль для отмены админом (красная рамка) */
+.booking-mini-card.cancelled {
+    opacity: 0.7;
+    background: #fff9f9; /* Еле заметный розовый фон */
+    border-left: 4px solid #ff3b30; /* Красная полоска вместо зеленой */
+    pointer-events: none; /* Чтобы точно нельзя было нажать */
+}
+
+/* 2. Стиль для перечеркнутого текста */
+.book-title s {
+    color: #8e8e93;
+    text-decoration-thickness: 2px;
+}
+
+/* 3. Оформление заблокированной отмены */
+.status-hint.locked {
+    background: #f2f2f7;
+    color: #8e8e93;
+    border: 1px solid #d1d1d6;
+    font-style: italic;
+    cursor: not-allowed;
+}
+
+/* 4. Яркая плашка "Занятие отменено админом" */
+.status-hint.red {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+}
+
+/* 5. Если занятие подтверждено, но уже "в прошлом" или отмена закрыта */
+.booking-mini-card.confirmed {
+    border-left: 4px solid #34c759; /* Твоя зеленая полоска */
+}
