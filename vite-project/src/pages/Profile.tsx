@@ -194,45 +194,43 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                             <div className="month-label">{month}</div>
                             {items.map((book: any) => {
                                 const isTooLateToCancel = isCancelationClosed(book.schedule?.date, book.schedule?.time);
-
-                                // ПРОВЕРКА: Отменил ли админ всё занятие целиком
                                 const isScheduleCancelled = book.schedule?.status === 'cancelled';
-
-                                // Финальный статус для отображения
                                 const displayStatus = isScheduleCancelled ? 'cancelled' : book.status;
 
                                 return (
-                                    <div key={book.id} className={`booking-mini-card ${displayStatus}`}>
-                                        <div className="book-info">
-                                            <div className="book-row">
-                    <span className="book-title">
+                                    <div key={book.id} className={`booking-item ${displayStatus}`}>
+                                        <div className="booking-body">
+                                            <div className="booking-main">
+                    <span className="booking-name">
                         {isScheduleCancelled ? <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
                     </span>
-                                                {displayStatus === 'confirmed' && !book.subscription_id && subscriptions.length === 0 && (
-                                                    <span className="status-hint red">Оплата на месте</span>
+                                                <span className="booking-meta">
+                        {new Date(book.schedule?.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} • {book.schedule?.time?.slice(0, 5)}
+                    </span>
+                                            </div>
+
+                                            <div className="booking-aside">
+                                                {isScheduleCancelled ? (
+                                                    <span className="badge badge-error">Отменено студией</span>
+                                                ) : book.status === 'confirmed' ? (
+                                                    isTooLateToCancel ? (
+                                                        <span className="badge badge-secondary">Запись активна</span>
+                                                    ) : (
+                                                        <button className="text-action-btn" onClick={() => handleCancelBooking(book.id)}>
+                                                            Отменить
+                                                        </button>
+                                                    )
+                                                ) : (
+                                                    <span className={`badge ${book.status === 'attended' ? 'badge-success' : 'badge-secondary'}`}>
+                            {book.status === 'attended' ? 'Посещено' : 'Отменено'}
+                        </span>
                                                 )}
                                             </div>
-                                            <span className="book-time">
-                    {new Date(book.schedule?.date).toLocaleDateString()} • {book.schedule?.time?.slice(0, 5)}
-                </span>
                                         </div>
 
-                                        {/* Логика кнопок и плашек статуса */}
-                                        {isScheduleCancelled ? (
-                                            <span className="status-hint red">Занятие отменено админом</span>
-                                        ) : book.status === 'confirmed' ? (
-                                            isTooLateToCancel ? (
-                                                <span className="status-hint locked">Отмена закрыта</span>
-                                            ) : (
-                                                <button className="cancel-txt-btn" onClick={() => handleCancelBooking(book.id)}>
-                                                    Отменить
-                                                </button>
-                                            )
-                                        ) : (
-                                            <span className={`status-hint ${book.status === 'attended' ? 'green' : ''}`}>
-                    {book.status === 'attended' ? 'Посещено' :
-                        book.status === 'late_cancelled' ? 'Поздняя отмена' : 'Отменено'}
-                </span>
+                                        {/* Деликатная плашка оплаты, если нужно */}
+                                        {displayStatus === 'confirmed' && !book.subscription_id && !isScheduleCancelled && (
+                                            <div className="payment-footer">Оплата на месте</div>
                                         )}
                                     </div>
                                 )
