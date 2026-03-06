@@ -183,3 +183,44 @@ select {
     align-self: flex-end;
   }
 }
+/* Контейнер для тега */
+.tg-tag-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  /* Убираем стандартную границу, добавляем легкий оттенок */
+  border: none;
+}
+
+/* Стили для разных уровней */
+.tag-beginners {
+  background: rgba(52, 199, 89, 0.12); /* Нежный зеленый */
+  color: #28a745;
+}
+
+.tag-advanced {
+  background: rgba(255, 59, 48, 0.12); /* Нежный красный */
+  color: #d63031;
+}
+
+.tag-any {
+  background: var(--tg-theme-secondary-bg-color);
+  color: var(--tg-theme-hint-color);
+}
+
+/* Дополнительно: стили для возраста, если хочешь сделать их похожими на теги */
+.age-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--tg-theme-text-color);
+  font-weight: 500;
+}

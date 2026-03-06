@@ -28,6 +28,22 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
         { id: 4, name: 'Чт' }, { id: 5, name: 'Пт' }, { id: 6, name: 'Сб' }, { id: 7, name: 'Вс' }
     ];
 
+    const getLevelInfo = (level: string) => {
+        switch (level) {
+            case 'beginners': return { label: 'Новички', class: 'tag-beginners', icon: '🐣' }
+            case 'advanced': return { label: 'Профи', class: 'tag-advanced', icon: '🔥' }
+            default: return { label: 'Любой уровень', class: 'tag-any', icon: '✨' }
+        }
+    }
+
+    const getAgeInfo = (age: string) => {
+        switch (age) {
+            case 'children': return { label: 'Дети', icon: '👶' }
+            case 'adults': return { label: 'Взрослые', icon: '💃' }
+            default: return { label: 'Любой Возраст', icon: '👥' }
+        }
+    }
+
     // Синхронный расчет времени окончания
     useEffect(() => {
         if (formData.time) {
@@ -90,6 +106,7 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
             }
         } finally { setLoading(false); }
     };
+    const filteredTemplates = templates.filter(t => t.day_of_week === selectedDay);
 
     return (
         <div className="admin-form-inside">
@@ -105,10 +122,12 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
             </div>
 
             {/* Форма добавления (стиль как у создания занятия) */}
-            <div className="admin-card mb-16" style={{padding: '12px', border: '1px solid var(--tg-theme-secondary-bg-color)'}}>
+            <div className="admin-card mb-16"
+                 style={{padding: '12px', border: '1px solid var(--tg-theme-secondary-bg-color)'}}>
                 <div className="field">
                     <label className="field-label-mini">Направление</label>
-                    <select value={formData.class_id} onChange={e => setFormData({...formData, class_id: e.target.value})}>
+                    <select value={formData.class_id}
+                            onChange={e => setFormData({...formData, class_id: e.target.value})}>
                         <option value="">Выберите класс</option>
                         {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
@@ -116,9 +135,11 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
 
                 <div className="field">
                     <label className="field-label-mini">Преподаватель</label>
-                    <select value={formData.teacher_id} onChange={e => setFormData({...formData, teacher_id: e.target.value})}>
+                    <select value={formData.teacher_id}
+                            onChange={e => setFormData({...formData, teacher_id: e.target.value})}>
                         <option value="">Выберите учителя</option>
-                        {teachers.map(t => <option key={t.id} value={t.telegram_id}>{t.last_name} {t.first_name}</option>)}
+                        {teachers.map(t => <option key={t.id}
+                                                   value={t.telegram_id}>{t.last_name} {t.first_name}</option>)}
                     </select>
                 </div>
 
@@ -186,26 +207,36 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
 
             {/* Список созданных шаблонов на выбранный день */}
             <div className="templates-list">
-                <div className="tg-section-label">Сетка на {days.find(d => d.id === selectedDay)?.name}</div>
-                {templates.filter(t => t.day_of_week === selectedDay).map(t => (
-                    <div key={t.id} className="tg-sub-row">
-                        <div className="sub-info-block">
-                            <span className="tg-text-main">{t.classes?.name}</span>
-                            <span className="tg-text-hint">
-                                {t.time?.slice(0,5)} - {t.end_time?.slice(0,5)} | {t.users?.last_name}
-                            </span>
+                <div className="tg-section-label">Расписание на {days.find(d => d.id === selectedDay)?.name}</div>
+                {filteredTemplates.map(t => {
+                    const level = getLevelInfo(t.level);
+                    const age = getAgeInfo(t.age_category);
+                    return (
+                        <div key={t.id} className="tg-sub-row">
+                            <div className="sub-info-block">
+                                <div className="tg-title-line">
+                                    <span className="tg-text-main">{t.classes?.name}</span>
+                                    <span className={`tg-tag-level ${level.class}`}>{level.icon} {level.label}</span>
+                                </div>
+                                <div className="tg-text-hint">
+                                    {t.time?.slice(0, 5)} — {t.end_time?.slice(0, 5)}
+                                    <span className="divider">|</span> {age.icon} {age.label}
+                                    {t.users?.last_name && <><span
+                                        className="divider">|</span> 👤 {t.users.last_name}</>}
+                                </div>
+                            </div>
+                            <button className="btn-delete-icon" onClick={() => handleDelete(t.id)}>🗑️</button>
                         </div>
-                        <button className="btn-delete-icon" onClick={() => handleDelete(t.id)}>🗑️</button>
-                    </div>
-                ))}
-                {templates.filter(t => t.day_of_week === selectedDay).length === 0 && (
-                    <div className="tg-empty-hint">Пусто. Добавьте первое занятие выше.</div>
-                )}
+                    );
+                })}
+                {filteredTemplates.length === 0 &&
+                    <div className="tg-empty-hint">Пусто. Добавьте первое занятие выше.</div>}
             </div>
 
             {/* Кнопка публикации */}
             {templates.filter(t => t.day_of_week === selectedDay).length > 0 && (
-                <button className="confirm-btn mt-16" style={{background: '#31b545'}} onClick={handleDeploy} disabled={loading}>
+                <button className="confirm-btn mt-16" style={{background: '#31b545'}} onClick={handleDeploy}
+                        disabled={loading}>
                     🚀 Опубликовать {days.find(d => d.id === selectedDay)?.name} целиком
                 </button>
             )}

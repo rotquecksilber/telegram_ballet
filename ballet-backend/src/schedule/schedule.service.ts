@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
+import {TelegramService} from "../telegram/telegram.service";
 
 @Injectable()
 export class ScheduleService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(private readonly supabaseService: SupabaseService,
+              private readonly telegramService: TelegramService) {}
 
   // Получить всё расписание с "присоединенными" данными из других таблиц
   async findAll() {
@@ -80,14 +82,80 @@ export class ScheduleService {
         return data;
     }
     async updateStatus(id: number, status: string) {
-        const { data, error } = await this.supabaseService.getClient()
+        const client = this.supabaseService.getClient();
+
+        // 1. Сначала получаем текущие данные занятия, чтобы было что отправить в уведомлении
+        const { data: lesson, error: fetchError } = await client
+            .from('schedule')
+            .select(`*, classes (name)`)
+            .eq('id', id)
+            .single();
+
+        if (fetchError || !lesson) throw new NotFoundException('Занятие не найдено');
+
+        // 2. Обновляем статус
+        const { data: updatedLesson, error: updateError } = await client
             .from('schedule')
             .update({ status })
             .eq('id', id)
-            .select(); // Добавляем select, чтобы вернуть обновленный объект
+            .select()
+            .single();
 
-        if (error) throw new Error(error.message);
-        return data;
+        if (updateError) throw new Error(updateError.message);
+
+        // 3. Вызываем уведомление, используя данные занятия (lesson)
+        if (status === 'cancelled') {
+            await this.notifyUsersAboutCancellation(id, lesson);
+        }
+
+        return updatedLesson;
+    }
+
+
+    private async notifyUsersAboutCancellation(scheduleId: number, lesson: any) {
+        const client = this.supabaseService.getClient();
+
+        // 1. Сначала меняем статус всех броней на 'cancelled'
+        const { error: updateError } = await client
+            .from('bookings')
+            .update({ status: 'cancelled' })
+            .eq('schedule_id', scheduleId)
+            .neq('status', 'cancelled'); // Меняем только тех, кто еще активен
+
+        if (updateError) {
+            console.error(`Ошибка обновления статусов броней: ${updateError.message}`);
+            return;
+        }
+
+        // 2. Находим всех, кого нужно уведомить
+        const { data: bookings, error: fetchError } = await client
+            .from('bookings')
+            .select('user_id')
+            .eq('schedule_id', scheduleId)
+            .eq('status', 'cancelled'); // Берем именно тех, кого только что отменили
+
+        if (fetchError || !bookings || bookings.length === 0) return;
+
+        // 3. Формируем сообщение
+        const className = lesson.classes?.name || 'Занятие';
+        const dateFormatted = new Date(lesson.date).toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long'
+        });
+
+        const message =
+            `⚠️ **Занятие отменено**\n\n` +
+            `🩰 ${className}\n` +
+            `📅 Дата: ${dateFormatted} в ${lesson.time.slice(0, 5)}\n\n` +
+            `Приносим извинения, занятие не состоится.`;
+
+        // 4. Рассылаем уведомления
+        await Promise.all(
+            bookings.map(booking =>
+                this.telegramService.sendNotification(booking.user_id, message)
+                    .catch(err => console.error(`Ошибка отправки TG для ${booking.user_id}: ${err.message}`))
+            )
+        );
     }
 
     async update(id: number, dto: any) {
