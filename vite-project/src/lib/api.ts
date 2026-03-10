@@ -12,6 +12,7 @@ export const endpoints = {
     templates: `${API_URL}/schedule-templates`,
     deploySchedule: `${API_URL}/schedule/deploy`,
 telegram: `${API_URL}/telegram/send`,
+    sendScheduleToAll: `${API_URL}/schedule/send-to-all`,
 
     templateById: (id: number | string) => `${API_URL}/schedule-templates/${id}`,
 

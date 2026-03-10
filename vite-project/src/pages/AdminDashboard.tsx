@@ -38,7 +38,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
     const [classes, setClasses] = useState<any[]>([])
     const [allUsers, setAllUsers] = useState<any[]>([])
     const [groupedSchedule, setGroupedSchedule] = useState<Record<string, ScheduleItem[]>>({})
-
+    const [isOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [expanded, setExpanded] = useState<string | null>('bookings')
     const [editingId, setEditingId] = useState<number | null>(null)
@@ -206,6 +206,33 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
             )}
         </section>
     )
+    const [sendDate, setSendDate] = useState('');
+    const [sending, setSending] = useState(false);
+
+
+        const handleSendSchedule = async () => {
+            if (!sendDate) return toast.error('Выберите дату');
+
+            setSending(true);
+            try {
+                const res = await apiRequest(endpoints.sendScheduleToAll, {
+                    method: 'POST',
+                    body: JSON.stringify({ date: sendDate })
+                });
+
+                if (res.ok) {
+                    toast.success('Расписание отправлено всем пользователям!');
+                    setSendDate(''); // Можно очистить поле
+                } else {
+                    const err = await res.json();
+                    toast.error(err.message || 'Ошибка сервера');
+                }
+            } catch {
+                toast.error('Ошибка сети');
+            } finally {
+                setSending(false);
+            }
+        };
 
     return (
         <div className="admin-container">
@@ -224,6 +251,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
             {/* Только для Полного Админа */}
             {viewMode === 'full' && (
                 <>
+
                     {renderSection('schedule', editingId ? 'Редактировать занятие' : 'Добавить занятие', '📅',
                         <ScheduleForm
                             classes={classes} teachers={teachers}
@@ -241,6 +269,52 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                             onEdit={handleEditInitiate}
                         />
                     )}
+
+
+                    <section className="admin-section tg-accordion">
+                        <div
+                            className="section-header tg-header"
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            <div className="header-left">
+                                <span className="section-icon">📤</span>
+                                <h3>Отправить расписание в Telegram</h3>
+                            </div>
+
+                            <span className={`accordion-arrow ${isOpen ? 'open' : ''}`}>
+            ▾
+        </span>
+                        </div>
+
+                        {isOpen && (
+                            <div className="accordion-content">
+                                <div className="admin-card tg-card">
+
+                                    <div className="form-row-grid">
+                                        <div className="field">
+                                            <label className="field-label-mini">Дата</label>
+
+                                            <input
+                                                className="tg-input"
+                                                type="date"
+                                                value={sendDate}
+                                                onChange={e => setSendDate(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        className="tg-send-btn"
+                                        onClick={handleSendSchedule}
+                                        disabled={sending}
+                                    >
+                                        {sending ? 'Отправка...' : '🚀 Отправить расписание'}
+                                    </button>
+
+                                </div>
+                            </div>
+                        )}
+                    </section>
                     {renderSection('templates', 'Шаблоны расписания', '📋',
                         <TemplateManager
                             classes={classes}
@@ -250,7 +324,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                     )}
 
                     {renderSection('subs', 'Выдача абонементов', '🎟️',
-                        <SubscriptionManager users={allUsers} />
+                        <SubscriptionManager users={allUsers}/>
                     )}
 
                     {renderSection('teachers', 'Преподаватели', '🎓',
@@ -264,7 +338,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
 
                                 const res = await apiRequest(url, {
                                     method: 'PATCH',
-                                    body: JSON.stringify({ is_teacher: true })
+                                    body: JSON.stringify({is_teacher: true})
                                 })
 
                                 if (res.ok) {
@@ -285,9 +359,13 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                             setNewClassName={setNewClassName}
                             onAddClass={async () => {
                                 const res = await apiRequest(endpoints.classes, {
-                                    method: 'POST', body: JSON.stringify({ name: newClassName })
+                                    method: 'POST', body: JSON.stringify({name: newClassName})
                                 })
-                                if (res.ok) { toast.success('Добавлено'); setNewClassName(''); loadInitialData() }
+                                if (res.ok) {
+                                    toast.success('Добавлено');
+                                    setNewClassName('');
+                                    loadInitialData()
+                                }
                             }}
                         />
                     )}

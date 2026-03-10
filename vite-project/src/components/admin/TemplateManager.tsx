@@ -13,6 +13,7 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
     const [selectedDay, setSelectedDay] = useState(1); // 1-Пн, 7-Вс
     const [loading, setLoading] = useState(false);
     const [activeDuration, setActiveDuration] = useState(60);
+    const [deployDate, setDeployDate] = useState(new Date().toISOString().split("T")[0]);
 
     const [formData, setFormData] = useState({
         class_id: '',
@@ -92,19 +93,20 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
     };
 
     const handleDeploy = async () => {
-        const dateStr = prompt("На какую дату опубликовать эту сетку?", new Date().toISOString().split('T')[0]);
-        if (!dateStr) return;
+        if (!deployDate) return;
         setLoading(true);
         try {
             const res = await apiRequest(endpoints.deploySchedule, {
                 method: 'POST',
-                body: JSON.stringify({ day_of_week: selectedDay, date: dateStr })
+                body: JSON.stringify({ day_of_week: selectedDay, date: deployDate })
             });
             if (res.ok) {
                 toast.success("Расписание успешно создано!");
-                onUpdate(); // Обновляем основной календарь админки
+                onUpdate();
             }
-        } finally { setLoading(false); }
+        } finally {
+            setLoading(false);
+        }
     };
     const filteredTemplates = templates.filter(t => t.day_of_week === selectedDay);
 
@@ -234,11 +236,28 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
             </div>
 
             {/* Кнопка публикации */}
-            {templates.filter(t => t.day_of_week === selectedDay).length > 0 && (
-                <button className="confirm-btn mt-16" style={{background: '#31b545'}} onClick={handleDeploy}
-                        disabled={loading}>
-                    🚀 Опубликовать {days.find(d => d.id === selectedDay)?.name} целиком
-                </button>
+            {filteredTemplates.length > 0 && (
+                <div className="mt-16">
+                    <div className="form-row-grid">
+                        <div className="field">
+                            <label className="field-label-mini">Дата публикации</label>
+                            <input
+                                type="date"
+                                value={deployDate}
+                                onChange={e => setDeployDate(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        className="confirm-btn mt-8"
+                        style={{background: '#31b545'}}
+                        onClick={handleDeploy}
+                        disabled={loading}
+                    >
+                        🚀 Опубликовать {days.find(d => d.id === selectedDay)?.name} целиком
+                    </button>
+                </div>
             )}
         </div>
     );

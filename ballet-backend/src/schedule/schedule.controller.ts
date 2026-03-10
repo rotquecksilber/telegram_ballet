@@ -82,4 +82,12 @@ export class ScheduleController {
       count: result.data?.length
     };
   }
+  @Post('send-to-all')
+  async sendScheduleToAll(@Body('date') targetDate: string) {
+    if (!targetDate) {
+      throw new Error('Дата обязательна');
+    }
+
+    return await this.scheduleService.notifyScheduleToAllUsers(targetDate);
+  }
 }

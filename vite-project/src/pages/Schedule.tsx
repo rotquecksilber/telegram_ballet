@@ -34,7 +34,17 @@ export const Schedule = () => {
                 const res = await apiRequest(endpoints.schedule)
                 if (res.ok) {
                     const data = await res.json()
-                    const grouped = data.reduce((acc: any, item: any) => {
+
+                    // Фильтруем прошедшие занятия
+                    const now = new Date()
+                    const futureLessons = data.filter((item: any) => {
+                        const [year, month, day] = item.date.split('-').map(Number)
+                        const lessonDate = new Date(year, month - 1, day)
+                        return lessonDate >= new Date(now.getFullYear(), now.getMonth(), now.getDate())
+                    })
+
+                    // Группируем
+                    const grouped = futureLessons.reduce((acc: any, item: any) => {
                         if (!acc[item.date]) acc[item.date] = []
                         acc[item.date].push(item)
                         return acc

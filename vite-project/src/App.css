@@ -224,3 +224,128 @@ select {
   color: var(--tg-theme-text-color);
   font-weight: 500;
 }
+
+
+/* секция */
+
+.tg-accordion {
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--tg-theme-bg-color);
+  border: 1px solid var(--tg-theme-secondary-bg-color);
+}
+
+/* header */
+
+.tg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.tg-header:hover {
+  background: var(--tg-theme-secondary-bg-color);
+}
+
+/* левая часть */
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  font-size: 18px;
+}
+
+.tg-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--tg-theme-text-color);
+}
+
+/* стрелка */
+
+.accordion-arrow {
+  font-size: 16px;
+  color: var(--tg-theme-hint-color);
+  transition: transform 0.25s ease;
+}
+
+.accordion-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* контент */
+
+.accordion-content {
+  padding: 0 16px 16px;
+  animation: tgAccordionOpen 0.25s ease;
+}
+
+@keyframes tgAccordionOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* карточка */
+
+.tg-card {
+  background: var(--tg-theme-secondary-bg-color);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+/* input */
+
+.tg-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  background: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+  outline: none;
+}
+
+/* кнопка */
+
+.tg-send-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  background: #31b545;
+  color: white;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tg-send-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.tg-send-btn:active {
+  transform: scale(0.98);
+}
+
+.tg-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

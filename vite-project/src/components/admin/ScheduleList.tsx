@@ -18,12 +18,31 @@ export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit }: Props)
         } catch (e) { return dateStr; }
     };
 
-    // Хелпер для обрезки времени HH:mm:ss -> HH:mm
     const formatTime = (time: string) => time ? time.slice(0, 5) : '';
+
+    // Получаем массив ближайших 3 дней из groupedData
+    const getRecentAndFutureDays = () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const threeDaysAgo = new Date(today);
+        threeDaysAgo.setDate(today.getDate() - 3);
+
+        return Object.entries(groupedData).filter(([date]) => {
+            const lessonDate = new Date(date);
+            lessonDate.setHours(0, 0, 0, 0);
+
+            return lessonDate >= threeDaysAgo; // последние 3 дня + будущее
+        });
+    };
+
+    const filteredData = getRecentAndFutureDays();
 
     return (
         <div className="admin-schedule-list">
-            {Object.entries(groupedData).map(([date, items]) => (
+            {filteredData.length === 0 && <div>На ближайшие 3 дня занятий нет</div>}
+
+            {filteredData.map(([date, items]) => (
                 <div key={date} className="admin-date-group">
                     <h4 className="admin-date-label">{formatDate(date)}</h4>
 
@@ -33,7 +52,6 @@ export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit }: Props)
                         return (
                             <div key={item.id} className={`admin-item-card ${isCancelled ? 'is-cancelled' : ''}`}>
                                 <div className="admin-item-main">
-                                    {/* БЛОК ВРЕМЕНИ С ОКОНЧАНИЕМ */}
                                     <div className="admin-item-time-wrapper">
                                         <span className="admin-item-time">{formatTime(item.time)}</span>
                                         {item.end_time && (
