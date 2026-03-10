@@ -210,25 +210,27 @@ export class ScheduleService {
     async notifyScheduleToAllUsers(targetDate: string) {
         const client = this.supabaseService.getClient();
 
-        // 1. Получаем расписание
+        // 1. Получаем расписание с явным join по class_id
         const { data: lessons, error } = await client
             .from('schedule')
             .select(`
-            teacher_id,
-            time,
-            end_time,
-            level,
-            age_category,
-            classes (
-                name
-            )
-        `)
+      teacher_id,
+      time,
+      end_time,
+      level,
+      age_category,
+      class_id,
+      classes!class_id (
+        name
+      )
+    `)
             .eq('date', targetDate)
             .order('time', { ascending: true });
 
         if (error) throw new Error(error.message);
+        if (!lessons?.length) return { message: 'Расписание пустое' };
 
-        // 2. Получаем всех пользователей
+        // 2. Получаем пользователей
         const { data: users } = await client
             .from('users')
             .select('telegram_id');
@@ -239,36 +241,28 @@ export class ScheduleService {
             .select('telegram_id, first_name, last_name');
 
         const teacherMap = new Map(
-            teachers.map(t => [
+            teachers?.map(t => [
                 t.telegram_id,
                 `${t.first_name || ''} ${t.last_name || ''}`.trim()
-            ])
+            ]) || []
         );
 
-        // функции иконок
         const getLevelInfo = (level: string) => {
             switch (level) {
-                case 'beginners':
-                    return { label: 'Новички', icon: '🐣' };
-                case 'advanced':
-                    return { label: 'Профи', icon: '🔥' };
-                default:
-                    return { label: 'Любой уровень', icon: '✨' };
+                case 'beginners': return { label: 'Новички', icon: '🐣' };
+                case 'advanced': return { label: 'Профи', icon: '🔥' };
+                default: return { label: 'Любой уровень', icon: '✨' };
             }
         };
 
         const getAgeInfo = (age: string) => {
             switch (age) {
-                case 'children':
-                    return { label: 'Дети', icon: '👶' };
-                case 'adults':
-                    return { label: 'Взрослые', icon: '💃' };
-                default:
-                    return { label: 'Любой возраст', icon: '👥' };
+                case 'children': return { label: 'Дети', icon: '👶' };
+                case 'adults': return { label: 'Взрослые', icon: '💃' };
+                default: return { label: 'Любой возраст', icon: '👥' };
             }
         };
 
-        // формат даты
         const dateFormatted = new Date(targetDate).toLocaleDateString('ru-RU', {
             day: 'numeric',
             month: 'long'
@@ -276,9 +270,10 @@ export class ScheduleService {
 
         let message = `📅 Расписание на ${dateFormatted}\n\n`;
 
-        // 4. Формируем сообщение
         lessons.forEach(lesson => {
-            const className = lesson.classes?.[0]?.name || 'Занятие';
+            // Надёжное получение названия занятия
+            // @ts-ignore
+            const className = lesson.classes?.name || lesson.classes?.[0]?.name || 'Занятие';
 
             const teacherName =
                 teacherMap.get(lesson.teacher_id) || 'Преподаватель не назначен';
@@ -288,20 +283,18 @@ export class ScheduleService {
 
             message +=
                 `🩰 ${className}\n` +
-                `⏰ ${lesson.time.slice(0,5)} — ${lesson.end_time?.slice(0,5)}\n` +
+                `⏰ ${lesson.time?.slice(0,5) || '?'} — ${lesson.end_time?.slice(0,5) || '?'} \n` +
                 `👤 ${teacherName}\n` +
                 `${levelInfo.icon} ${levelInfo.label} | ${ageInfo.icon} ${ageInfo.label}\n\n`;
         });
 
-        // 5. Отправляем всем пользователям
+        // 5. Рассылка
         await Promise.all(
-            users.map(u =>
+            users?.map(u =>
                 this.telegramService
                     .sendNotification(u.telegram_id, message)
-                    .catch(err =>
-                        console.error(`Ошибка TG ${u.telegram_id}:`, err.message)
-                    )
-            )
+                    .catch(() => {}) // глотаем ошибки отправки
+            ) || []
         );
 
         return { message: 'Расписание отправлено' };

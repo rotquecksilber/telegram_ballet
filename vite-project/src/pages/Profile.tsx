@@ -339,6 +339,7 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         width: '100%',
                         padding: '12px',
                         border: 'none',
+                        marginTop: '15px',
                         borderRadius: '12px',
                         fontWeight: '600',
                         background: 'linear-gradient(45deg, #FFD700, #FFA500)',
