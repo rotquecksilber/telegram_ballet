@@ -1,24 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
-import { Telegraf } from 'telegraf';
+import { Telegraf, Context } from 'telegraf';
 import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
-export class TelegramService {
+export class TelegramService implements OnModuleInit {
   constructor(
-      @InjectBot() private readonly bot: Telegraf<any>,
+      @InjectBot() private readonly bot: Telegraf<Context>,
       private readonly supabaseService: SupabaseService,
   ) {}
+
+  async onModuleInit() {
+    this.bot.on('pre_checkout_query', async (ctx) => {
+      try {
+        await ctx.answerPreCheckoutQuery(true);
+      } catch {}
+    });
+
+    this.bot.on('successful_payment', async (ctx) => {
+      const payment = ctx.message?.successful_payment;
+      if (!payment) return;
+
+      // Здесь можно записать донат в базу
+      // const userId = payment.invoice_payload.split('_')[1];
+      // await this.supabaseService.addDonation(userId, payment.total_amount);
+
+      try {
+        await ctx.reply('✨ Огромное спасибо за поддержку ⭐❤️');
+      } catch {}
+    });
+  }
 
   async sendNotification(chatId: string | number, text: string) {
     try {
       await this.bot.telegram.sendMessage(chatId, text, { parse_mode: 'Markdown' });
-    } catch (e) {
-      console.error('Ошибка отправки сообщения:', e);
-    }
+    } catch {}
   }
 
-  // Только неактивные пользователи
   async handleInactiveUsersReminders() {
     const now = new Date();
     const eightDaysAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000);
@@ -27,10 +45,7 @@ export class TelegramService {
         .from('users')
         .select('telegram_id, first_name, created_at');
 
-    if (userError || !users) {
-      console.error('[Inactive Reminder] Ошибка получения пользователей:', userError?.message);
-      return;
-    }
+    if (userError || !users) return;
 
     for (const user of users) {
       const { data: lastBooking } = await this.supabaseService.getClient()
@@ -49,7 +64,6 @@ export class TelegramService {
         lastActivityDate = new Date(user.created_at);
       }
 
-      // Если пользователь не был больше 8 дней
       if (lastActivityDate < eightDaysAgo) {
         const { data: futureBooking } = await this.supabaseService.getClient()
             .from('bookings')
@@ -69,6 +83,34 @@ export class TelegramService {
           await this.sendNotification(user.telegram_id, msg);
         }
       }
+    }
+  }
+
+  async createDonateInvoiceLink(userId: number): Promise<string | null> {
+    try {
+      const payload: any = {
+        title: 'Поддержка проекта ⭐',
+        description: 'Поддержка на развитие платформы',
+        payload: `donate_${userId}_${Date.now()}`,
+        provider_token: '',
+        currency: 'XTR',
+        prices: [
+          {
+            label: 'Поддержка',
+            amount: 100,
+          },
+        ],
+      };
+
+      const link = await this.bot.telegram.createInvoiceLink(payload as any);
+
+      if (typeof link !== 'string' || !link.startsWith('https://t.me/')) {
+        return null;
+      }
+
+      return link;
+    } catch {
+      return null;
     }
   }
 }

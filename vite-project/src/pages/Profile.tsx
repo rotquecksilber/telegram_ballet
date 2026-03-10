@@ -40,6 +40,64 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
         return diffMins <= 180;
     };
 
+    // Profile.tsx
+    const handleDonate = async () => {
+        try {
+            const response = await fetch(endpoints.donate, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: user?.id }),
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text().catch(() => 'нет текста');
+                throw new Error(`Сервер: ${response.status} — ${errorText}`);
+            }
+
+            const rawText = await response.text();
+
+            let data;
+            try {
+                data = JSON.parse(rawText);
+            } catch {
+                toast.error('Сервер вернул невалидный JSON');
+                return;
+            }
+
+            if (!data.success || !data.link) {
+                toast.error(data.error || 'Не удалось получить ссылку на оплату');
+                return;
+            }
+
+            const link = data.link;
+
+            if (typeof link !== 'string' || !link.startsWith('https://t.me/')) {
+                toast.error(`Некорректная ссылка: ${link}`);
+                return;
+            }
+
+            window.Telegram?.WebApp.openInvoice(link, (status: string) => {
+                if (status === 'paid') {
+                    toast.success('Спасибо огромное! ❤️⭐');
+                } else if (status === 'cancelled') {
+                    toast('Оплата отменена', {
+                        icon: 'ℹ️',
+                        duration: 4000,
+                    });
+                } else if (status === 'failed') {
+                    toast.error('Не удалось провести оплату');
+                }
+            });
+        } catch (err: any) {
+            toast.error(
+                err.message?.includes('fetch')
+                    ? 'Не удалось подключиться к серверу'
+                    : 'Ошибка при создании доната'
+            );
+        }
+    };
     const loadUserData = useCallback(async (tgId: number) => {
         setIsSubLoading(true);
         setIsBookingsLoading(true);
@@ -158,14 +216,15 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         </span>
                                     </div>
                                     {/* Добавляем класс pending, если еще не активирован */}
-                                    <div className={`sub-status-tag ${sub.is_frozen ? 'frozen' : isActivated ? 'active' : 'pending'}`}>
+                                    <div
+                                        className={`sub-status-tag ${sub.is_frozen ? 'frozen' : isActivated ? 'active' : 'pending'}`}>
                                         {sub.is_frozen ? 'Заморожен' : isActivated ? 'Активен' : 'Ждет активации'}
                                     </div>
                                 </div>
                                 <div className="sub-progress">
                                     <div
                                         className="sub-progress-fill"
-                                        style={{ width: `${Math.min((sub.remaining_lessons / (sub.total_lessons || 1)) * 100, 100)}%` }}
+                                        style={{width: `${Math.min((sub.remaining_lessons / (sub.total_lessons || 1)) * 100, 100)}%`}}
                                     ></div>
                                 </div>
                                 <div className="sub-details">
@@ -180,7 +239,8 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
 
                                 {/* Дополнительная строка с информацией о длительности для неактивированных */}
                                 {!isActivated && (
-                                    <div className="sub-activation-info" style={{fontSize: '11px', marginTop: '4px', opacity: 0.7}}>
+                                    <div className="sub-activation-info"
+                                         style={{fontSize: '11px', marginTop: '4px', opacity: 0.7}}>
                                         * Будет действовать {sub.duration_days} дней с момента начала
                                     </div>
                                 )}
@@ -211,17 +271,22 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                                 const isTooLateToCancel = isCancelationClosed(book.schedule?.date, book.schedule?.time);
 
                                 return (
-                                    <div key={book.id} className={`booking-cell ${isScheduleCancelled ? 'is-cancelled' : ''}`}>
+                                    <div key={book.id}
+                                         className={`booking-cell ${isScheduleCancelled ? 'is-cancelled' : ''}`}>
                                         <div className="booking-content">
                                             <div className="booking-title-row">
                     <span className="booking-name">
                         {isScheduleCancelled ? <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
                     </span>
-                                                {isScheduleCancelled && <span className="status-label-alert">ОТМЕНЕНО СТУДИЕЙ</span>}
+                                                {isScheduleCancelled &&
+                                                    <span className="status-label-alert">ОТМЕНЕНО СТУДИЕЙ</span>}
                                             </div>
 
                                             <div className="booking-date-text">
-                                                {new Date(book.schedule?.date).toLocaleDateString('ru-RU', {day: 'numeric', month: 'short'})} • {book.schedule?.time?.slice(0, 5)}
+                                                {new Date(book.schedule?.date).toLocaleDateString('ru-RU', {
+                                                    day: 'numeric',
+                                                    month: 'short'
+                                                })} • {book.schedule?.time?.slice(0, 5)}
                                             </div>
                                         </div>
 
@@ -230,7 +295,8 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                                                 isTooLateToCancel ? (
                                                     <span className="status-confirmed-text">Запись активна</span>
                                                 ) : (
-                                                    <button className="cancel-minimal-btn" onClick={() => handleCancelBooking(book.id)}>
+                                                    <button className="cancel-minimal-btn"
+                                                            onClick={() => handleCancelBooking(book.id)}>
                                                         Отменить
                                                     </button>
                                                 )
@@ -266,6 +332,26 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         <span className="value">{user.phone}</span>
                     </div>
                 </div>
+                <button
+                    className="donate-btn mt-24"
+                    onClick={handleDonate}
+                    style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                        color: '#000',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '8px'
+                    }}
+                >
+                    ⭐ Поддержать разработку (100 звезд)
+                </button>
             </div>
         )
     }
@@ -276,11 +362,13 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
             <div className="registration-form">
                 <div className="form-group">
                     <label>Имя</label>
-                    <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Введите имя" />
+                    <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)}
+                           placeholder="Введите имя"/>
                 </div>
                 <div className="form-group">
                     <label>Фамилия</label>
-                    <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Введите фамилию" />
+                    <input type="text" value={lastName} onChange={e => setLastName(e.target.value)}
+                           placeholder="Введите фамилию"/>
                 </div>
                 <div className="form-group">
                     <label>Телефон</label>
