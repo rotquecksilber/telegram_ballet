@@ -3,7 +3,7 @@ import { TelegramService } from './telegram.service';
 import { BotUpdate } from './bot.update';
 import { SupabaseService } from '../supabase/supabase.service';
 import {ConfigModule} from "@nestjs/config";
-import {TelegramController} from "src/telegram/telegram.controller"; // Импортируй свой модуль базы
+import {TelegramController} from "../telegram/telegram.controller"; 
 
 @Global()
 @Module({
