@@ -21,10 +21,6 @@ export class TelegramService implements OnModuleInit {
       const payment = ctx.message?.successful_payment;
       if (!payment) return;
 
-      // Здесь можно записать донат в базу
-      // const userId = payment.invoice_payload.split('_')[1];
-      // await this.supabaseService.addDonation(userId, payment.total_amount);
-
       try {
         await ctx.reply('✨ Огромное спасибо за поддержку ⭐❤️');
       } catch {}
@@ -111,6 +107,25 @@ export class TelegramService implements OnModuleInit {
       return link;
     } catch {
       return null;
+    }
+  }
+
+  async broadcastMessage(message: string) {
+    const { data: users, error } = await this.supabaseService.getClient()
+        .from('users')
+        .select('telegram_id');
+
+    if (error || !users) {
+      console.error('Failed to fetch users for broadcast', error);
+      return;
+    }
+
+    for (const user of users) {
+      try {
+        await this.bot.telegram.sendMessage(user.telegram_id, message, { parse_mode: 'Markdown' });
+      } catch (err) {
+        console.error(`Failed to send message to ${user.telegram_id}`, err);
+      }
     }
   }
 }

@@ -12,6 +12,7 @@ export const endpoints = {
     templates: `${API_URL}/schedule-templates`,
     deploySchedule: `${API_URL}/schedule/deploy`,
 telegram: `${API_URL}/telegram/send`,
+    broadcast: `${API_URL}/telegram/broadcast`,
     donate: `${API_URL}/telegram/stars-donate`,
     sendScheduleToAll: `${API_URL}/schedule/send-to-all`,
 

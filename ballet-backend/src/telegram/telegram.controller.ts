@@ -1,4 +1,4 @@
-import {Controller, Post, Body, Param, Get} from '@nestjs/common';
+import {Controller, Post, Body, Param, Get, BadRequestException} from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 
 @Controller('telegram')
@@ -31,6 +31,16 @@ export class TelegramController {
       };
     }
   }
+  @Post('broadcast')
+  async broadcast(@Body('message') message: string) {
+    if (!message || message.trim() === '') {
+      throw new BadRequestException('Message cannot be empty');
+    }
 
+    // Вызываем сервис для рассылки
+    await this.telegramService.broadcastMessage(message);
+
+    return { success: true, message: 'Message sent to all users' };
+  }
 
 }

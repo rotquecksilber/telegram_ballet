@@ -206,11 +206,10 @@ export class ScheduleService {
         return client.from('schedule').insert(newClasses).select();
     }
 
-    // ScheduleService
     async notifyScheduleToAllUsers(targetDate: string) {
         const client = this.supabaseService.getClient();
 
-        // 1. Получаем расписание с явным join по class_id
+        // 1. Получаем расписание
         const { data: lessons, error } = await client
             .from('schedule')
             .select(`
@@ -220,9 +219,7 @@ export class ScheduleService {
       level,
       age_category,
       class_id,
-      classes!class_id (
-        name
-      )
+      classes!class_id (name)
     `)
             .eq('date', targetDate)
             .order('time', { ascending: true });
@@ -230,56 +227,33 @@ export class ScheduleService {
         if (error) throw new Error(error.message);
         if (!lessons?.length) return { message: 'Расписание пустое' };
 
-        // 2. Получаем пользователей
+        // 2. Пользователи
         const { data: users } = await client
             .from('users')
             .select('telegram_id');
 
-        // 3. Получаем учителей
+        if (!users?.length) return { message: 'Нет пользователей' };
+
+        // 3. Учителя
         const { data: teachers } = await client
             .from('users')
             .select('telegram_id, first_name, last_name');
 
         const teacherMap = new Map(
-            teachers?.map(t => [
-                t.telegram_id,
-                `${t.first_name || ''} ${t.last_name || ''}`.trim()
-            ]) || []
+            teachers?.map(t => [t.telegram_id, `${t.first_name || ''} ${t.last_name || ''}`.trim()]) || []
         );
 
-        const getLevelInfo = (level: string) => {
-            switch (level) {
-                case 'beginners': return { label: 'Новички', icon: '🐣' };
-                case 'advanced': return { label: 'Профи', icon: '🔥' };
-                default: return { label: 'Любой уровень', icon: '✨' };
-            }
-        };
-
-        const getAgeInfo = (age: string) => {
-            switch (age) {
-                case 'children': return { label: 'Дети', icon: '👶' };
-                case 'adults': return { label: 'Взрослые', icon: '💃' };
-                default: return { label: 'Любой возраст', icon: '👥' };
-            }
-        };
-
-        const dateFormatted = new Date(targetDate).toLocaleDateString('ru-RU', {
-            day: 'numeric',
-            month: 'long'
-        });
-
+        // 4. Формируем сообщение (один раз)
+        const dateFormatted = new Date(targetDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
         let message = `📅 Расписание на ${dateFormatted}\n\n`;
 
         lessons.forEach(lesson => {
-            // Надёжное получение названия занятия
             // @ts-ignore
             const className = lesson.classes?.name || lesson.classes?.[0]?.name || 'Занятие';
+            const teacherName = teacherMap.get(lesson.teacher_id) || 'Преподаватель не назначен';
 
-            const teacherName =
-                teacherMap.get(lesson.teacher_id) || 'Преподаватель не назначен';
-
-            const levelInfo = getLevelInfo(lesson.level);
-            const ageInfo = getAgeInfo(lesson.age_category);
+            const levelInfo = this.getLevelInfo(lesson.level);
+            const ageInfo = this.getAgeInfo(lesson.age_category);
 
             message +=
                 `🩰 ${className}\n` +
@@ -288,15 +262,43 @@ export class ScheduleService {
                 `${levelInfo.icon} ${levelInfo.label} | ${ageInfo.icon} ${ageInfo.label}\n\n`;
         });
 
-        // 5. Рассылка
-        await Promise.all(
-            users?.map(u =>
-                this.telegramService
-                    .sendNotification(u.telegram_id, message)
-                    .catch(() => {}) // глотаем ошибки отправки
-            ) || []
-        );
+        // 5. Безопасная рассылка по батчам
+        const batchSize = 25; // безопасно для Telegram
+        const delayMs = 1000; // 1 секунда между батчами
 
-        return { message: 'Расписание отправлено' };
+        for (let i = 0; i < users.length; i += batchSize) {
+            const batch = users.slice(i, i + batchSize);
+
+            await Promise.all(
+                batch.map(u =>
+                    this.telegramService.sendNotification(u.telegram_id, message)
+                        .catch(() => {}) // глотаем ошибки
+                )
+            );
+
+            // Задержка между батчами
+            if (i + batchSize < users.length) {
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+            }
+        }
+
+        return { message: `Расписание отправлено ${users.length} пользователям` };
+    }
+
+// Вспомогательные методы (можно вынести в класс)
+    private getLevelInfo(level: string) {
+        switch (level) {
+            case 'beginners': return { label: 'Новички', icon: '🐣' };
+            case 'advanced': return { label: 'Профи', icon: '🔥' };
+            default: return { label: 'Любой уровень', icon: '✨' };
+        }
+    }
+
+    private getAgeInfo(age: string) {
+        switch (age) {
+            case 'children': return { label: 'Дети', icon: '👶' };
+            case 'adults': return { label: 'Взрослые', icon: '💃' };
+            default: return { label: 'Любой возраст', icon: '👥' };
+        }
     }
 }

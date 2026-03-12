@@ -44,6 +44,8 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
     const [editingId, setEditingId] = useState<number | null>(null)
     const [activeDuration, setActiveDuration] = useState(60)
     const [usersForFreeze, setUsersForFreeze] = useState<any[]>([]);
+    const [broadcastMessage, setBroadcastMessage] = useState('');
+    const [sendingBroadcast, setSendingBroadcast] = useState(false);
 
     const [newClassName, setNewClassName] = useState('')
     const [selectedUserId, setSelectedUserId] = useState('')
@@ -60,6 +62,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
     })
 
     useEffect(() => { loadInitialData() }, [])
+
 
     const loadInitialData = async () => {
         try {
@@ -86,6 +89,30 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
             }
         } catch { toast.error("Ошибка обновления данных") }
     }
+
+    const handleSendBroadcast = async () => {
+        if (!broadcastMessage.trim()) return toast.error('Введите сообщение');
+
+        setSendingBroadcast(true);
+        try {
+            const res = await apiRequest(endpoints.broadcast, {
+                method: 'POST',
+                body: JSON.stringify({ message: broadcastMessage }),
+            });
+
+            if (res.ok) {
+                toast.success('Сообщение отправлено всем пользователям!');
+                setBroadcastMessage('');
+            } else {
+                const err = await res.json();
+                toast.error(err.message || 'Ошибка сервера');
+            }
+        } catch {
+            toast.error('Ошибка сети');
+        } finally {
+            setSendingBroadcast(false);
+        }
+    };
 
     const handleSaveSchedule = async () => {
         // 1. Базовая валидация
@@ -397,6 +424,42 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                             onUpdate={loadInitialData}
                         />
                     )}
+                    <section className="admin-section tg-accordion">
+                        <div
+                            className="section-header tg-header"
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            <div className="header-left">
+                                <span className="section-icon">📣</span>
+                                <h3>Отправить сообщение всем пользователям</h3>
+                            </div>
+                            <span className={`accordion-arrow ${isOpen ? 'open' : ''}`}>▾</span>
+                        </div>
+
+                        {isOpen && (
+                            <div className="accordion-content">
+                                <div className="admin-card tg-card">
+        <textarea
+            className="tg-input"
+            rows={5}
+            placeholder="Введите сообщение..."
+            value={broadcastMessage}
+            onChange={e => setBroadcastMessage(e.target.value)}
+        />
+
+                                    <button
+                                        className="tg-send-btn"
+                                        onClick={handleSendBroadcast}
+                                        disabled={sendingBroadcast}
+                                    >
+                                        {sendingBroadcast ? 'Отправка...' : '🚀 Отправить сообщение'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </section>
+
+
                 </>
             )}
         </div>
