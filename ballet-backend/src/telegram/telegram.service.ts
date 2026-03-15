@@ -37,13 +37,16 @@ export class TelegramService implements OnModuleInit {
     const now = new Date();
     const eightDaysAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000);
 
-    const { data: users, error: userError } = await this.supabaseService.getClient()
+    const { data: users, error } = await this.supabaseService.getClient()
         .from('users')
-        .select('telegram_id, first_name, created_at');
+        .select('telegram_id, first_name, created_at, last_reminder_sent_at')
+        // берём всех, у кого либо вообще не отправляли, либо отправляли давно
+        .or(`last_reminder_sent_at.is.null,last_reminder_sent_at.lt.${eightDaysAgo.toISOString()}`);
 
-    if (userError || !users) return;
+    if (error || !users?.length) return;
 
     for (const user of users) {
+      // ─── Определяем дату последней активности ────────────────────────
       const { data: lastBooking } = await this.supabaseService.getClient()
           .from('bookings')
           .select('schedule(date)')
@@ -53,32 +56,37 @@ export class TelegramService implements OnModuleInit {
           .limit(1)
           .maybeSingle();
 
-      let lastActivityDate: Date;
-      if (lastBooking) {
-        lastActivityDate = new Date((lastBooking.schedule as any).date);
-      } else {
-        lastActivityDate = new Date(user.created_at);
-      }
+      const lastActivityDate = lastBooking
+          ? new Date((lastBooking.schedule as any).date)
+          : new Date(user.created_at);
 
-      if (lastActivityDate < eightDaysAgo) {
-        const { data: futureBooking } = await this.supabaseService.getClient()
-            .from('bookings')
-            .select('id')
-            .eq('user_id', user.telegram_id)
-            .eq('status', 'confirmed')
-            .gte('schedule.date', now.toISOString().split('T')[0])
-            .limit(1);
+      if (lastActivityDate >= eightDaysAgo) continue; // ещё активен
 
-        if (!futureBooking || futureBooking.length === 0) {
-          const msgText = lastBooking
-              ? `Вы не заглядывали к нам больше недели. Мы всегда рады видеть вас на занятиях! ✨`
-              : `Вы зарегистрировались у нас больше недели назад, но так и не записались на первое занятие. Пора это исправить! 💃`;
+      // ─── Есть ли подтверждённая запись в будущем? ────────────────────
+      const { data: future } = await this.supabaseService.getClient()
+          .from('bookings')
+          .select('id')
+          .eq('user_id', user.telegram_id)
+          .eq('status', 'confirmed')
+          .gte('schedule->>date', now.toISOString().split('T')[0])
+          .limit(1);
 
-          const msg = `👋 **${user.first_name}, скучаем по вам!**\n\n${msgText}\n\nПосмотрите расписание, там много интересного! 🩰`;
+      if (future?.length) continue; // есть запись → не беспокоим
 
-          await this.sendNotification(user.telegram_id, msg);
-        }
-      }
+      // ─── Отправляем напоминание ──────────────────────────────────────
+      const msgText = lastBooking
+          ? `Вы не заглядывали к нам больше недели. Мы всегда рады видеть вас на занятиях! ✨`
+          : `Вы зарегистрировались у нас больше недели назад, но так и не записались. Пора это исправить! 💃`;
+
+      const msg = `👋 **${user.first_name}, скучаем по вам!**\n\n${msgText}\n\nПосмотрите расписание, там много интересного! 🩰`;
+
+      await this.sendNotification(user.telegram_id, msg);
+
+      // ─── Обновляем дату последнего напоминания ───────────────────────
+      await this.supabaseService.getClient()
+          .from('users')
+          .update({ last_reminder_sent_at: now.toISOString() })
+          .eq('telegram_id', user.telegram_id);
     }
   }
 
