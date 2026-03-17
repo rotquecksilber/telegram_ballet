@@ -17,8 +17,11 @@ export class SubscriptionsController {
   }
 
   @Patch(':id/spend')
-  spend(@Param('id') id: string) {
-    return this.subscriptionsService.spendLesson(+id);
+  async spend(
+      @Param('id') id: string,
+      @Body('lessonName') lessonName: string, // <-- название занятия из фронта
+  ) {
+    return this.subscriptionsService.spendLesson(+id, lessonName);
   }
 
   @Get('user/:telegram_id')
@@ -29,8 +32,9 @@ export class SubscriptionsController {
   @Post(':id/force-spend')
   async forceSpend(
       @Param('id') id: number,
-      @Body('count') count: number
+      @Body('count') count: number,
+      @Body('lessonName') lessonName: string, // название занятия
   ) {
-    return this.subscriptionsService.forceSpendLessons(+id, count);
+    return this.subscriptionsService.forceSpendLessons(+id, count, lessonName);
   }
 }
