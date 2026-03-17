@@ -11,6 +11,7 @@ import toast from "react-hot-toast"
 import {CustomerDetails} from "../components/admin/CustomerDetails.tsx";
 import {FreezeManager} from "../components/admin/FreezeManager.tsx";
 import {TemplateManager} from "../components/admin/TemplateManager.tsx";
+import {ForceSpendManager} from "../components/admin/ForceSpendManager.tsx";
 
 
 
@@ -352,6 +353,9 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
 
                     {renderSection('subs', 'Выдача абонементов', '🎟️',
                         <SubscriptionManager users={allUsers}/>
+                    )}
+                    {renderSection('forceSpend', 'Принудительное списание', '⚠️',
+                        <ForceSpendManager users={allUsers} />
                     )}
 
                     {renderSection('teachers', 'Преподаватели', '🎓',

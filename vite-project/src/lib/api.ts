@@ -15,6 +15,8 @@ telegram: `${API_URL}/telegram/send`,
     broadcast: `${API_URL}/telegram/broadcast`,
     donate: `${API_URL}/telegram/stars-donate`,
     sendScheduleToAll: `${API_URL}/schedule/send-to-all`,
+    forceSpendSubscription: (id: number | string) =>
+        `${API_URL}/subscriptions/${id}/force-spend`,
 
     templateById: (id: number | string) => `${API_URL}/schedule-templates/${id}`,
 

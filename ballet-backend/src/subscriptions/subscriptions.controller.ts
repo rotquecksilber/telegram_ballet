@@ -25,4 +25,12 @@ export class SubscriptionsController {
   async getByUserId(@Param('telegram_id') telegram_id: string) {
     return this.subscriptionsService.findActiveByTelegramId(Number(telegram_id));
   }
+
+  @Post(':id/force-spend')
+  async forceSpend(
+      @Param('id') id: number,
+      @Body('count') count: number
+  ) {
+    return this.subscriptionsService.forceSpendLessons(+id, count);
+  }
 }

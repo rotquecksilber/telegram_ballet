@@ -145,4 +145,34 @@ export class SubscriptionsService {
     if (error) throw new Error(`Ошибка базы данных: ${error.message}`);
     return data || [];
   }
+
+  async forceSpendLessons(id: number, count: number) {
+    const { data: sub, error } = await this.client
+        .from('subscriptions')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error || !sub) throw new Error('Абонемент не найден');
+
+    if (count <= 0) throw new Error('Некорректное количество');
+
+    const newCount = Math.max(sub.remaining_lessons - count, 0);
+
+    const status = newCount <= 0 ? 'exhausted' : sub.status;
+
+    const { data, error: updateError } = await this.client
+        .from('subscriptions')
+        .update({
+          remaining_lessons: newCount,
+          status
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (updateError) throw new Error(updateError.message);
+
+    return data;
+  }
 }

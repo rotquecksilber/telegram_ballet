@@ -25,7 +25,7 @@ export const Schedule = () => {
         const diffMins = diffMs / (1000 * 60);
 
         // Закрываем, если до занятия 15 минут или оно уже началось/прошло
-        return diffMins <= 15;
+        return diffMins <= 60;
     };
 
     useEffect(() => {
