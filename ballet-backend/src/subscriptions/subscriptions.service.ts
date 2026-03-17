@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import {TelegramService} from "src/telegram/telegram.service";
 
 @Injectable()
 export class SubscriptionsService {
-  constructor(private readonly supabaseService: SupabaseService) {
+  constructor(private readonly supabaseService: SupabaseService,
+              private readonly telegramService: TelegramService,) {
   }
 
   private get client() {
@@ -86,8 +88,8 @@ export class SubscriptionsService {
   }
 
   // Метод для уменьшения кол-ва занятий (когда ученик пришел на урок)
-  async spendLesson(id: number) {
-    // 1. Получаем полные данные абонемента
+  async spendLesson(id: number, lessonName: string) {
+    // 1️⃣ Получаем данные абонемента
     const { data: sub, error: fetchError } = await this.client
         .from('subscriptions')
         .select('*')
@@ -96,6 +98,7 @@ export class SubscriptionsService {
 
     if (fetchError || !sub) throw new Error('Абонемент не найден');
 
+    // 2️⃣ Вычисляем новое количество занятий
     const newCount = sub.remaining_lessons - 1;
     const status = newCount <= 0 ? 'exhausted' : 'active';
 
@@ -104,12 +107,9 @@ export class SubscriptionsService {
       status
     };
 
-    // 2. ЛОГИКА АКТИВАЦИИ: если это самое первое списание
+    // 3️⃣ Логика активации (если это первое списание)
     if (!sub.activation_date) {
       const today = new Date();
-
-      // Берем длительность из БД (которую прислал фронт при создании)
-      // Если вдруг там пусто, ставим 30 по умолчанию
       const daysToExpiration = sub.duration_days || 30;
 
       const expiryDate = new Date(today);
@@ -117,12 +117,10 @@ export class SubscriptionsService {
 
       updateData.activation_date = today.toISOString().split('T')[0];
       updateData.expiry_date = expiryDate.toISOString().split('T')[0];
-
-      console.log(`Абонемент ${id} активирован сегодня. Годен до: ${updateData.expiry_date}`);
     }
 
-    // 3. Обновляем запись в Supabase
-    const { data, error } = await this.client
+    // 4️⃣ Обновляем абонемент
+    const { data: updated, error } = await this.client
         .from('subscriptions')
         .update(updateData)
         .eq('id', id)
@@ -130,7 +128,11 @@ export class SubscriptionsService {
         .single();
 
     if (error) throw new Error(error.message);
-    return data;
+
+    // 5️⃣ Отправляем уведомление пользователю
+    await this.notifyLessonDebited(sub.user_id, updated, lessonName, false);
+
+    return updated;
   }
 
   async findActiveByTelegramId(telegram_id: number) {
@@ -146,7 +148,7 @@ export class SubscriptionsService {
     return data || [];
   }
 
-  async forceSpendLessons(id: number, count: number) {
+  async forceSpendLessons(id: number, count: number, lessonName: string) {
     const { data: sub, error } = await this.client
         .from('subscriptions')
         .select('*')
@@ -154,14 +156,12 @@ export class SubscriptionsService {
         .single();
 
     if (error || !sub) throw new Error('Абонемент не найден');
-
     if (count <= 0) throw new Error('Некорректное количество');
 
     const newCount = Math.max(sub.remaining_lessons - count, 0);
-
     const status = newCount <= 0 ? 'exhausted' : sub.status;
 
-    const { data, error: updateError } = await this.client
+    const { data: updated, error: updateError } = await this.client
         .from('subscriptions')
         .update({
           remaining_lessons: newCount,
@@ -173,6 +173,31 @@ export class SubscriptionsService {
 
     if (updateError) throw new Error(updateError.message);
 
-    return data;
+    // ⚠️ Отправляем уведомление о принудительном списании
+    await this.notifyLessonDebited(sub.user_id, updated, lessonName, true);
+
+    return updated;
+  }
+
+
+  async notifyLessonDebited(user_id: number, subscription: any, lessonName: string, forced = false) {
+    try {
+      const remaining = subscription.remaining_lessons;
+      let message = `✅ Занятие **${lessonName}** списано.\n` +
+          `📊 Осталось занятий: ${remaining}`;
+
+      if (forced) {
+        message += `\n\n⚠️ Это принудительное списание. По всем вопросам пишите @Yuliya_Bacheva`;
+      }
+
+      if (remaining === 1) {
+        message += `\n💡 Напоминаем оплатить следующий абонемент заранее`;
+      }
+
+      await this.telegramService.sendNotification(user_id, message);
+
+    } catch (err) {
+      console.error(`Ошибка уведомления в Telegram для ${user_id}: ${err.message}`);
+    }
   }
 }
