@@ -75,15 +75,15 @@ export const ForceSpendManager = ({ users }: Props) => {
     }
 
     return (
-        <div className="admin-force-spend">
+        <div className="tg-force-spend">
 
-            {/* 👤 выбор пользователя */}
+            {/* 👤 пользователь */}
             <select
-                className="admin-input"
+                className="tg-input tg-select"
                 value={selectedUser}
                 onChange={e => setSelectedUser(e.target.value)}
             >
-                <option value="">-- Выберите ученика --</option>
+                <option value="">Выберите ученика</option>
 
                 {users.map(u => (
                     <option key={u.id} value={u.telegram_id}>
@@ -92,18 +92,18 @@ export const ForceSpendManager = ({ users }: Props) => {
                 ))}
             </select>
 
-            {/* 🎟️ выбор абонемента */}
+            {/* 🎟️ абонемент */}
             {subscriptions.length > 0 && (
                 <select
-                    className="admin-input"
+                    className="tg-input tg-select"
                     value={selectedSub}
                     onChange={e => setSelectedSub(e.target.value)}
                 >
-                    <option value="">-- Выберите абонемент --</option>
+                    <option value="">Выберите абонемент</option>
 
                     {subscriptions.map(sub => (
                         <option key={sub.id} value={sub.id}>
-                            ID {sub.id} — осталось: {sub.remaining_lessons}
+                            ID {sub.id} — осталось {sub.remaining_lessons}
                         </option>
                     ))}
                 </select>
@@ -112,7 +112,7 @@ export const ForceSpendManager = ({ users }: Props) => {
             {/* 🔢 количество */}
             {selectedSub && (
                 <input
-                    className="admin-input"
+                    className="tg-input tg-number"
                     type="number"
                     min={1}
                     value={count}
@@ -123,11 +123,11 @@ export const ForceSpendManager = ({ users }: Props) => {
 
             {/* 🔥 кнопка */}
             <button
-                className="admin-btn danger"
+                className="tg-danger-btn"
                 onClick={handleForceSpend}
                 disabled={loading || !selectedSub}
             >
-                {loading ? "Списание..." : "⚠️ Принудительно списать"}
+                {loading ? "Списание..." : "⚠️ Списать занятия"}
             </button>
 
         </div>

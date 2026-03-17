@@ -349,3 +349,86 @@ select {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* === FORCE SPEND — Telegram Mini App === */
+
+.tg-force-spend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  background: var(--tg-theme-secondary-bg-color);
+  padding: 14px;
+  border-radius: 14px;
+}
+
+/* Input / Select */
+
+.tg-input {
+  width: 100%;
+  padding: 10px 12px;
+
+  border-radius: 10px;
+  border: none;
+  outline: none;
+
+  font-size: 14px;
+
+  background: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+}
+
+/* Select выглядит как input */
+
+.tg-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+/* Number input */
+
+.tg-number {
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Danger button */
+
+.tg-danger-btn {
+  margin-top: 6px;
+  padding: 12px;
+
+  border-radius: 12px;
+  border: none;
+
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+
+  background: #ff4d4f; /* красный Telegram-safe */
+  color: #fff;
+
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.tg-danger-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.tg-danger-btn:active {
+  transform: translateY(0);
+  opacity: 0.85;
+}
+
+.tg-danger-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Подсказка */
+
+.tg-hint {
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: center;
+}
