@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import {TelegramService} from "src/telegram/telegram.service";
+import {TelegramService} from '../telegram/telegram.service';
 
 @Injectable()
 export class SubscriptionsService {
