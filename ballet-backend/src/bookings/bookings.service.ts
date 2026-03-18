@@ -184,7 +184,7 @@ export class BookingsService {
       try {
         const lessonName = booking.schedule?.classes?.name || 'занятие';
         // Вызываем сервис, который сам проверит activation_date и обновит expiry_date
-        await this.subscriptionsService.spendLesson(targetSubId, lessonName);
+        await this.subscriptionsService.spendLesson(targetSubId);
       } catch (subError) {
         this.logger.error(`Ошибка вызова spendLesson для ${targetSubId}: ${subError.message}`);
         throw new BadRequestException('Не удалось списать занятие с абонемента');
