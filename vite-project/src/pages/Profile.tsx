@@ -1,8 +1,9 @@
 import '../styles/Profile.css'
-import { useEffect, useState, useCallback } from 'react'
+import {useEffect, useState, useCallback} from 'react'
 import { useUserStore } from '../store/userStore'
 import { endpoints, apiRequest } from '../lib/api.ts'
 import toast from 'react-hot-toast'
+// import {MOTIVATION_FACTS} from "../../quotes.ts";
 
 interface ProfileProps {
     onRegisterSuccess: () => void
@@ -223,6 +224,55 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
         return dateB.getTime() - dateA.getTime()
     })
 
+    // const dailyFact = useMemo(() => {
+    //     const now = new Date();
+    //     // Создаем уникальное число для каждого дня (например, 20260318)
+    //     const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+    //
+    //     // Используем остаток от деления, чтобы индекс всегда был в пределах массива
+    //     const index = dateSeed % MOTIVATION_FACTS.length;
+    //
+    //     return MOTIVATION_FACTS[index];
+    // }, []);
+
+    // Считаем посещенные занятия в этом месяце
+    const attendedCount = recentBookings.filter(book => book.status === 'attended').length;
+
+
+    const getMilestone = (count: number) => {
+        // 24+ занятия: "Космический закат" (Фиолетово-розовый взрыв)
+        if (count >= 24) return {
+            label: 'Легенда студии! 🔥',
+            color: 'linear-gradient(135deg, #FF0080 0%, #7928CA 100%)'
+        };
+
+        // 16+ занятия: "Электрик" (Насыщенный синий-голубой)
+        if (count >= 16) return {
+            label: 'Вы в отличной форме! 💪',
+            color: 'linear-gradient(135deg, #007CF0 0%, #00DFD8 100%)'
+        };
+
+        // 8+ занятия: "Сочный апельсин" (Вместо того дурацкого серого)
+        if (count >= 8)  return {
+            label: 'Так держать! 🚀',
+            color: 'linear-gradient(135deg, #FAD961 0%, #F76B1C 100%)'
+        };
+
+        // 4+ занятия: "Свежая мята"
+        if (count >= 4)  return {
+            label: 'Хорошее начало! ✨',
+            color: 'linear-gradient(135deg, #43E97B 0%, #38F9D7 100%)'
+        };
+
+        return {
+            label: 'Занимайтесь чаще ✨',
+            color: 'var(--tg-theme-button-color)'
+        };
+    };
+
+    const milestone = getMilestone(attendedCount);
+    const progressPercent = Math.min((attendedCount / 24) * 100, 100);
+
     if (user?.fullName) {
         return (
             <div className="profile-view">
@@ -279,6 +329,38 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         <p>У вас нет активных абонементов</p>
                     </div>
                 )}
+
+                <div className="achievement-card">
+                    <div className="achievement-header">
+                        <span className="achievement-title">Активность за месяц</span>
+                        <span className="achievement-count">{attendedCount}</span>
+                    </div>
+
+                    <div className="progress-container">
+                        <div
+                            className="progress-bar-fill"
+                            style={{
+                                width: `${progressPercent || 2}%`, // 2% чтобы даже при 0 был виден край
+                                background: milestone.color
+                            }}
+                        >
+                            <div className="progress-glow"/>
+                        </div>
+
+                        {[4, 8, 16, 24].map(m => (
+                            <div
+                                key={m}
+                                className={`milestone-dot ${attendedCount >= m ? 'reached' : ''}`}
+                                style={{left: `${(m / 24) * 100}%`}}
+                            >
+                                <span className="milestone-number">{m}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <p className="achievement-message">{milestone.label}</p>
+                </div>
+
+
                 <div className="recordings-section">
                     <h2 className="section-title mt-24">Мои записи (текущий месяц)</h2>
 
@@ -360,81 +442,97 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                     )}
                 </div>
 
-                    <div className="info-card mt-24">
-                        <div className="info-item">
-                            <span className="label">Статус</span>
-                            <span
-                                className={`status-badge ${user.isAdmin ? 'admin' : user.isTeacher ? 'teacher' : ''}`}>
+
+                {/*    <div className="daily-fact-card">*/}
+                {/*        <div className="fact-accent-line" style={{background: milestone.color}}/>*/}
+                {/*        <div className="fact-content">*/}
+                {/*            <div className="fact-top">*/}
+                {/*                <span className="fact-tag">Интересно сегодня</span>*/}
+                {/*                <span className="fact-date">*/}
+                {/*    {new Date().toLocaleDateString('ru-RU', {day: 'numeric', month: 'short'})}*/}
+                {/*</span>*/}
+                {/*            </div>*/}
+                {/*            <p className="fact-text">«{dailyFact}»</p>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+
+                <div className="info-card mt-24">
+                    <div className="info-item">
+                        <span className="label">Статус</span>
+                        <span
+                            className={`status-badge ${user.isAdmin ? 'admin' : user.isTeacher ? 'teacher' : ''}`}>
               {user.isAdmin ? 'Администратор' : user.isTeacher ? 'Преподаватель' : 'Ученик'}
             </span>
-                        </div>
-                        <div className="info-item">
-                            <span className="label">Ученик</span>
-                            <span className="value">{user.fullName}</span>
-                        </div>
-                        <div className="info-item">
-                            <span className="label">Телефон</span>
-                            <span className="value">{user.phone}</span>
-                        </div>
                     </div>
-
-                    <button
-                        className="donate-btn mt-24"
-                        onClick={handleDonate}
-                        style={{
-                            width: '100%',
-                            padding: '12px',
-                            border: 'none',
-                            marginTop: '15px',
-                            borderRadius: '12px',
-                            fontWeight: '600',
-                            background: 'linear-gradient(45deg, #FFD700, #FFA500)',
-                            color: '#000',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: '8px',
-                        }}
-                    >
-                        ⭐ Поддержать разработку (100 звезд)
-                    </button>
+                    <div className="info-item">
+                        <span className="label">Ученик</span>
+                        <span className="value">{user.fullName}</span>
+                    </div>
+                    <div className="info-item">
+                        <span className="label">Телефон</span>
+                        <span className="value">{user.phone}</span>
+                    </div>
                 </div>
-                )
-                }
 
-                return (
-                <div className="registration-container">
-                    <h2 className="section-title">Регистрация</h2>
-                    <div className="registration-form">
-                        <div className="form-group">
-                            <label>Имя</label>
-                            <input
-                                type="text"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                placeholder="Введите имя"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Фамилия</label>
-                            <input
-                                type="text"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                placeholder="Введите фамилию"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Телефон</label>
-                            <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                placeholder=""
-                            />
-                        </div>
-                        <button className="submit-btn" onClick={handleRegister} disabled={loading}>
+                <button
+                    className="donate-btn mt-24"
+                    onClick={handleDonate}
+                    style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: 'none',
+                        marginTop: '15px',
+                        borderRadius: '12px',
+                        fontWeight: '600',
+                        background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                        color: '#000',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '8px',
+                    }}
+                >
+                    ⭐ Поддержать разработку (100 звезд)
+                </button>
+
+
+            </div>
+        )
+    }
+
+    return (
+        <div className="registration-container">
+            <h2 className="section-title">Регистрация</h2>
+            <div className="registration-form">
+                <div className="form-group">
+                    <label>Имя</label>
+                    <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Введите имя"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Фамилия</label>
+                    <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Введите фамилию"
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Телефон</label>
+                    <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder=""
+                    />
+                </div>
+                <button className="submit-btn" onClick={handleRegister} disabled={loading}>
                             {loading ? 'Создаем профиль...' : 'Зарегистрироваться'}
                         </button>
                     </div>
