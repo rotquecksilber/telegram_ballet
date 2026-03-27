@@ -555,3 +555,46 @@ select {
   color: var(--tg-theme-hint-color);
   font-size: 14px;
 }
+.search-container {
+  position: relative;
+  width: 100%;
+  /* Убеждаемся, что родитель не скрывает содержимое */
+  overflow: visible !important;
+}
+
+.search-dropdown {
+  position: absolute;
+  /* Размещаем ровно под инпутом */
+  top: 100%;
+  left: 0;
+  right: 0;
+
+  /* Цвета из темы Telegram */
+  background: var(--tg-theme-secondary-bg-color, #fff);
+  border: 1px solid var(--tg-theme-hint-color, #ccc);
+  border-radius: 8px;
+
+  /* Тень, чтобы список "парил" над формой */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+
+  /* Самое важное: z-index выше, чем у кнопок и других инпутов */
+  z-index: 9999;
+
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+/* Стили для элементов внутри списка */
+.search-dropdown-item {
+  padding: 12px;
+  background: var(--tg-theme-secondary-bg-color);
+  color: var(--tg-theme-text-color);
+  border-bottom: 0.5px solid var(--tg-theme-hint-color);
+  cursor: pointer;
+}
+
+.search-dropdown-item:hover {
+  background: var(--tg-theme-hint-color);
+  opacity: 0.8;
+}

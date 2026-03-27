@@ -94,25 +94,20 @@ export const ForceSpendManager = ({ users }: Props) => {
                                 setIsDropdownOpen(true);
                             }}
                         />
-                        {isDropdownOpen && searchTerm && (
-                            <div className="search-dropdown" style={{
-                                position: 'absolute', top: '100%', left: 0, right: 0,
-                                background: '#fff', border: '1px solid #ccc', zIndex: 10,
-                                maxHeight: '200px', overflowY: 'auto', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                            }}>
-                                {filteredUsers.length > 0 ? filteredUsers.map(u => (
-                                    <div
-                                        key={u.id}
-                                        onClick={() => {
+                        {isDropdownOpen && searchTerm && !selectedUser && (
+                            <div className="search-dropdown">
+                                {filteredUsers.length > 0 ? (
+                                    filteredUsers.map(u => (
+                                        <div key={u.id} className="search-dropdown-item" onClick={() => {
                                             setSelectedUser(u);
-                                            setIsDropdownOpen(false);
-                                            setSearchTerm("");
-                                        }}
-                                        style={{ padding: '10px', cursor: 'pointer', borderBottom: '1px solid #eee' }}
-                                    >
-                                        {u.first_name} {u.last_name} <small style={{opacity: 0.6}}>{u.phone}</small>
-                                    </div>
-                                )) : <div style={{ padding: '10px', color: '#999' }}>Никто не найден</div>}
+                                            setIsDropdownOpen(false); // Сразу закрываем
+                                        }}>
+                                            {u.last_name} {u.first_name}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="search-dropdown-item">Никто не найден</div>
+                                )}
                             </div>
                         )}
                     </>
