@@ -1,71 +1,107 @@
 import { useState, useMemo, useEffect } from 'react'
 import { apiRequest, endpoints } from '../../lib/api'
 import toast from "react-hot-toast"
+import '../../styles/AdminDashboard.css'
 
 interface Props {
     users: any[]
 }
 
-export const ForceSpendManager = ({ users }: Props) => {
+export const SubscriptionManager = ({ users }: Props) => {
     const [search, setSearch] = useState('')
     const [selectedUser, setSelectedUser] = useState<any>(null)
-    const [subscriptions, setSubscriptions] = useState<any[]>([])
-    const [selectedSub, setSelectedSub] = useState("")
-    const [count, setCount] = useState(1)
     const [loading, setLoading] = useState(false)
 
-    // Поиск (точно такой же как в SubscriptionManager)
+    // Поля формы
+    const [lessons, setLessons] = useState<number>(8)
+    const [customLessons, setCustomLessons] = useState('')
+    const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0])
+    const [expiryDate, setExpiryDate] = useState('')
+
+    // НОВОЕ: Срок в днях для передачи на бэк
+    const [durationDays, setDurationDays] = useState(30)
+
+    // Срок (для подсветки активного таба)
+    const [activeMonthTab, setActiveMonthTab] = useState(1)
+
+    // Заморозка
+    const [allowFreeze, setAllowFreeze] = useState(false)
+    const [freezeDays, setFreezeDays] = useState(7)
+
+    // Инициализация при первом рендере или смене даты покупки
+    useEffect(() => {
+        updateExpiryDate(activeMonthTab)
+    }, [purchaseDate])
+
+    const updateExpiryDate = (months: number) => {
+        setActiveMonthTab(months)
+        const dateStart = new Date(purchaseDate)
+        const dateEnd = new Date(purchaseDate)
+
+        dateEnd.setMonth(dateEnd.getMonth() + months)
+
+        // Вычисляем разницу в днях для duration_days
+        const diffTime = Math.abs(dateEnd.getTime() - dateStart.getTime())
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+        setDurationDays(diffDays)
+        setExpiryDate(dateEnd.toISOString().split('T')[0])
+    }
+
+    const handleCustomExpiryChange = (val: string) => {
+        setExpiryDate(val)
+        setActiveMonthTab(0)
+
+        // Если админ вручную выбрал дату, пересчитываем durationDays
+        const dateStart = new Date(purchaseDate)
+        const dateEnd = new Date(val)
+        if (dateEnd > dateStart) {
+            const diffTime = Math.abs(dateEnd.getTime() - dateStart.getTime())
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            setDurationDays(diffDays)
+        }
+    }
+
     const filteredUsers = useMemo(() => {
         return users
             .filter(u => `${u.last_name} ${u.first_name}`.toLowerCase().includes(search.toLowerCase()))
             .sort((a, b) => (a.last_name || '').localeCompare(b.last_name || ''))
     }, [users, search])
 
-    // Загрузка абонементов при выборе пользователя
-    useEffect(() => {
-        const loadSubs = async () => {
-            if (!selectedUser) return setSubscriptions([])
-
-            const res = await apiRequest(endpoints.userSubscription(selectedUser.telegram_id))
-            if (res.ok) {
-                const data = await res.json()
-                // Фильтруем только те, где есть занятия
-                setSubscriptions(data.filter((s: any) => s.remaining_lessons > 0))
-            } else {
-                toast.error("Ошибка загрузки абонементов")
-            }
-        }
-        loadSubs()
-    }, [selectedUser])
-
-    const handleForceSpend = async () => {
-        if (!selectedSub) return toast.error("Выберите абонемент")
-        if (count <= 0) return toast.error("Укажите количество")
-
-        if (!window.confirm(`Списать ${count} занятий?`)) return
+    const handleCreate = async () => {
+        if (!selectedUser) return toast.error('Выберите ученика')
+        const finalLessons = customLessons ? parseInt(customLessons) : lessons
+        if (!finalLessons) return toast.error('Укажите количество занятий')
 
         setLoading(true)
         try {
-            const res = await apiRequest(
-                endpoints.forceSpendSubscription(selectedSub),
-                {
-                    method: "POST",
-                    body: JSON.stringify({ count })
-                }
-            )
+            const res = await apiRequest(endpoints.subscriptions, {
+                method: 'POST',
+                body: JSON.stringify({
+                    user_id: selectedUser.telegram_id,
+                    total_lessons: finalLessons,
+                    remaining_lessons: finalLessons,
+                    purchase_date: purchaseDate,
+                    // Передаем duration_days для активации при первом посещении
+                    duration_days: durationDays,
+                    // Передаем expiry_date как предварительный (он пересчитается при списании)
+                    expiry_date: expiryDate,
+                    freeze_limit_days: allowFreeze ? freezeDays : 0,
+                    status: 'active'
+                })
+            })
 
             if (res.ok) {
-                toast.success("Занятия успешно списаны")
-                setCount(1)
-                // Обновляем список абонементов
-                const updated = await apiRequest(endpoints.userSubscription(selectedUser.telegram_id))
-                if (updated.ok) setSubscriptions(await updated.json())
+                toast.success(`Абонемент создан для ${selectedUser.last_name}`)
+                setSelectedUser(null)
+                setCustomLessons('')
+                setAllowFreeze(false)
+                updateExpiryDate(1)
             } else {
-                const err = await res.json()
-                toast.error(err.message || "Ошибка сервера")
+                toast.error('Ошибка при сохранении в базу')
             }
-        } catch {
-            toast.error("Ошибка сети")
+        } catch (e) {
+            toast.error('Ошибка сети')
         } finally {
             setLoading(false)
         }
@@ -74,21 +110,15 @@ export const ForceSpendManager = ({ users }: Props) => {
     return (
         <div className="admin-card subscription-border">
             {!selectedUser ? (
-                /* СЕКЦИЯ ПОИСКА (КОПИЯ СТИЛЯ) */
                 <div className="user-selector">
                     <input
                         type="text"
-                        placeholder="Поиск ученика для списания..."
+                        placeholder="Поиск ученика по фамилии..."
                         className="admin-search-input"
-                        style={{
-                            background: 'var(--tg-theme-bg-color)',
-                            color: 'var(--tg-theme-text-color)',
-                            border: '1px solid var(--tg-theme-hint-color)'
-                        }}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <div className="user-list-mini" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                    <div className="user-list-mini">
                         {filteredUsers.length > 0 ? filteredUsers.map(u => (
                             <div key={u.id} className="user-row" onClick={() => setSelectedUser(u)}>
                                 <span>{u.last_name} {u.first_name}</span>
@@ -98,65 +128,99 @@ export const ForceSpendManager = ({ users }: Props) => {
                     </div>
                 </div>
             ) : (
-                /* ФОРМА СПИСАНИЯ */
-                <div className="subscription-form-active animate-fade">
-                    <div className="selected-user-badge" style={{ border: '1px solid var(--tg-theme-button-color)' }}>
+                <div className="subscription-form-active">
+                    <div className="selected-user-badge">
                         <span>Ученик: <b>{selectedUser.last_name} {selectedUser.first_name}</b></span>
-                        <button className="btn-text" onClick={() => {
-                            setSelectedUser(null);
-                            setSelectedSub("");
-                        }}>Изменить</button>
+                        <button className="btn-text" onClick={() => setSelectedUser(null)}>Изменить</button>
                     </div>
 
-                    <div className="field mt-12">
-                        <label className="field-label-mini">Выберите абонемент</label>
-                        {subscriptions.length > 0 ? (
-                            <select
-                                className="admin-input tg-select"
-                                style={{
-                                    background: 'var(--tg-theme-bg-color)',
-                                    color: 'var(--tg-theme-text-color)'
-                                }}
-                                value={selectedSub}
-                                onChange={e => setSelectedSub(e.target.value)}
-                            >
-                                <option value="">---</option>
-                                {subscriptions.map(sub => (
-                                    <option key={sub.id} value={sub.id}>
-                                        ID: {sub.id} | Остаток: {sub.remaining_lessons} зан.
-                                    </option>
+                    <div className="field">
+                        <label className="field-label-mini">Количество занятий</label>
+                        <div className="lessons-grid-smart">
+                            {[4, 8, 12, 24].map(n => (
+                                <button
+                                    key={n}
+                                    className={`opt-btn ${lessons === n && !customLessons ? 'active' : ''}`}
+                                    onClick={() => { setLessons(n); setCustomLessons(''); }}
+                                >{n}</button>
+                            ))}
+                            <input
+                                type="number"
+                                placeholder="+"
+                                value={customLessons}
+                                onChange={(e) => setCustomLessons(e.target.value)}
+                                className="opt-input"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-row-grid-1">
+                        <div className="field">
+                            <label className="field-label-mini">Дата покупки</label>
+                            <input
+                                type="date"
+                                className="admin-input"
+                                value={purchaseDate}
+                                onChange={(e) => setPurchaseDate(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="field mt-12">
+                            <label className="field-label-mini">Срок (активируется при первом визите)</label>
+                            <div className="segmented-control mb-8">
+                                {[1, 2, 3].map(m => (
+                                    <button
+                                        key={m}
+                                        type="button"
+                                        className={`segment-btn ${activeMonthTab === m ? 'active' : ''}`}
+                                        onClick={() => updateExpiryDate(m)}
+                                    >{m} мес</button>
                                 ))}
-                            </select>
-                        ) : (
-                            <div className="p-12 text-center opacity-50" style={{ fontSize: '13px' }}>
-                                Ученика нет активных абонементов
+                            </div>
+                            <div className="expiry-hint" style={{fontSize: '12px', marginBottom: '4px', opacity: 0.7}}>
+                                Примерный срок: {durationDays} дн.
+                            </div>
+                            <input
+                                type="date"
+                                className="admin-input"
+                                value={expiryDate}
+                                onChange={(e) => handleCustomExpiryChange(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="freeze-section">
+                        <div className="toggle-container">
+                            <span className="toggle-label">Разрешить заморозку</span>
+                            <label className="switch">
+                                <input
+                                    type="checkbox"
+                                    checked={allowFreeze}
+                                    onChange={e => setAllowFreeze(e.target.checked)}
+                                />
+                                <span className="slider round"></span>
+                            </label>
+                        </div>
+
+                        {allowFreeze && (
+                            <div className="freeze-details animate-fade">
+                                <label className="field-label-mini">Лимит дней заморозки</label>
+                                <div className="segmented-control">
+                                    {[7, 14, 30].map(d => (
+                                        <button
+                                            key={d}
+                                            className={`segment-btn ${freezeDays === d ? 'active' : ''}`}
+                                            onClick={() => setFreezeDays(d)}
+                                        >{d} дн</button>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
 
-                    {selectedSub && (
-                        <div className="animate-fade">
-                            <div className="field mt-12">
-                                <label className="field-label-mini">Количество для списания</label>
-                                <input
-                                    type="number"
-                                    className="admin-input"
-                                    min="1"
-                                    value={count}
-                                    onChange={e => setCount(Number(e.target.value))}
-                                />
-                            </div>
-
-                            <button
-                                className="confirm-btn mt-16"
-                                style={{ background: 'var(--tg-theme-destructive-text-color, #ff4d4f)' }}
-                                onClick={handleForceSpend}
-                                disabled={loading}
-                            >
-                                {loading ? 'Списание...' : '⚠️ Подтвердить списание'}
-                            </button>
-                        </div>
-                    )}
+                    <button className="confirm-btn mt-16" onClick={handleCreate} disabled={loading}>
+                        {loading ? 'Создание...' : 'Выдать абонемент'}
+                    </button>
                 </div>
             )}
         </div>
