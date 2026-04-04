@@ -1025,3 +1025,70 @@
     color: var(--tg-theme-text-color);
     opacity: 0.9;
 }
+/* Контейнер для выравнивания вправо */
+.lang-selector-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    padding: 0 4px;
+}
+
+/* Основная подложка переключателя */
+.lang-segmented-control {
+    position: relative;
+    display: flex;
+    background: var(--tg-theme-secondary-bg-color, #efeff4);
+    border-radius: 10px;
+    padding: 2px;
+    width: 100px; /* Фиксированная ширина для симметрии */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопки языков */
+.lang-option {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--tg-theme-hint-color, #999);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 0;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    outline: none;
+}
+
+/* Цвет текста при активации */
+.lang-option.active {
+    color: var(--tg-theme-button-text-color, #fff);
+}
+
+/* Бегунок (слайдер), который ездит между кнопками */
+.lang-slider {
+    position: absolute;
+    z-index: 1;
+    top: 2px;
+    bottom: 2px;
+    width: calc(50% - 2px);
+    background: var(--tg-theme-button-color, #2481cc);
+    border-radius: 8px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Позиции слайдера */
+.lang-slider.ru {
+    transform: translateX(0);
+}
+
+.lang-slider.en {
+    transform: translateX(100%);
+}
+
+/* Эффект нажатия на весь контрол */
+.lang-segmented-control:active {
+    transform: scale(0.98);
+    transition: transform 0.1s;
+}

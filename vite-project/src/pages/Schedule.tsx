@@ -5,7 +5,71 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '../store/userStore'
 import toast from 'react-hot-toast'
 
+// 1. Словарь переводов
+const translations = {
+    ru: {
+        pageTitle: 'Расписание',
+        emptyState: 'На ближайшее время занятий нет',
+        teacherLabel: '👤',
+        registerPrompt: 'Пожалуйста, зарегистрируйтесь в профиле',
+        regClosedToast: 'Запись на это занятие уже закрыта',
+        bookedNoSub: (<span>Записано! <b>Без абонемента.</b> Оплата в студии.</span>),
+        bookedSuccess: 'Вы успешно записаны!',
+        networkError: 'Ошибка сети',
+        loadError: 'Ошибка загрузки данных',
+        booking: 'Запись...',
+        bookBtn: 'Записаться',
+        bookedBtn: 'Вы записаны',
+        cancelledBtn: 'Отменено',
+        closedBtn: 'Запись закрыта',
+        levels: {
+            beginners: { label: 'Новички', icon: '🐣' },
+            advanced: { label: 'Профи', icon: '🔥' },
+            any: { label: 'Любой уровень', icon: '✨' }
+        },
+        ages: {
+            children: { label: 'Дети', icon: '👶' },
+            adults: { label: 'Взрослые', icon: '💃' },
+            any: { label: 'Любой Возраст', icon: '👥' }
+        }
+    },
+    en: {
+        pageTitle: 'Schedule',
+        emptyState: 'No classes scheduled for nearest time',
+        teacherLabel: '👤',
+        registerPrompt: 'Please complete registration in your profile',
+        regClosedToast: 'Registration for this class is already closed',
+        bookedNoSub: (<span>Booked! <b>No subscription.</b> Pay at the studio.</span>),
+        bookedSuccess: 'Successfully booked!',
+        networkError: 'Network error',
+        loadError: 'Failed to load data',
+        booking: 'Booking...',
+        bookBtn: 'Book Now',
+        bookedBtn: 'Booked',
+        cancelledBtn: 'Cancelled',
+        closedBtn: 'Closed',
+        levels: {
+            beginners: { label: 'Beginners', icon: '🐣' },
+            advanced: { label: 'Pro', icon: '🔥' },
+            any: { label: 'All Levels', icon: '✨' }
+        },
+        ages: {
+            children: { label: 'Kids', icon: '👶' },
+            adults: { label: 'Adults', icon: '💃' },
+            any: { label: 'All Ages', icon: '👥' }
+        }
+    }
+}
+
 export const Schedule = () => {
+    // Инициализация языка из localStorage
+    const [lang, setLang] = useState<'ru' | 'en'>(() => {
+        const saved = localStorage.getItem('user_lang');
+        return (saved === 'en' || saved === 'ru') ? saved : 'ru';
+    });
+
+    const t = translations[lang];
+
     const { user } = useUserStore()
     const [groupedData, setGroupedData] = useState<Record<string, any[]>>({})
     const [loading, setLoading] = useState(true)
@@ -13,18 +77,19 @@ export const Schedule = () => {
     const [userSubs, setUserSubs] = useState<any[]>([])
     const [bookedScheduleIds, setBookedScheduleIds] = useState<number[]>([])
 
-    // 1. ФУНКЦИЯ ПРОВЕРКИ ВРЕМЕНИ
+    // Функция смены языка с сохранением
+    const handleLangChange = (newLang: 'ru' | 'en') => {
+        setLang(newLang);
+        localStorage.setItem('user_lang', newLang);
+    };
+
     const isRegistrationClosed = (date: string, time: string) => {
         const [year, month, day] = date.split('-').map(Number);
         const [hours, minutes] = time.split(':').map(Number);
-
         const lessonDate = new Date(year, month - 1, day, hours, minutes);
         const now = new Date();
-
         const diffMs = lessonDate.getTime() - now.getTime();
         const diffMins = diffMs / (1000 * 60);
-
-        // Закрываем, если до занятия 15 минут или оно уже началось/прошло
         return diffMins <= 60;
     };
 
@@ -34,16 +99,12 @@ export const Schedule = () => {
                 const res = await apiRequest(endpoints.schedule)
                 if (res.ok) {
                     const data = await res.json()
-
-                    // Фильтруем прошедшие занятия
                     const now = new Date()
                     const futureLessons = data.filter((item: any) => {
                         const [year, month, day] = item.date.split('-').map(Number)
                         const lessonDate = new Date(year, month - 1, day)
                         return lessonDate >= new Date(now.getFullYear(), now.getMonth(), now.getDate())
                     })
-
-                    // Группируем
                     const grouped = futureLessons.reduce((acc: any, item: any) => {
                         if (!acc[item.date]) acc[item.date] = []
                         acc[item.date].push(item)
@@ -57,12 +118,10 @@ export const Schedule = () => {
                         apiRequest(endpoints.userSubscription(user.id)),
                         apiRequest(endpoints.userBookings(user.id))
                     ])
-
                     if (subRes.ok) {
                         const subs = await subRes.json()
                         setUserSubs(subs.filter((s: any) => s.status === 'active' && s.remaining_lessons > 0))
                     }
-
                     if (bookRes.ok) {
                         const bookings = await bookRes.json()
                         const ids = bookings
@@ -72,23 +131,21 @@ export const Schedule = () => {
                     }
                 }
             } catch (e) {
-                console.error('Ошибка:', e)
-                toast.error('Ошибка загрузки данных')
+                toast.error(t.loadError)
             } finally {
                 setLoading(false)
             }
         }
         loadScheduleData()
-    }, [user?.id])
+    }, [user?.id, t.loadError])
 
     const handleBook = async (lessonId: number) => {
-        if (!user?.fullName) return toast.error('Пожалуйста, зарегистрируйтесь в профиле')
+        if (!user?.fullName) return toast.error(t.registerPrompt)
 
-        // Находим занятие для финальной проверки времени перед запросом
         const allItems = Object.values(groupedData).flat();
         const lesson = allItems.find(i => i.id === lessonId);
         if (lesson && isRegistrationClosed(lesson.date, lesson.time)) {
-            return toast.error('Запись на это занятие уже закрыта');
+            return toast.error(t.regClosedToast);
         }
 
         const hasActiveSub = userSubs.length > 0
@@ -107,56 +164,66 @@ export const Schedule = () => {
 
             if (res.ok) {
                 if (!hasActiveSub) {
-                    toast.success(
-                        <span>
-                            Записано! <b>Без абонемента.</b> Оплата в студии.
-                        </span>,
-                        { duration: 6000, icon: '💳' }
-                    )
+                    toast.success(t.bookedNoSub, { duration: 6000, icon: '💳' })
                 } else {
-                    toast.success('Вы успешно записаны!')
+                    toast.success(t.bookedSuccess)
                 }
                 setBookedScheduleIds(prev => [...prev, lessonId])
             } else {
                 const error = await res.json()
-                toast.error(error.message || 'Ошибка записи')
+                toast.error(error.message || 'Error')
             }
         } catch (e) {
-            toast.error('Ошибка сети')
+            toast.error(t.networkError)
         } finally {
             setBookingLoading(null)
         }
     }
 
     const getLevelInfo = (level: string) => {
-        switch (level) {
-            case 'beginners': return { label: 'Новички', class: 'tag-beginners', icon: '🐣' }
-            case 'advanced': return { label: 'Профи', class: 'tag-advanced', icon: '🔥' }
-            default: return { label: 'Любой уровень', class: 'tag-any', icon: '✨' }
-        }
+        const key = level as keyof typeof t.levels;
+        const info = t.levels[key] || t.levels.any;
+        return { ...info, class: `tag-${level || 'any'}` };
     }
 
     const getAgeInfo = (age: string) => {
-        switch (age) {
-            case 'children': return { label: 'Дети', icon: '👶' }
-            case 'adults': return { label: 'Взрослые', icon: '💃' }
-            default: return { label: 'Любой Возраст', icon: '👥' }
-        }
+        const key = age as keyof typeof t.ages;
+        return t.ages[key] || t.ages.any;
     }
 
     if (loading) return <div className="loader-container"><div className="spinner"></div></div>
 
     return (
         <div className="schedule-container">
-            <h1 className="page-title">Расписание</h1>
+            {/* Переключатель языка */}
+            <div className="lang-selector-container" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '15px' }}>
+                <div className="lang-segmented-control">
+                    <button
+                        className={`lang-option ${lang === 'ru' ? 'active' : ''}`}
+                        onClick={() => handleLangChange('ru')}
+                    >
+                        RU
+                    </button>
+                    <button
+                        className={`lang-option ${lang === 'en' ? 'active' : ''}`}
+                        onClick={() => handleLangChange('en')}
+                    >
+                        EN
+                    </button>
+                    <div className={`lang-slider ${lang}`} />
+                </div>
+            </div>
+
+            <h1 className="page-title">{t.pageTitle}</h1>
+
             <AnimatePresence>
                 {Object.keys(groupedData).length === 0 ? (
-                    <div className="empty-state">На ближайшее время занятий нет</div>
+                    <div className="empty-state">{t.emptyState}</div>
                 ) : (
                     Object.entries(groupedData).map(([date, items]) => (
                         <div key={date} className="date-group">
                             <div className="date-header">
-                                {new Date(date).toLocaleDateString('ru-RU', {
+                                {new Date(date).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', {
                                     weekday: 'short', day: 'numeric', month: 'long'
                                 })}
                             </div>
@@ -166,11 +233,7 @@ export const Schedule = () => {
                                 const age = getAgeInfo(item.age_category)
                                 const isCancelled = item.status === 'cancelled'
                                 const isAlreadyBooked = bookedScheduleIds.includes(Number(item.id))
-
-                                // 2. ВЫЧИСЛЯЕМ ДОСТУПНОСТЬ ПО ВРЕМЕНИ
                                 const isTimeOut = isRegistrationClosed(item.date, item.time);
-
-                                // Кнопка неактивна если: отменено, уже записан ИЛИ время вышло
                                 const isDisabled = isCancelled || isAlreadyBooked || isTimeOut || bookingLoading === item.id;
 
                                 return (
@@ -190,7 +253,7 @@ export const Schedule = () => {
                                                     {isCancelled ? <s>{item.classes?.name}</s> : item.classes?.name}
                                                 </div>
                                                 <div className="teacher-name">
-                                                    👤 {item.teacher?.first_name} {item.teacher?.last_name}
+                                                    {t.teacherLabel} {item.teacher?.first_name} {item.teacher?.last_name}
                                                 </div>
                                                 <div className="tags-row">
                                                     <span className={`compact-tag ${level.class}`}>
@@ -209,14 +272,14 @@ export const Schedule = () => {
                                             onClick={() => handleBook(item.id)}
                                         >
                                             {isCancelled
-                                                ? 'Отменено'
+                                                ? t.cancelledBtn
                                                 : isAlreadyBooked
-                                                    ? 'Вы записаны'
+                                                    ? t.bookedBtn
                                                     : isTimeOut
-                                                        ? 'Запись закрыта' // Текст для опоздавших
+                                                        ? t.closedBtn
                                                         : bookingLoading === item.id
-                                                            ? 'Запись...'
-                                                            : 'Записаться'}
+                                                            ? t.booking
+                                                            : t.bookBtn}
                                         </button>
                                     </motion.div>
                                 )

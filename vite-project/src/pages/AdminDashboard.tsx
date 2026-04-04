@@ -41,7 +41,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
     const [groupedSchedule, setGroupedSchedule] = useState<Record<string, ScheduleItem[]>>({})
     const [isOpen, setIsOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [expanded, setExpanded] = useState<string | null>('bookings')
+    const [expanded, setExpanded] = useState<string | null>('')
     const [editingId, setEditingId] = useState<number | null>(null)
     const [activeDuration, setActiveDuration] = useState(60)
     const [usersForFreeze, setUsersForFreeze] = useState<any[]>([]);
@@ -306,7 +306,8 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                         >
                             <div className="header-left">
                                 <span className="section-icon">📤</span>
-                                <h3>Отправить расписание в Telegram</h3>
+                                <h3>Отправить расписание в Telegram <span style={{color: 'red', fontWeight: 'bold'}}>(НЕ ЗАБЫТЬ УВЕДОМИТЬ)</span>
+                                </h3>
                             </div>
 
                             <span className={`accordion-arrow ${isOpen ? 'open' : ''}`}>
