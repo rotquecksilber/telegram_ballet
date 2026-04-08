@@ -380,7 +380,7 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                         <div className="skeleton-line"></div>
                     ) : recentBookings.length > 0 ? (
                         sortedWeeks.map(([weekLabel, items]: [string, any[]]) => (
-                            <details key={weekLabel} className="week-accordion">
+                            <details key={weekLabel} className="week-accordion" open>
                                 <summary className="week-summary">
                                     {weekLabel} <span className="badge">{items.length}</span>
                                 </summary>
@@ -388,16 +388,19 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                                     {items.map((book: any) => {
                                         const currentSchedule = schedules.find((s) => s.id === book.schedule_id)
                                         const isScheduleCancelled = currentSchedule?.status === 'cancelled'
+
+                                        // ПРОВЕРКА: Закрыта ли отмена (меньше 3 часов до начала)
                                         const isTooLateToCancel = isCancelationClosed(book.schedule?.date, book.schedule?.time)
+
                                         return (
                                             <div key={book.id}
                                                  className={`booking-cell ${isScheduleCancelled ? 'is-cancelled' : ''}`}>
                                                 <div className="booking-content">
                                                     <div className="booking-title-row">
-                                                        <span className="booking-name">
-                                                            {isScheduleCancelled ?
-                                                                <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
-                                                        </span>
+                                        <span className="booking-name">
+                                            {isScheduleCancelled ?
+                                                <s>{book.schedule?.classes?.name}</s> : book.schedule?.classes?.name}
+                                        </span>
                                                         {isScheduleCancelled && <span
                                                             className="status-label-alert">{t.cancelledByStudio}</span>}
                                                     </div>
@@ -407,17 +410,29 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                                                         })} • {book.schedule?.time?.slice(0, 5)}
                                                     </div>
                                                 </div>
+
+                                                {/* ЛОГИКА КНОПКИ ОТМЕНЫ */}
                                                 <div className="booking-side-action">
                                                     {!isScheduleCancelled && book.status === 'confirmed' ? (
-                                                        isTooLateToCancel ? <span
-                                                                className="status-confirmed-text">{t.bookingActive}</span> :
-                                                            <button className="cancel-minimal-btn"
-                                                                    onClick={() => handleCancelBooking(book.id)}>{t.cancel}</button>
+                                                        isTooLateToCancel ? (
+                                                            // Если до занятия меньше 180 минут — кнопка пропадает, пишем статус
+                                                            <span
+                                                                className="status-confirmed-text">{t.bookingActive}</span>
+                                                        ) : (
+                                                            // Если больше 3 часов — показываем кнопку
+                                                            <button
+                                                                className="cancel-minimal-btn"
+                                                                onClick={() => handleCancelBooking(book.id)}
+                                                            >
+                                                                {t.cancel}
+                                                            </button>
+                                                        )
                                                     ) : (
+                                                        // Если занятие уже посещено или отменено
                                                         book.status !== 'confirmed' && !isScheduleCancelled && (
                                                             <span className="status-final-text">
-                                                                {book.status === 'attended' ? t.attended : t.cancelled}
-                                                            </span>
+                                                {book.status === 'attended' ? t.attended : t.cancelled}
+                                            </span>
                                                         )
                                                     )}
                                                 </div>
