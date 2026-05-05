@@ -163,7 +163,72 @@ export class SubscriptionsService {
         .order('id', { ascending: false });
 
     if (error) throw new Error(`Ошибка БД: ${error.message}`);
-    return data || [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+
+    const toExpire: number[] = [];
+    const toUnfreeze: Array<{ id: number; updateData: any }> = [];
+    const result: any[] = [];
+
+    for (const sub of data || []) {
+      // Автоматическая разморозка: лимит дней заморозки исчерпан
+      if (sub.status === 'frozen' && sub.freeze_start_date && sub.freeze_limit_days > 0) {
+        const freezeStart = new Date(sub.freeze_start_date);
+        freezeStart.setHours(0, 0, 0, 0);
+        const diffDays = Math.ceil((today.getTime() - freezeStart.getTime()) / (1000 * 60 * 60 * 24));
+        const usedBefore = sub.freeze_days_used || 0;
+
+        if (usedBefore + diffDays >= sub.freeze_limit_days) {
+          const daysToExtend = sub.freeze_limit_days - usedBefore;
+          const newExpiry = new Date(sub.expiry_date);
+          newExpiry.setDate(newExpiry.getDate() + daysToExtend);
+          const newExpiryStr = newExpiry.toISOString().split('T')[0];
+
+          if (newExpiryStr < todayStr) {
+            toExpire.push(sub.id);
+          } else {
+            const updateData = {
+              is_frozen: false,
+              freeze_start_date: null,
+              status: 'active',
+              expiry_date: newExpiryStr,
+              freeze_days_used: sub.freeze_limit_days,
+            };
+            toUnfreeze.push({ id: sub.id, updateData });
+            result.push({ ...sub, ...updateData });
+          }
+          continue;
+        }
+      }
+
+      // Проверка истечения активного абонемента
+      if (sub.status === 'active' && sub.activation_date && sub.expiry_date) {
+        if (sub.expiry_date < todayStr) {
+          toExpire.push(sub.id);
+          continue;
+        }
+      }
+
+      result.push(sub);
+    }
+
+    if (toExpire.length > 0) {
+      await this.client
+          .from('subscriptions')
+          .update({ status: 'expired' })
+          .in('id', toExpire);
+    }
+
+    for (const { id, updateData } of toUnfreeze) {
+      await this.client
+          .from('subscriptions')
+          .update(updateData)
+          .eq('id', id);
+    }
+
+    return result;
   }
 
   // ================= УВЕДОМЛЕНИЯ =================

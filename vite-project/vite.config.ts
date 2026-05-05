@@ -7,10 +7,10 @@ import type { UserConfig } from 'vite' // optional but helpful
 
 export default defineConfig(({  }) => {
   const isVercel = process.env.VERCEL === '1'
-  const useHttpsLocally =
-      !isVercel &&
-      fs.existsSync('./localhost-key.pem') &&
-      fs.existsSync('./localhost.pem')
+  const useHttpsLocally = false
+      // !isVercel &&
+      // fs.existsSync('./localhost-key.pem') &&
+      // fs.existsSync('./localhost.pem')
 
   const baseConfig: UserConfig = {
     plugins: [react(), tailwindcss(), tsconfigPaths()],

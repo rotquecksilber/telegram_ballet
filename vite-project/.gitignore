@@ -26,3 +26,6 @@ dist-ssr
 *.pem
 *.env
 /.idea
+
+.vscode
+quotes.ts

@@ -222,16 +222,25 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
         }
     }
 
-    const handleCancelBooking = async (bookingId: number) => {
-        if (!window.confirm(t.confirmCancel)) return
-        try {
-            const res = await apiRequest(`${endpoints.bookings}/${bookingId}/cancel`, { method: 'PATCH' })
-            if (res.ok) {
-                toast.success('OK')
-                if (user?.id) loadUserData(user.id)
+    const handleCancelBooking = (bookingId: number) => {
+        const doCancel = async () => {
+            try {
+                const res = await apiRequest(`${endpoints.bookings}/${bookingId}/cancel`, { method: 'PATCH' })
+                if (res.ok) {
+                    toast.success('OK')
+                    if (user?.id) loadUserData(user.id)
+                }
+            } catch (e) {
+                toast.error('Error')
             }
-        } catch (e) {
-            toast.error('Error')
+        }
+
+        if (window.Telegram?.WebApp?.showConfirm) {
+            window.Telegram.WebApp.showConfirm(t.confirmCancel, (confirmed: boolean) => {
+                if (confirmed) doCancel()
+            })
+        } else {
+            if (window.confirm(t.confirmCancel)) doCancel()
         }
     }
 

@@ -49,6 +49,26 @@ export class BookingsService {
       throw new BadRequestException('Запись закрыта (до начала менее 15 минут)');
     }
 
+    // Проверка абонемента: не истёк и не заморожен
+    if (dto.subscription_id) {
+      const { data: sub } = await client
+          .from('subscriptions')
+          .select('id, status, expiry_date, activation_date')
+          .eq('id', dto.subscription_id)
+          .single();
+
+      if (!sub || sub.status === 'expired' || sub.status === 'exhausted' || sub.status === 'frozen') {
+        throw new BadRequestException('Выбранный абонемент недействителен');
+      }
+
+      if (sub.activation_date && sub.expiry_date) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (sub.expiry_date < todayStr) {
+          throw new BadRequestException('Абонемент истёк');
+        }
+      }
+    }
+
     // Проверка на дубликат (не даем записаться, если статус confirmed или attended)
     const { data: existing } = await client
         .from('bookings')
