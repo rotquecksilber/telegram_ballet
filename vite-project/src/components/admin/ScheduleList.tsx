@@ -5,9 +5,10 @@ interface Props {
     onDelete: (id: number) => void
     onCancel: (id: number) => void
     onEdit: (item: any) => void
+    onToggleClose: (id: number, closed: boolean) => void
 }
 
-export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit }: Props) => {
+export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit, onToggleClose }: Props) => {
 
     const formatDate = (dateStr: string) => {
         try {
@@ -48,6 +49,7 @@ export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit }: Props)
 
                     {items.map((item) => {
                         const isCancelled = item.status === 'cancelled';
+                        const isClosed = item.status === 'closed';
 
                         return (
                             <div key={item.id} className={`admin-item-card ${isCancelled ? 'is-cancelled' : ''}`}>
@@ -69,11 +71,21 @@ export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit }: Props)
                                             {item.teacher?.first_name} {item.teacher?.last_name}
                                         </span>
                                         {isCancelled && <span className="badge-cancelled">ОТМЕНЕНО</span>}
+                                        {!isCancelled && isClosed && <span className="badge-cancelled">ЗАПИСЬ ЗАКРЫТА</span>}
                                     </div>
                                 </div>
 
                                 <div className="admin-item-actions">
                                     <button className="btn-icon edit" onClick={() => onEdit(item)}>✏️</button>
+                                    {!isCancelled && (
+                                        <button
+                                            className="btn-icon close-reg"
+                                            title={isClosed ? 'Открыть запись' : 'Закрыть запись (много записалось)'}
+                                            onClick={() => onToggleClose(item.id, !isClosed)}
+                                        >
+                                            {isClosed ? '🔓' : '🔒'}
+                                        </button>
+                                    )}
                                     {!isCancelled && (
                                         <button className="btn-icon cancel" onClick={() => onCancel(item.id)}>🚫</button>
                                     )}

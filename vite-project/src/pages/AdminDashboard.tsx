@@ -184,6 +184,19 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
         if (res.ok) { toast.success('Отменено'); loadInitialData() }
     }
 
+    const handleToggleCloseRegistration = async (id: number, closed: boolean) => {
+        const res = await apiRequest(`${endpoints.schedule}/${id}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: closed ? 'closed' : 'active' })
+        })
+        if (res.ok) {
+            toast.success(closed ? 'Запись закрыта' : 'Запись снова открыта')
+            loadInitialData()
+        } else {
+            toast.error('Ошибка сервера')
+        }
+    }
+
     const handleEditInitiate = (item: ScheduleItem) => {
         setScheduleData({
             class_id: String(item.class_id ?? ''),
@@ -295,6 +308,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                             onDelete={handleDeleteSchedule}
                             onCancel={handleCancelSchedule}
                             onEdit={handleEditInitiate}
+                            onToggleClose={handleToggleCloseRegistration}
                         />
                     )}
 

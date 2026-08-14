@@ -30,8 +30,9 @@ export class BookingsService {
     const { data: lesson, error: lessonError } = await client
         .from('schedule')
         .select(`
-          date, 
-          time, 
+          date,
+          time,
+          status,
           classes:class_id (name)
         `)
         .eq('id', targetId)
@@ -39,6 +40,13 @@ export class BookingsService {
 
     if (lessonError || !lesson) {
       throw new NotFoundException(`Занятие с ID ${targetId} не найдено`);
+    }
+
+    if (lesson.status === 'closed') {
+      throw new BadRequestException('Запись на это занятие закрыта администратором');
+    }
+    if (lesson.status === 'cancelled') {
+      throw new BadRequestException('Занятие отменено');
     }
 
     // Проверка времени: не позже чем за 15 мин

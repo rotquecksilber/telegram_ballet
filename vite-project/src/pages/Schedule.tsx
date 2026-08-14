@@ -144,7 +144,7 @@ export const Schedule = () => {
 
         const allItems = Object.values(groupedData).flat();
         const lesson = allItems.find(i => i.id === lessonId);
-        if (lesson && isRegistrationClosed(lesson.date, lesson.time)) {
+        if (lesson && (isRegistrationClosed(lesson.date, lesson.time) || lesson.status === 'closed')) {
             return toast.error(t.regClosedToast);
         }
 
@@ -232,16 +232,17 @@ export const Schedule = () => {
                                 const level = getLevelInfo(item.level)
                                 const age = getAgeInfo(item.age_category)
                                 const isCancelled = item.status === 'cancelled'
+                                const isClosed = item.status === 'closed'
                                 const isAlreadyBooked = bookedScheduleIds.includes(Number(item.id))
                                 const isTimeOut = isRegistrationClosed(item.date, item.time);
-                                const isDisabled = isCancelled || isAlreadyBooked || isTimeOut || bookingLoading === item.id;
+                                const isDisabled = isCancelled || isClosed || isAlreadyBooked || isTimeOut || bookingLoading === item.id;
 
                                 return (
                                     <motion.div
                                         initial={{ opacity: 0, y: 15 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         key={item.id}
-                                        className={`lesson-card ${isCancelled ? 'cancelled' : ''} ${isAlreadyBooked ? 'booked' : ''} ${isTimeOut && !isAlreadyBooked ? 'timeout' : ''}`}
+                                        className={`lesson-card ${isCancelled ? 'cancelled' : ''} ${isAlreadyBooked ? 'booked' : ''} ${(isTimeOut || isClosed) && !isAlreadyBooked ? 'timeout' : ''}`}
                                     >
                                         <div className="card-top">
                                             <div className="time-col">
@@ -275,7 +276,7 @@ export const Schedule = () => {
                                                 ? t.cancelledBtn
                                                 : isAlreadyBooked
                                                     ? t.bookedBtn
-                                                    : isTimeOut
+                                                    : isTimeOut || isClosed
                                                         ? t.closedBtn
                                                         : bookingLoading === item.id
                                                             ? t.booking
