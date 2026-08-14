@@ -153,6 +153,48 @@ export class SubscriptionsService {
     return data;
   }
 
+  // ================= ВОЗВРАТ ОШИБОЧНО СПИСАННОГО ЗАНЯТИЯ =================
+  // Добавляет занятия обратно на абонемент, НЕ трогая expiry_date/activation_date
+  async addLessons(id: number, count: number) {
+    const { data: sub, error } = await this.client
+        .from('subscriptions')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error || !sub) throw new Error('Абонемент не найден');
+    if (count <= 0) throw new Error('Некорректное количество');
+
+    const newCount = sub.remaining_lessons + count;
+    // Если абонемент был исчерпан, а занятия вернули — снова активен
+    const status = sub.status === 'exhausted' && newCount > 0 ? 'active' : sub.status;
+
+    const { data, error: updateError } = await this.client
+        .from('subscriptions')
+        .update({ remaining_lessons: newCount, status })
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (updateError) throw new Error(updateError.message);
+
+    await this.notifyLessonReturned(sub.user_id, data, count);
+
+    return data;
+  }
+
+  // ================= ВСЕ АБОНЕМЕНТЫ ПОЛЬЗОВАТЕЛЯ (для исправления ошибок) =================
+  async findAllByTelegramId(telegram_id: number) {
+    const { data, error } = await this.client
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', telegram_id)
+        .order('id', { ascending: false });
+
+    if (error) throw new Error(`Ошибка БД: ${error.message}`);
+    return data;
+  }
+
   // ================= АКТИВНЫЕ АБОНЕМЕНТЫ =================
   async findActiveByTelegramId(telegram_id: number) {
     const { data, error } = await this.client
@@ -248,6 +290,21 @@ export class SubscriptionsService {
       if (remaining === 0) {
         message += `\n❌ Абонемент завершён`;
       }
+
+      await this.telegramService.sendNotification(user_id, message);
+    } catch (err) {
+      console.error(`Ошибка уведомления Telegram для ${user_id}: ${err.message}`);
+    }
+  }
+
+  async notifyLessonReturned(user_id: number, subscription: any, count: number) {
+    try {
+      const remaining = Number(subscription.remaining_lessons);
+      const word = count === 1 ? 'занятие' : 'занятия';
+      const message =
+          `↩️ На ваш абонемент возвращено ${count} ${word} (ошибочное списание).\n` +
+          `📊 Осталось занятий: ${remaining}\n\n` +
+          `По всем вопросам пишите @Yuliya_Bacheva`;
 
       await this.telegramService.sendNotification(user_id, message);
     } catch (err) {

@@ -17,6 +17,8 @@ telegram: `${API_URL}/telegram/send`,
     sendScheduleToAll: `${API_URL}/schedule/send-to-all`,
     forceSpendSubscription: (id: number | string) =>
         `${API_URL}/subscriptions/${id}/force-spend`,
+    addLessonsSubscription: (id: number | string) =>
+        `${API_URL}/subscriptions/${id}/add-lessons`,
 
     templateById: (id: number | string) => `${API_URL}/schedule-templates/${id}`,
 
@@ -25,6 +27,9 @@ telegram: `${API_URL}/telegram/send`,
     bookings: `${API_URL}/bookings`,
     userSubscription: (telegram_id: string | number) =>
         `${API_URL}/subscriptions/user/${telegram_id}`,
+
+    userAllSubscriptions: (telegram_id: string | number) =>
+        `${API_URL}/subscriptions/user/${telegram_id}/all`,
 
     userBookings: (userId: string | number) =>
         `${API_URL}/bookings/user/${userId}`,

@@ -13,6 +13,7 @@ import {FreezeManager} from "../components/admin/FreezeManager.tsx";
 import {TemplateManager} from "../components/admin/TemplateManager.tsx";
 import {ForceSpendManager} from "../components/admin/ForceSpendManager.tsx";
 import {RegistrationManager} from "../components/admin/RegistrationManager.tsx";
+import {ReturnLessonsManager} from "../components/admin/ReturnLessonsManager.tsx";
 
 
 
@@ -365,6 +366,10 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                     )}
                     {renderSection('forceSpend', 'Принудительное списание', '⚠️',
                         <ForceSpendManager users={allUsers} />
+                    )}
+
+                    {renderSection('returnLessons', 'Возврат занятия (ошибка списания)', '↩️',
+                        <ReturnLessonsManager users={allUsers} />
                     )}
 
                     {renderSection('teachers', 'Преподаватели', '🎓',

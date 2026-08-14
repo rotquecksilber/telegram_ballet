@@ -26,11 +26,24 @@ export class SubscriptionsController {
     return this.subscriptionsService.findActiveByTelegramId(Number(telegram_id));
   }
 
+  @Get('user/:telegram_id/all')
+  async getAllByUserId(@Param('telegram_id') telegram_id: string) {
+    return this.subscriptionsService.findAllByTelegramId(Number(telegram_id));
+  }
+
   @Post(':id/force-spend')
   async forceSpend(
       @Param('id') id: number,
       @Body('count') count: number
   ) {
     return this.subscriptionsService.forceSpendLessons(+id, count);
+  }
+
+  @Post(':id/add-lessons')
+  async addLessons(
+      @Param('id') id: number,
+      @Body('count') count: number
+  ) {
+    return this.subscriptionsService.addLessons(+id, count);
   }
 }
