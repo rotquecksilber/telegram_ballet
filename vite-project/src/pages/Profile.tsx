@@ -11,11 +11,11 @@ const translations = {
         lessonsLeft: 'Осталось занятий',
         frozen: 'Заморожен',
         active: 'Активен',
-        pending: 'Ждет активации',
+        pending: '⏳ Ждет активации',
         expiryDate: 'Срок действия:',
         expiresOn: 'до',
-        startsOnFirstVisit: 'Активируется при первом посещении',
-        activationInfo: (days: number) => `* Будет действовать ${days} дней с момента начала`,
+        startsOnFirstVisit: 'Начнётся с первого занятия',
+        activationInfo: (days: number) => `Отсчёт ${days} дней начнётся, как только вы сходите на первое занятие по этому абонементу.`,
         noSub: 'У вас нет активных абонементов',
         monthlyActivity: 'Активность за месяц',
         myBookings: 'Мои записи (текущий месяц)',
@@ -54,11 +54,11 @@ const translations = {
         lessonsLeft: 'Lessons left',
         frozen: 'Frozen',
         active: 'Active',
-        pending: 'Pending activation',
+        pending: '⏳ Pending activation',
         expiryDate: 'Expiry date:',
         expiresOn: 'until',
-        startsOnFirstVisit: 'Activates on first visit',
-        activationInfo: (days: number) => `* Valid for ${days} days after start`,
+        startsOnFirstVisit: 'Starts on your first class',
+        activationInfo: (days: number) => `The ${days}-day countdown starts as soon as you attend your first class on this subscription.`,
         noSub: 'No active subscriptions',
         monthlyActivity: 'Monthly Activity',
         myBookings: 'My Bookings (current month)',
@@ -347,9 +347,9 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
                                     </span>
                                 </div>
                                 {!isActivated && (
-                                    <div className="sub-activation-info"
-                                         style={{fontSize: '11px', marginTop: '4px', opacity: 0.7}}>
-                                        {t.activationInfo(sub.duration_days)}
+                                    <div className="sub-activation-banner">
+                                        <span className="icon">⏳</span>
+                                        <span>{t.activationInfo(sub.duration_days)}</span>
                                     </div>
                                 )}
                             </div>

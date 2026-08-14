@@ -53,6 +53,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
     const [newClassName, setNewClassName] = useState('')
     const [selectedUserId, setSelectedUserId] = useState('')
     const [selectedCustomerId, setSelectedCustomerId] = useState<string>('')
+    const [customerSearch, setCustomerSearch] = useState('')
 
     const [scheduleData, setScheduleData] = useState({
         class_id: '',
@@ -415,27 +416,73 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                         />
                     )}
 
-                    {renderSection('customers', 'Клиенты и история', '🔍',
-                        <div className="admin-customers">
-                            <select
-                                className="admin-input"
-                                value={selectedCustomerId}
-                                onChange={(e) => setSelectedCustomerId(e.target.value)}
-                            >
-                                <option value="">-- Выберите ученика --</option>
-                                {allUsers.map(u => (
-                                    // ВАЖНО: передаем telegram_id вместо id
-                                    <option key={u.id} value={u.telegram_id}>
-                                        {u.first_name} {u.last_name} ({u.phone})
-                                    </option>
-                                ))}
-                            </select>
+                    {renderSection('customers', 'Клиенты и история', '🔍', (() => {
+                        const selectedCustomer = allUsers.find(u => String(u.telegram_id) === selectedCustomerId)
+                        const filteredCustomers = customerSearch
+                            ? allUsers
+                                .filter(u => `${u.last_name || ''} ${u.first_name || ''} ${u.phone || ''}`.toLowerCase().includes(customerSearch.toLowerCase()))
+                                .sort((a, b) => (a.last_name || '').localeCompare(b.last_name || ''))
+                                .slice(0, 10)
+                            : []
 
-                            <div style={{marginTop: '20px'}}>
-                                <CustomerDetails userId={selectedCustomerId}/>
+                        return (
+                            <div className="admin-customers">
+                                {!selectedCustomer ? (
+                                    <div className="user-selector" style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Поиск ученика по фамилии или имени..."
+                                            className="admin-search-input"
+                                            style={{ width: '100%', boxSizing: 'border-box' }}
+                                            value={customerSearch}
+                                            onChange={(e) => setCustomerSearch(e.target.value)}
+                                        />
+
+                                        {customerSearch && (
+                                            <div className="user-list-mini" style={{
+                                                height: 'auto',
+                                                maxHeight: '300px',
+                                                overflowY: 'auto',
+                                                marginTop: '8px',
+                                                border: '1px solid var(--tg-theme-hint-color)',
+                                                borderRadius: '8px',
+                                                background: 'var(--tg-theme-secondary-bg-color)'
+                                            }}>
+                                                {filteredCustomers.length > 0 ? filteredCustomers.map(u => (
+                                                    <div
+                                                        key={u.id}
+                                                        className="user-row"
+                                                        style={{ padding: '12px', borderBottom: '1px solid var(--tg-theme-hint-color)', cursor: 'pointer' }}
+                                                        onClick={() => setSelectedCustomerId(String(u.telegram_id))}
+                                                    >
+                                                        <div style={{ fontWeight: 600, color: 'var(--tg-theme-text-color)' }}>
+                                                            {u.first_name} {u.last_name}
+                                                        </div>
+                                                        <div style={{ fontSize: '12px', color: 'var(--tg-theme-hint-color)' }}>
+                                                            {u.phone}
+                                                        </div>
+                                                    </div>
+                                                )) : (
+                                                    <div style={{ padding: '20px', textAlign: 'center', opacity: 0.5 }}>
+                                                        Никто не найден
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="selected-user-badge" style={{ background: 'var(--tg-theme-secondary-bg-color)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                                        <span>Ученик: <b>{selectedCustomer.first_name} {selectedCustomer.last_name}</b></span>
+                                        <button className="btn-text" onClick={() => { setSelectedCustomerId(''); setCustomerSearch('') }}>Изменить</button>
+                                    </div>
+                                )}
+
+                                <div style={{marginTop: '20px'}}>
+                                    <CustomerDetails userId={selectedCustomerId}/>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )
+                    })())}
                     {renderSection('freeze', 'Заморозка абонементов', '❄️',
                         <FreezeManager
                             users={usersForFreeze} // МЕНЯЕМ ЗДЕСЬ с allUsers на usersForFreeze

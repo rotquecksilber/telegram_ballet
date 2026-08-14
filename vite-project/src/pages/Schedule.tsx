@@ -22,6 +22,11 @@ const translations = {
         bookedBtn: 'Вы записаны',
         cancelledBtn: 'Отменено',
         closedBtn: 'Запись закрыта',
+        cancelBtn: 'Отменить запись',
+        cancelling: 'Отмена...',
+        confirmCancel: 'Вы уверены, что хотите отменить запись?',
+        cancelSuccess: 'Запись отменена',
+        cancelError: 'Не удалось отменить запись',
         levels: {
             beginners: { label: 'Новички', icon: '🐣' },
             advanced: { label: 'Профи', icon: '🔥' },
@@ -48,6 +53,11 @@ const translations = {
         bookedBtn: 'Booked',
         cancelledBtn: 'Cancelled',
         closedBtn: 'Closed',
+        cancelBtn: 'Cancel booking',
+        cancelling: 'Cancelling...',
+        confirmCancel: 'Are you sure you want to cancel?',
+        cancelSuccess: 'Booking cancelled',
+        cancelError: 'Failed to cancel booking',
         levels: {
             beginners: { label: 'Beginners', icon: '🐣' },
             advanced: { label: 'Pro', icon: '🔥' },
@@ -74,8 +84,10 @@ export const Schedule = () => {
     const [groupedData, setGroupedData] = useState<Record<string, any[]>>({})
     const [loading, setLoading] = useState(true)
     const [bookingLoading, setBookingLoading] = useState<number | null>(null)
+    const [cancellingId, setCancellingId] = useState<number | null>(null)
     const [userSubs, setUserSubs] = useState<any[]>([])
     const [bookedScheduleIds, setBookedScheduleIds] = useState<number[]>([])
+    const [bookingIdByScheduleId, setBookingIdByScheduleId] = useState<Record<number, number>>({})
 
     // Функция смены языка с сохранением
     const handleLangChange = (newLang: 'ru' | 'en') => {
@@ -91,6 +103,16 @@ export const Schedule = () => {
         const diffMs = lessonDate.getTime() - now.getTime();
         const diffMins = diffMs / (1000 * 60);
         return diffMins <= 60;
+    };
+
+    const isCancelationClosed = (date: string, time: string) => {
+        const [year, month, day] = date.split('-').map(Number);
+        const [hours, minutes] = time.split(':').map(Number);
+        const lessonDate = new Date(year, month - 1, day, hours, minutes);
+        const now = new Date();
+        const diffMs = lessonDate.getTime() - now.getTime();
+        const diffMins = diffMs / (1000 * 60);
+        return diffMins <= 180;
     };
 
     useEffect(() => {
@@ -128,6 +150,12 @@ export const Schedule = () => {
                             .filter((b: any) => b.status === 'confirmed' || b.status === 'attended')
                             .map((b: any) => Number(b.schedule_id))
                         setBookedScheduleIds(ids)
+
+                        const idMap: Record<number, number> = {}
+                        bookings
+                            .filter((b: any) => b.status === 'confirmed')
+                            .forEach((b: any) => { idMap[Number(b.schedule_id)] = b.id })
+                        setBookingIdByScheduleId(idMap)
                     }
                 }
             } catch (e) {
@@ -177,6 +205,41 @@ export const Schedule = () => {
             toast.error(t.networkError)
         } finally {
             setBookingLoading(null)
+        }
+    }
+
+    const handleCancel = (scheduleId: number) => {
+        const bookingId = bookingIdByScheduleId[scheduleId]
+        if (!bookingId) return
+
+        const doCancel = async () => {
+            setCancellingId(scheduleId)
+            try {
+                const res = await apiRequest(`${endpoints.bookings}/${bookingId}/cancel`, { method: 'PATCH' })
+                if (res.ok) {
+                    toast.success(t.cancelSuccess)
+                    setBookedScheduleIds(prev => prev.filter(id => id !== scheduleId))
+                    setBookingIdByScheduleId(prev => {
+                        const next = { ...prev }
+                        delete next[scheduleId]
+                        return next
+                    })
+                } else {
+                    toast.error(t.cancelError)
+                }
+            } catch (e) {
+                toast.error(t.networkError)
+            } finally {
+                setCancellingId(null)
+            }
+        }
+
+        if (window.Telegram?.WebApp?.showConfirm) {
+            window.Telegram.WebApp.showConfirm(t.confirmCancel, (confirmed: boolean) => {
+                if (confirmed) doCancel()
+            })
+        } else {
+            if (window.confirm(t.confirmCancel)) doCancel()
         }
     }
 
@@ -234,8 +297,9 @@ export const Schedule = () => {
                                 const isCancelled = item.status === 'cancelled'
                                 const isClosed = item.status === 'closed'
                                 const isAlreadyBooked = bookedScheduleIds.includes(Number(item.id))
+                                const canCancel = isAlreadyBooked && !!bookingIdByScheduleId[Number(item.id)] && !isCancelationClosed(item.date, item.time)
                                 const isTimeOut = isRegistrationClosed(item.date, item.time);
-                                const isDisabled = isCancelled || isClosed || isAlreadyBooked || isTimeOut || bookingLoading === item.id;
+                                const isDisabled = (isCancelled || isClosed || isAlreadyBooked || isTimeOut || bookingLoading === item.id) && !canCancel;
 
                                 return (
                                     <motion.div
@@ -268,19 +332,21 @@ export const Schedule = () => {
                                         </div>
 
                                         <button
-                                            className={`book-btn ${isDisabled ? 'disabled' : ''} ${bookingLoading === item.id ? 'loading' : ''}`}
-                                            disabled={isDisabled}
-                                            onClick={() => handleBook(item.id)}
+                                            className={`book-btn ${isDisabled ? 'disabled' : ''} ${bookingLoading === item.id ? 'loading' : ''} ${canCancel ? 'cancel-mode' : ''}`}
+                                            disabled={isDisabled || cancellingId === item.id}
+                                            onClick={() => canCancel ? handleCancel(item.id) : handleBook(item.id)}
                                         >
-                                            {isCancelled
-                                                ? t.cancelledBtn
-                                                : isAlreadyBooked
-                                                    ? t.bookedBtn
-                                                    : isTimeOut || isClosed
-                                                        ? t.closedBtn
-                                                        : bookingLoading === item.id
-                                                            ? t.booking
-                                                            : t.bookBtn}
+                                            {canCancel
+                                                ? (cancellingId === item.id ? t.cancelling : t.cancelBtn)
+                                                : isCancelled
+                                                    ? t.cancelledBtn
+                                                    : isAlreadyBooked
+                                                        ? t.bookedBtn
+                                                        : isTimeOut || isClosed
+                                                            ? t.closedBtn
+                                                            : bookingLoading === item.id
+                                                                ? t.booking
+                                                                : t.bookBtn}
                                         </button>
                                     </motion.div>
                                 )

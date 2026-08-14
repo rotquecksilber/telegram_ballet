@@ -127,6 +127,11 @@
     transform: scale(0.95);
 }
 
+.book-btn.cancel-mode {
+    background: rgba(255, 59, 48, 0.12);
+    color: #ff3b30;
+}
+
 /* Загрузка */
 .loader-container {
     height: 100vh;
