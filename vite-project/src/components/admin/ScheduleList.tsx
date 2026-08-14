@@ -5,10 +5,9 @@ interface Props {
     onDelete: (id: number) => void
     onCancel: (id: number) => void
     onEdit: (item: any) => void
-    onToggleClose: (id: number, closed: boolean) => void
 }
 
-export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit, onToggleClose }: Props) => {
+export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit }: Props) => {
 
     const formatDate = (dateStr: string) => {
         try {
@@ -77,15 +76,6 @@ export const ScheduleList = ({ groupedData, onDelete, onCancel, onEdit, onToggle
 
                                 <div className="admin-item-actions">
                                     <button className="btn-icon edit" onClick={() => onEdit(item)}>✏️</button>
-                                    {!isCancelled && (
-                                        <button
-                                            className="btn-icon close-reg"
-                                            title={isClosed ? 'Открыть запись' : 'Закрыть запись (много записалось)'}
-                                            onClick={() => onToggleClose(item.id, !isClosed)}
-                                        >
-                                            {isClosed ? '🔓' : '🔒'}
-                                        </button>
-                                    )}
                                     {!isCancelled && (
                                         <button className="btn-icon cancel" onClick={() => onCancel(item.id)}>🚫</button>
                                     )}
