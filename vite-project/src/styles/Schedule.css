@@ -1,7 +1,7 @@
 /* Hallmark · genre: editorial · design-system: design.md · designed-as-app
  * Deduped, tokenized. Was 3× duplicate rule blocks (.lesson-card, .book-btn,
  * .time-col, .spinner) with drifting hex values; now a single definition per
- * selector, all colour through tokens.css, display type through Fraunces. */
+ * selector, all colour through tokens.css, display type through Newsreader. */
 
 .schedule-container {
     padding: var(--space-md);
@@ -37,7 +37,6 @@
 /* Карточка занятия */
 .lesson-card {
     background: var(--color-paper);
-    border: 1px solid var(--color-card-edge);
     border-radius: var(--radius-lg);
     padding: var(--space-md);
     margin-bottom: var(--space-sm);

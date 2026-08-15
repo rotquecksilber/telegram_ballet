@@ -3,24 +3,26 @@
  *
  * This app used to inherit paper/ink from Telegram's own --tg-theme-* variables
  * (so it matched whatever theme — including wild third-party ones — the viewer
- * had set in Telegram). By request, that's gone: the app now ships its own
- * fixed light/dark palette below, so every user sees the same brand regardless
- * of their Telegram theme. `--tg-theme-*` variables are no longer read anywhere.
+ * had set in Telegram). By request, that's gone: the app now ships one fixed
+ * light palette below, so every user sees the same calm, plain-white look
+ * regardless of their Telegram theme. No dark variant — kept intentionally
+ * simple. `--tg-theme-*` variables are no longer read anywhere.
  */
 :root {
-  /* Typography — Cormorant Garamond (display + numerals) / EB Garamond (body, UI).
-     Both classical serifs, one family register — deliberately un-technical,
-     matches the balletic/editorial tone the whole app is built around. */
-  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  /* Typography — Newsreader (display + numerals) / EB Garamond (body, UI).
+     Two calm reading serifs, low contrast, no delicate hairlines — Cormorant
+     Garamond read as visually "tense"; Newsreader is a relaxed book serif. */
+  --font-display: "Newsreader", ui-serif, Georgia, serif;
   --font-body:    "EB Garamond", ui-serif, Georgia, serif;
 
-  /* Paper/ink — our own fixed palette (light). Warm ivory anchor, ties into
-     the same hue family as the accent so neutrals don't read cold/generic. */
-  --color-paper:        oklch(97% 0.010 60);
-  --color-paper-2:       oklch(93% 0.012 60);
-  --color-ink:           oklch(24% 0.014 50);
-  --color-hint:          oklch(52% 0.014 50);
-  --color-separator:     oklch(88% 0.010 50);
+  /* Paper/ink — plain white, not tinted. Cards separate from the page via
+     background contrast (paper vs paper-2) and shadow — not via borders,
+     now that we control both surfaces ourselves. */
+  --color-paper:        oklch(100% 0 0);
+  --color-paper-2:      oklch(95.5% 0 0);
+  --color-ink:           oklch(22% 0.01 50);
+  --color-hint:          oklch(52% 0.006 50);
+  --color-separator:     oklch(90% 0 0);
 
   /* Semantic accents — OKLCH, one hue each, no near-duplicates */
   --color-accent:        oklch(58% 0.19 258); /* primary actions, links, active state */
@@ -42,7 +44,6 @@
   --color-border:      oklch(0% 0 0 / 8%);
   --color-border-soft: oklch(0% 0 0 / 5%);
   --color-shadow:      oklch(0% 0 0 / 6%);
-  --color-card-edge:   oklch(24% 0.014 50 / 14%);
 
   /* 4pt spacing scale */
   --space-3xs: 0.25rem;
@@ -63,27 +64,6 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 120ms;
   --dur-short: 200ms;
-}
-
-/* Dark palette — follows the *device's* light/dark setting, not Telegram's
-   theme picker. Same hue anchors, only lightness/chroma move (color.md dark
-   mode recipe): never pure black, elevation via lightness not shadow. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-paper:      oklch(16% 0.012 50);
-    --color-paper-2:    oklch(20% 0.014 50);
-    --color-ink:        oklch(94% 0.008 50);
-    --color-hint:       oklch(66% 0.012 50);
-    --color-separator:  oklch(32% 0.012 50);
-    --color-card-edge:  oklch(94% 0.008 50 / 12%);
-
-    --color-accent:      oklch(66% 0.17 258);
-    --color-accent-deep: oklch(40% 0.15 258);
-    --color-success:     oklch(72% 0.15 152);
-    --color-danger:      oklch(68% 0.19  25);
-    --color-warning:     oklch(78% 0.14  70);
-    --color-purple:      oklch(66% 0.16 305);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
