@@ -1,4 +1,4 @@
-/* Hallmark · genre: editorial · design-system: design.md · designed-as-app
+/* Hallmark · genre: modern-minimal · design-system: design.md · designed-as-app
  * Design tokens — single source of truth for the ballet studio Mini App.
  *
  * This app used to inherit paper/ink from Telegram's own --tg-theme-* variables
@@ -9,11 +9,14 @@
  * simple. `--tg-theme-*` variables are no longer read anywhere.
  */
 :root {
-  /* Typography — Newsreader (display + numerals) / EB Garamond (body, UI).
-     Two calm reading serifs, low contrast, no delicate hairlines — Cormorant
-     Garamond read as visually "tense"; Newsreader is a relaxed book serif. */
-  --font-display: "Newsreader", ui-serif, Georgia, serif;
-  --font-body:    "EB Garamond", ui-serif, Georgia, serif;
+  /* Typography — Geist, one grotesk family at varying weight. The serif
+     picks (Fraunces, Cormorant Garamond, Newsreader) all read as dated —
+     "из нулевых" — regardless of pairing. Geist is the current
+     Stripe/Linear/Vercel-school modern-minimal default; a single family at
+     different weights is the deliberate choice for this genre, not a
+     shortcut (see typography.md's single-font allowance). */
+  --font-display: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-body:    "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   /* Paper/ink — plain white, not tinted. Cards separate from the page via
      background contrast (paper vs paper-2) and shadow — not via borders,
@@ -54,10 +57,10 @@
   --space-lg:  1.5rem;
   --space-xl:  2rem;
 
-  /* Radius scale — replaces the ad hoc 24/20/14/12/10/8px mix */
-  --radius-sm:   8px;
-  --radius-md:   12px;
-  --radius-lg:   18px;
+  /* Radius scale — tighter than the old bubbly 18-24px cards read as dated too */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
   --radius-pill: 999px;
 
   /* Motion */

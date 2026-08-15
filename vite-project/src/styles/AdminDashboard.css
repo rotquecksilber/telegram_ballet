@@ -1,4 +1,4 @@
-/* Hallmark · genre: editorial · design-system: design.md · designed-as-app */
+/* Hallmark · genre: modern-minimal · design-system: design.md · designed-as-app */
 /* --- ОСНОВНОЙ КОНТЕЙНЕР --- */
 .admin-container {
     padding: 20px 16px 120px;
@@ -321,13 +321,6 @@
 
 
 
-/* --- ТЕМНАЯ ТЕМА --- */
-@media (prefers-color-scheme: dark) {
-    .admin-card { border: 1px solid rgba(255, 255, 255, 0.1); }
-    .divider { background: rgba(255, 255, 255, 0.1); }
-}
-
-
 /* Контейнер всего блока длительности */
 .field {
     display: flex;
@@ -402,17 +395,6 @@
 .end-time-hint b {
     color: var(--color-ink);
     font-weight: 700;
-}
-
-/* Темная тема (для Telegram Desktop или ночного режима) */
-@media (prefers-color-scheme: dark) {
-    .duration-tabs-segmented {
-        background: rgba(255, 255, 255, 0.1);
-    }
-    .duration-segment.active {
-        background: #2c2c2e; /* Более светлый серый для темной темы */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    }
 }
 
 /* Контейнер карточки */

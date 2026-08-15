@@ -1,4 +1,4 @@
-/* Hallmark · genre: editorial · design-system: design.md · designed-as-app
+/* Hallmark · genre: modern-minimal · design-system: design.md · designed-as-app
  * Deduped, tokenized. Was 3× duplicate rule blocks (.lesson-card, .book-btn,
  * .time-col, .spinner) with drifting hex values; now a single definition per
  * selector, all colour through tokens.css, display type through Newsreader. */

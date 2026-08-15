@@ -123,15 +123,6 @@
     cursor: not-allowed;
 }
 
-/* Адаптация под темную тему Telegram */
-@media (prefers-color-scheme: dark) {
-    .info-card {
-        border-color: rgba(255, 255, 255, 0.1);
-    }
-    .form-group input {
-        border-color: rgba(255, 255, 255, 0.15);
-    }
-}
 /* Мёртвый дублирующий блок .subscription-card/.sub-header/.sub-status/.sub-lessons/
    .sub-progress-bar/.progress-fill/.sub-footer/.no-sub-card удалён — Profile.tsx их
    не использует (актуальная карточка ниже, .sub-main/.sub-count/.sub-progress). */
@@ -1086,7 +1077,6 @@
     font-size: 14px;
     font-weight: 500;
     padding: 0;
-    font-style: italic;
 }
 
 .week-content {
