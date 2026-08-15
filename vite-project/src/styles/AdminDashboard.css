@@ -58,7 +58,7 @@
 /* --- КАРТОЧКИ (ФОРМЫ) --- */
 .admin-card {
     background: var(--color-paper);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     padding: 20px;
     box-shadow: 0 4px 12px var(--color-shadow);
 }
