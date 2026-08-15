@@ -60,7 +60,7 @@
     background: var(--color-paper);
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 /* Идентификация раздела уже даёт иконка в заголовке аккордеона (📅 🎓 🩰 …) —
@@ -128,7 +128,12 @@
     font-size: 16px;
     font-weight: 700;
     margin-top: 10px;
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
 }
+
+.confirm-btn:hover { opacity: 0.92; }
+.confirm-btn:active { transform: scale(0.98); }
 
 .action-btn {
     background: var(--color-accent);
@@ -138,7 +143,12 @@
     border-radius: 12px;
     font-weight: 600;
     height: 45px;
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
 }
+
+.action-btn:hover { opacity: 0.92; }
+.action-btn:active { transform: scale(0.97); }
 
 .btn-secondary {
     width: 100%;
@@ -149,7 +159,12 @@
     border-radius: 12px;
     margin-top: 8px;
     font-size: 14px;
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
+
+.btn-secondary:hover { background: var(--color-paper-2); }
+.btn-secondary:active { transform: scale(0.98); }
 
 /* --- СПИСОК ЗАНЯТИЙ (SCHEDULE LIST) --- */
 .admin-schedule-list {

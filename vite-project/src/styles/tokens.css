@@ -46,7 +46,7 @@
   /* Neutral utility tokens */
   --color-border:      oklch(0% 0 0 / 8%);
   --color-border-soft: oklch(0% 0 0 / 5%);
-  --color-shadow:      oklch(0% 0 0 / 6%);
+  --color-shadow:      oklch(30% 0.03 258 / 7%); /* tinted toward the accent hue, not flat black */
 
   /* 4pt spacing scale */
   --space-3xs: 0.25rem;

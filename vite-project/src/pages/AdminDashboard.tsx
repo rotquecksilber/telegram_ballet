@@ -175,9 +175,18 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
     };
 
     const handleDeleteSchedule = async (id: number) => {
-        if (!window.confirm('Удалить?')) return
-        const res = await apiRequest(`${endpoints.schedule}/${id}`, { method: 'DELETE' })
-        if (res.ok) { toast.success('Удалено'); loadInitialData() }
+        const doDelete = async () => {
+            const res = await apiRequest(`${endpoints.schedule}/${id}`, { method: 'DELETE' })
+            if (res.ok) { toast.success('Удалено'); loadInitialData() }
+        }
+
+        if (window.Telegram?.WebApp?.showConfirm) {
+            window.Telegram.WebApp.showConfirm('Удалить занятие?', (confirmed: boolean) => {
+                if (confirmed) doDelete()
+            })
+        } else {
+            if (window.confirm('Удалить?')) doDelete()
+        }
     }
 
     const handleCancelSchedule = async (id: number) => {
