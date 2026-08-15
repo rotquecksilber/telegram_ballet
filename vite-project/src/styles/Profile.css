@@ -1115,3 +1115,144 @@
     transform: scale(0.98);
     transition: transform 0.1s;
 }
+
+/* ===== Обновлённый вид "Мои записи" ===== */
+.week-accordion {
+    margin: 0 0 12px 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--tg-theme-bg-color);
+    border: 1px solid var(--tg-theme-secondary-bg-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.week-summary {
+    padding: 13px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: var(--tg-theme-hint-color);
+    background: var(--tg-theme-secondary-bg-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    user-select: none;
+    text-transform: uppercase;
+}
+
+.week-summary .badge {
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 10px;
+    line-height: 1.6;
+    text-transform: none;
+}
+
+.week-content {
+    padding: 4px 8px;
+    background: var(--tg-theme-bg-color);
+}
+
+.booking-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
+    border-left: 3px solid transparent;
+    border-radius: 6px;
+}
+
+.booking-cell:last-child {
+    border-bottom: none;
+}
+
+.booking-cell.cell-active { border-left-color: #007aff; }
+.booking-cell.cell-attended { border-left-color: #34c759; }
+.booking-cell.cell-cancelled { border-left-color: transparent; opacity: 0.55; }
+.booking-cell.cell-studio-cancelled { border-left-color: #ff3b30; opacity: 0.7; }
+
+.booking-date-badge {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--tg-theme-secondary-bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+}
+
+.badge-day {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--tg-theme-text-color);
+}
+
+.badge-month {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--tg-theme-hint-color);
+}
+
+.booking-cell.cell-attended .booking-date-badge {
+    background: rgba(52, 199, 89, 0.14);
+}
+
+.booking-cell.cell-active .booking-date-badge {
+    background: rgba(0, 122, 255, 0.12);
+}
+
+.booking-cell .booking-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.booking-cell .booking-title-row {
+    margin-bottom: 2px;
+}
+
+.booking-cell .booking-name {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.booking-cell .booking-date-text {
+    font-size: 13px;
+}
+
+.booking-cell .booking-side-action {
+    min-width: auto;
+}
+
+.status-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.status-pill--active {
+    color: #007aff;
+    background: rgba(0, 122, 255, 0.12);
+}
+
+.status-pill--attended {
+    color: #34c759;
+    background: rgba(52, 199, 89, 0.14);
+}
+
+.status-pill--cancelled {
+    color: var(--tg-theme-hint-color);
+    background: var(--tg-theme-secondary-bg-color);
+}
