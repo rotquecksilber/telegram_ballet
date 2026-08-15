@@ -131,70 +131,9 @@
         border-color: rgba(255, 255, 255, 0.15);
     }
 }
-.subscription-card {
-    background: linear-gradient(135deg, #34c759 0%, #28a745 100%);
-    border-radius: 20px;
-    padding: 20px;
-    color: white;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 20px rgba(52, 199, 89, 0.2);
-}
-
-.sub-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.sub-header h3 { margin: 0; font-size: 16px; opacity: 0.9; }
-
-.sub-status {
-    font-size: 10px;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 4px 8px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    font-weight: 700;
-}
-
-.sub-status.frozen { background: #ffcc00; color: #000; }
-
-.sub-lessons {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
-}
-
-.sub-lessons .count { font-size: 32px; font-weight: 800; }
-.sub-lessons .total { opacity: 0.8; font-size: 14px; }
-
-.sub-progress-bar {
-    height: 6px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: #fff;
-    transition: width 0.5s ease-out;
-}
-
-.sub-footer { font-size: 12px; opacity: 0.9; }
-
-.no-sub-card {
-    background: var(--tg-theme-bg-color);
-    padding: 20px;
-    border-radius: 16px;
-    text-align: center;
-    border: 2px dashed var(--tg-theme-hint-color);
-    color: var(--tg-theme-hint-color);
-    margin-bottom: 20px;
-}
+/* Мёртвый дублирующий блок .subscription-card/.sub-header/.sub-status/.sub-lessons/
+   .sub-progress-bar/.progress-fill/.sub-footer/.no-sub-card удалён — Profile.tsx их
+   не использует (актуальная карточка ниже, .sub-main/.sub-count/.sub-progress). */
 
 /* Блок, когда абонемент не найден */
 .no-subscription {
@@ -224,14 +163,13 @@
     line-height: 1.4;
 }
 
-/* Улучшение существующей карточки абонемента (для контраста) */
 .subscription-card {
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    background: var(--color-accent-deep);
     border-radius: 20px;
     padding: 20px;
     color: white;
     margin-bottom: 24px;
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 8px 20px oklch(46% 0.17 258 / 25%);
 }
 
 .sub-main {
@@ -326,10 +264,9 @@
     cursor: not-allowed;
 }
 
-/* Если хочешь выделить именно состояние "Записан" */
-.lesson-card.booked {
-    border-left: 4px solid #4CAF50; /* Зеленая полоска сбоку */
-}
+/* .lesson-card.booked живёт в Schedule.css (лёгкая подложка, без полоски) —
+   этот дублирующий мёртвый блок с полоской слева удалён, чтобы не всплывал
+   по случайности порядка загрузки CSS. */
 /* Группировка по месяцам */
 .month-group {
     margin-bottom: 20px;
@@ -373,7 +310,7 @@
 
 .book-date {
     font-size: 0.85rem;
-    color: #007aff;
+    color: var(--color-accent);
     background: rgba(0, 122, 255, 0.1);
     padding: 2px 6px;
     border-radius: 4px;
@@ -388,7 +325,7 @@
 .cancel-txt-btn {
     background: none;
     border: none;
-    color: #ff3b30;
+    color: var(--color-danger);
     font-size: 0.85rem;
     font-weight: 600;
     padding: 8px;
@@ -411,7 +348,7 @@
 
 .status-hint.red {
     background: rgba(255, 59, 48, 0.1);
-    color: #ff3b30;
+    color: var(--color-danger);
 }
 
 .status-hint.green {
@@ -440,14 +377,10 @@
     border: 1px solid #e0e0e0;
 }
 
-.booking-mini-card.confirmed {
-    border-left: 4px solid #4CAF50; /* Зеленая полоска для подтвержденных */
-}
-/* 1. Специфический стиль для отмены админом (красная рамка) */
+/* 1. Специфический стиль для отмены админом */
 .booking-mini-card.cancelled {
     opacity: 0.7;
     background: #fff9f9; /* Еле заметный розовый фон */
-    border-left: 4px solid #ff3b30; /* Красная полоска вместо зеленой */
     pointer-events: none; /* Чтобы точно нельзя было нажать */
 }
 
@@ -469,17 +402,13 @@
 /* 4. Яркая плашка "Занятие отменено админом" */
 .status-hint.red {
     background: rgba(255, 59, 48, 0.1);
-    color: #ff3b30;
+    color: var(--color-danger);
     font-weight: 700;
     text-transform: uppercase;
     font-size: 10px;
     letter-spacing: 0.3px;
 }
 
-/* 5. Если занятие подтверждено, но уже "в прошлом" или отмена закрыта */
-.booking-mini-card.confirmed {
-    border-left: 4px solid #34c759; /* Твоя зеленая полоска */
-}
 /* Список записей */
 .month-group {
     margin-bottom: 24px;
@@ -525,7 +454,7 @@
 
 .booking-name s {
     color: var(--tg-theme-hint-color);
-    text-decoration-color: #ff3b30;
+    text-decoration-color: var(--color-danger);
 }
 
 .booking-meta {
@@ -543,12 +472,12 @@
 
 .badge-success {
     background: rgba(52, 199, 89, 0.12);
-    color: #34c759;
+    color: var(--color-success);
 }
 
 .badge-error {
     background: rgba(255, 59, 48, 0.12);
-    color: #ff3b30;
+    color: var(--color-danger);
 }
 
 .badge-secondary {
@@ -559,7 +488,7 @@
 .text-action-btn {
     background: none;
     border: none;
-    color: #ff3b30;
+    color: var(--color-danger);
     font-size: 13px;
     font-weight: 600;
     padding: 4px 0;
@@ -583,12 +512,11 @@
 .booking-mini-card.cancelled {
     opacity: 0.6;
     background: #fdfdfd;
-    border-left: 3px solid #ff3b30; /* Четкий красный акцент */
 }
 
 .status-hint.red {
     background: #fff0f0;
-    color: #ff3b30;
+    color: var(--color-danger);
     border: none;
     font-weight: 700;
 }
@@ -647,7 +575,7 @@
 /* Метка отмены админом */
 .admin-cancel-label {
     font-size: 11px;
-    color: #ff3b30;
+    color: var(--color-danger);
     background: rgba(255, 59, 48, 0.1);
     padding: 2px 6px;
     border-radius: 4px;
@@ -658,7 +586,7 @@
 .cancel-link {
     background: none;
     border: none;
-    color: #ff3b30;
+    color: var(--color-danger);
     font-size: 14px;
     font-weight: 500;
     padding: 8px 0;
@@ -699,7 +627,7 @@
 
 .booking-name s {
     color: var(--tg-theme-hint-color);
-    text-decoration-color: #ff3b30;
+    text-decoration-color: var(--color-danger);
 }
 
 .booking-date-text {
@@ -712,7 +640,7 @@
 .status-label-alert {
     font-size: 10px;
     font-weight: 800;
-    color: #ff3b30;
+    color: var(--color-danger);
     background: rgba(255, 59, 48, 0.1);
     padding: 2px 6px;
     border-radius: 4px;
@@ -722,7 +650,7 @@
 .cancel-minimal-btn {
     background: none;
     border: none;
-    color: #ff3b30;
+    color: var(--color-danger);
     font-size: 15px;
     font-weight: 500;
     padding: 4px 0;
@@ -730,7 +658,7 @@
 
 .status-confirmed-text {
     font-size: 14px;
-    color: #34c759;
+    color: var(--color-success);
     font-weight: 600;
 }
 
@@ -844,7 +772,7 @@
 .status-label-alert {
     font-size: 12px;
     font-weight: 600;
-    color: var(--tg-theme-destructive-color, #ff3b30); /* fallback на случай отсутствия переменной */
+    color: var(--tg-theme-destructive-color, var(--color-danger)); /* fallback на случай отсутствия переменной */
     background: var(--tg-theme-destructive-color-alpha, rgba(255, 59, 48, 0.12));
     padding: 3px 8px;
     border-radius: 8px;
@@ -887,7 +815,7 @@
     padding: 0;
     font-size: 15px;
     font-weight: 500;
-    color: var(--tg-theme-destructive-color, #ff3b30);
+    color: var(--tg-theme-destructive-color, var(--color-danger));
     cursor: pointer;
 }
 
@@ -1164,7 +1092,6 @@
     gap: 12px;
     padding: 12px 8px;
     border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
-    border-left: 3px solid transparent;
     border-radius: 6px;
 }
 
@@ -1172,10 +1099,9 @@
     border-bottom: none;
 }
 
-.booking-cell.cell-active { border-left-color: #007aff; }
-.booking-cell.cell-attended { border-left-color: #34c759; }
-.booking-cell.cell-cancelled { border-left-color: transparent; opacity: 0.55; }
-.booking-cell.cell-studio-cancelled { border-left-color: #ff3b30; opacity: 0.7; }
+/* Статус читается по цвету бейджа даты и по status-pill — без цветных полосок сбоку */
+.booking-cell.cell-cancelled { opacity: 0.55; }
+.booking-cell.cell-studio-cancelled { opacity: 0.7; }
 
 .booking-date-badge {
     flex-shrink: 0;
@@ -1243,12 +1169,12 @@
 }
 
 .status-pill--active {
-    color: #007aff;
+    color: var(--color-accent);
     background: rgba(0, 122, 255, 0.12);
 }
 
 .status-pill--attended {
-    color: #34c759;
+    color: var(--color-success);
     background: rgba(52, 199, 89, 0.14);
 }
 
