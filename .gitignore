@@ -3,3 +3,12 @@
 email.html
 .DS_Store
 .vercel
+
+# Папки от других проектов, случайно оказавшиеся в этой директории
+/dashboards
+/task-board
+
+# Файлы от других проектов (Face Cult и т.п.), случайно оказавшиеся в корне
+/FACE_CULT_August_2026_Content_Plan.docx
+/FaceCult_Promo_Sentyabr.docx
+/Marketing Calendar 2026 (edited).xlsx

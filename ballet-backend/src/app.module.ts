@@ -13,6 +13,7 @@ import {BotUpdate} from "./telegram/bot.update";
 import { TelegramModule } from './telegram/telegram.module';
 import {SupabaseService} from "./supabase/supabase.service";
 import { CronController } from './cron/cron.controller';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { CronController } from './cron/cron.controller';
       }),
       inject: [ConfigService],
     }),// Это подтянет .env во всё приложение
-    UsersModule, ScheduleModule, ClassesModule, SubscriptionsModule, BookingsModule, ScheduleTemplatesModule, TelegramModule,
+    UsersModule, ScheduleModule, ClassesModule, SubscriptionsModule, BookingsModule, ScheduleTemplatesModule, TelegramModule, StatsModule,
   ],
   controllers: [AppController, CronController],
   providers: [AppService, BotUpdate, SupabaseService],

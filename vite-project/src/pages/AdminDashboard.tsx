@@ -14,6 +14,7 @@ import {TemplateManager} from "../components/admin/TemplateManager.tsx";
 import {ForceSpendManager} from "../components/admin/ForceSpendManager.tsx";
 import {RegistrationManager} from "../components/admin/RegistrationManager.tsx";
 import {ReturnLessonsManager} from "../components/admin/ReturnLessonsManager.tsx";
+import {StatsManager} from "../components/admin/StatsManager.tsx";
 
 
 
@@ -282,6 +283,10 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
             {/* Только для Полного Админа */}
             {viewMode === 'full' && (
                 <>
+
+                    {renderSection('stats', 'Статистика', '📊',
+                        <StatsManager />
+                    )}
 
                     {renderSection('schedule', editingId ? 'Редактировать занятие' : 'Добавить занятие', '📅',
                         <ScheduleForm

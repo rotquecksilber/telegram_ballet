@@ -40,6 +40,22 @@ telegram: `${API_URL}/telegram/send`,
     userBookingsByTg: (tgId: string | number) =>
         `${API_URL}/bookings/user/${tgId}`,
     usersWithSubs: `${API_URL}/users/with-subscriptions`,
+
+    // Stats
+    statsSnapshot: `${API_URL}/stats/snapshot`,
+    statsTimeseries: (groupBy: 'day' | 'week' | 'month', from?: string, to?: string) => {
+        const params = new URLSearchParams({ groupBy });
+        if (from) params.set('from', from);
+        if (to) params.set('to', to);
+        return `${API_URL}/stats/timeseries?${params.toString()}`;
+    },
+    statsClasses: (from?: string, to?: string) => {
+        const params = new URLSearchParams();
+        if (from) params.set('from', from);
+        if (to) params.set('to', to);
+        const qs = params.toString();
+        return `${API_URL}/stats/classes${qs ? `?${qs}` : ''}`;
+    },
 };
 
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
