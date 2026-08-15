@@ -15,17 +15,31 @@ it only adds what Telegram doesn't: typography, semantic accents, spacing,
 card edges.
 
 ## Typography
-- Display: **Fraunces**, weight 600 (semibold), roman only — headings, lesson
-  names, big numbers (time, counts, stats). Tight tracking (-0.01em to -0.02em).
-  No italic on headings — italic is an AI tell on headers; if ever used, only
-  inside running body copy.
-- Body: **IBM Plex Sans**, weight 400/600 — all UI text: buttons, labels,
+- Display: **Cormorant Garamond**, weight 600, roman only — headings, lesson
+  names, big numbers (time, counts, stats). No italic on headings — italic is
+  an AI tell on headers; if ever used, only inside running body copy.
+- Body: **EB Garamond**, weight 400/600 — all UI text: buttons, labels,
   list rows, hints. Replaces the system-ui stack everywhere.
-- No third/outlier face. Fraunces carries numerals too (tabular-nums) instead
-  of a separate mono face — keeps the pairing to two families, per the 2+1 rule.
+- Both classical serifs, one register — deliberate, not a serif+sans/serif+mono
+  contrast pairing. No third/outlier face; Cormorant carries numerals too
+  (tabular-nums) instead of a separate mono face.
 - Weight contrast: body 400, headings 600/700 — never both at the same weight.
+- (Superseded pick: Fraunces + IBM Plex Sans — read as "chujerodno"/artisan-café,
+  not balletic. Replaced.)
 
 ## Colour
+Fixed brand palette — **no longer derived from Telegram's `--tg-theme-*`
+variables**. Every user sees the same app regardless of their Telegram theme
+(including wild third-party ones). Light and dark variants ship as our own
+tokens, switching on the device's `prefers-color-scheme`, not Telegram's
+theme picker:
+- `--color-paper` / `--color-paper-2` — warm ivory (light) / warm charcoal
+  (dark) surfaces, same hue anchor as the accent.
+- `--color-ink` / `--color-hint` — text, tinted toward the anchor hue per
+  color.md (never pure black/white).
+- `--color-card-edge` — always-visible card border, independent of paper vs
+  paper-2 contrast.
+
 Semantic accent set is functional, not decorative — do not restyle per page:
 - `--color-accent` (blue) — primary actions, links, active state
 - `--color-success` (green) — attended, confirmed
@@ -33,10 +47,6 @@ Semantic accent set is functional, not decorative — do not restyle per page:
 - `--color-warning` (orange) — expiring, needs attention
 - `--color-purple` — advanced level tag, popularity rank
 - `--color-accent-deep` — solid hero surfaces (e.g. subscription card), never gradient
-
-Paper/ink come from `--tg-theme-*` (Telegram's own theme). No page invents its
-own surface colour. Card separation uses `--color-card-edge` (adapts to the
-active Telegram theme) — never relies on bg-vs-secondary-bg contrast alone.
 
 ## Spacing / radius / motion
 4pt scale (`--space-*`), radius scale (`--radius-sm/md/lg/pill`), two eases

@@ -5,7 +5,7 @@
 
 .schedule-container {
     padding: var(--space-md);
-    background: var(--tg-theme-secondary-bg-color, #f0f0f2);
+    background: var(--color-paper-2);
     min-height: 100vh;
 }
 
@@ -29,14 +29,14 @@
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin: var(--space-lg) 0 var(--space-xs) var(--space-3xs);
     letter-spacing: 0.5px;
 }
 
 /* Карточка занятия */
 .lesson-card {
-    background: var(--tg-theme-bg-color, #ffffff);
+    background: var(--color-paper);
     border: 1px solid var(--color-card-edge);
     border-radius: var(--radius-lg);
     padding: var(--space-md);
@@ -66,14 +66,14 @@
     font-size: 19px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
 }
 
 .time-end {
     font-family: var(--font-display);
     font-size: 0.75em;
     font-variant-numeric: tabular-nums;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
 }
 
 .info-col {
@@ -94,7 +94,7 @@
 
 .teacher-name {
     font-size: 13px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-bottom: var(--space-xs);
 }
 
@@ -122,8 +122,8 @@
 
 /* Кнопка */
 .book-btn {
-    background: var(--tg-theme-button-color, var(--color-accent));
-    color: var(--tg-theme-button-text-color, #ffffff);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
     border: none;
     width: 100%;
     padding: var(--space-sm);
@@ -143,8 +143,8 @@
 }
 
 .book-btn.disabled {
-    background: var(--tg-theme-secondary-bg-color, #e0e0e0);
-    color: var(--tg-theme-hint-color, #a0a0a0);
+    background: var(--color-paper-2);
+    color: var(--color-hint);
     cursor: not-allowed;
     opacity: 1;
 }

@@ -50,18 +50,18 @@ export const TeacherManager = ({ allUsers, teachers, selectedUserId, setSelected
                             maxHeight: '300px',
                             overflowY: 'auto',
                             marginTop: '8px',
-                            border: '1px solid var(--tg-theme-hint-color)',
+                            border: '1px solid var(--color-hint)',
                             borderRadius: '8px',
-                            background: 'var(--tg-theme-secondary-bg-color)'
+                            background: 'var(--color-paper-2)'
                         }}>
                             {filteredUsers.length > 0 ? filteredUsers.map(u => (
                                 <div
                                     key={u.id}
                                     className="user-row"
-                                    style={{ padding: '12px', borderBottom: '1px solid var(--tg-theme-hint-color)', cursor: 'pointer' }}
+                                    style={{ padding: '12px', borderBottom: '1px solid var(--color-hint)', cursor: 'pointer' }}
                                     onClick={() => setSelectedUserId(String(u.id))}
                                 >
-                                    <div style={{ fontWeight: 600, color: 'var(--tg-theme-text-color)' }}>
+                                    <div style={{ fontWeight: 600, color: 'var(--color-ink)' }}>
                                         {u.first_name} {u.last_name || `(@${u.username})`}
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@ export const TeacherManager = ({ allUsers, teachers, selectedUserId, setSelected
                 </div>
             ) : (
                 <div className="input-group">
-                    <div className="selected-user-badge" style={{ background: 'var(--tg-theme-secondary-bg-color)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', flex: 1 }}>
+                    <div className="selected-user-badge" style={{ background: 'var(--color-paper-2)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', flex: 1 }}>
                         <span>Ученик: <b>{selectedUser.first_name} {selectedUser.last_name}</b></span>
                         <button className="btn-text" onClick={() => { setSelectedUserId(''); setSearch('') }}>Изменить</button>
                     </div>

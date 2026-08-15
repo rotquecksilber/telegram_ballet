@@ -283,7 +283,7 @@ export const Profile = ({ onRegisterSuccess }: ProfileProps) => {
             'linear-gradient(135deg, #007CF0 0%, #00DFD8 100%)',
             'linear-gradient(135deg, #FAD961 0%, #F76B1C 100%)',
             'linear-gradient(135deg, #43E97B 0%, #38F9D7 100%)',
-            'var(--tg-theme-button-color)'
+            'var(--color-accent)'
         ]
         const colorIdx = t.milestones.findIndex(m => m.count === milestone.count)
         return { label: milestone.label, color: colors[colorIdx] }

@@ -449,21 +449,21 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                                                 maxHeight: '300px',
                                                 overflowY: 'auto',
                                                 marginTop: '8px',
-                                                border: '1px solid var(--tg-theme-hint-color)',
+                                                border: '1px solid var(--color-hint)',
                                                 borderRadius: '8px',
-                                                background: 'var(--tg-theme-secondary-bg-color)'
+                                                background: 'var(--color-paper-2)'
                                             }}>
                                                 {filteredCustomers.length > 0 ? filteredCustomers.map(u => (
                                                     <div
                                                         key={u.id}
                                                         className="user-row"
-                                                        style={{ padding: '12px', borderBottom: '1px solid var(--tg-theme-hint-color)', cursor: 'pointer' }}
+                                                        style={{ padding: '12px', borderBottom: '1px solid var(--color-hint)', cursor: 'pointer' }}
                                                         onClick={() => setSelectedCustomerId(String(u.telegram_id))}
                                                     >
-                                                        <div style={{ fontWeight: 600, color: 'var(--tg-theme-text-color)' }}>
+                                                        <div style={{ fontWeight: 600, color: 'var(--color-ink)' }}>
                                                             {u.first_name} {u.last_name}
                                                         </div>
-                                                        <div style={{ fontSize: '12px', color: 'var(--tg-theme-hint-color)' }}>
+                                                        <div style={{ fontSize: '12px', color: 'var(--color-hint)' }}>
                                                             {u.phone}
                                                         </div>
                                                     </div>
@@ -476,7 +476,7 @@ export const AdminDashboard = ({ viewMode = 'full' }: AdminDashboardProps) => {
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="selected-user-badge" style={{ background: 'var(--tg-theme-secondary-bg-color)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                                    <div className="selected-user-badge" style={{ background: 'var(--color-paper-2)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between' }}>
                                         <span>Ученик: <b>{selectedCustomer.first_name} {selectedCustomer.last_name}</b></span>
                                         <button className="btn-text" onClick={() => { setSelectedCustomerId(''); setCustomerSearch('') }}>Изменить</button>
                                     </div>

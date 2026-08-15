@@ -1,14 +1,26 @@
 /* Hallmark · genre: editorial · design-system: design.md · designed-as-app
  * Design tokens — single source of truth for the ballet studio Mini App.
- * Telegram supplies the paper/ink layer natively via --tg-theme-* (light/dark follow
- * the user's Telegram theme automatically). These tokens only cover what Telegram
- * doesn't: typography, the semantic accent set, spacing, radius and motion — so
- * every screen stops inventing its own font/blue/green/red.
+ *
+ * This app used to inherit paper/ink from Telegram's own --tg-theme-* variables
+ * (so it matched whatever theme — including wild third-party ones — the viewer
+ * had set in Telegram). By request, that's gone: the app now ships its own
+ * fixed light/dark palette below, so every user sees the same brand regardless
+ * of their Telegram theme. `--tg-theme-*` variables are no longer read anywhere.
  */
 :root {
-  /* Typography — Fraunces (display + numerals) / IBM Plex Sans (body, UI) */
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
-  --font-body:    "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Typography — Cormorant Garamond (display + numerals) / EB Garamond (body, UI).
+     Both classical serifs, one family register — deliberately un-technical,
+     matches the balletic/editorial tone the whole app is built around. */
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-body:    "EB Garamond", ui-serif, Georgia, serif;
+
+  /* Paper/ink — our own fixed palette (light). Warm ivory anchor, ties into
+     the same hue family as the accent so neutrals don't read cold/generic. */
+  --color-paper:        oklch(97% 0.010 60);
+  --color-paper-2:       oklch(93% 0.012 60);
+  --color-ink:           oklch(24% 0.014 50);
+  --color-hint:          oklch(52% 0.014 50);
+  --color-separator:     oklch(88% 0.010 50);
 
   /* Semantic accents — OKLCH, one hue each, no near-duplicates */
   --color-accent:        oklch(58% 0.19 258); /* primary actions, links, active state */
@@ -26,17 +38,11 @@
   --fill-warning: oklch(75% 0.16  70 / 16%);
   --fill-purple:  oklch(58% 0.18 305 / 12%);
 
-  /* Neutral utility tokens (Telegram theme vars cover paper/ink; these fill the gaps) */
+  /* Neutral utility tokens */
   --color-border:      oklch(0% 0 0 / 8%);
   --color-border-soft: oklch(0% 0 0 / 5%);
   --color-shadow:      oklch(0% 0 0 / 6%);
-
-  /* Card edge that stays visible regardless of the user's Telegram colour theme.
-     hint-color is guaranteed readable against both bg and secondary-bg in every
-     Telegram theme, so mixing it in at low strength gives a border that adapts
-     automatically instead of relying on bg vs secondary-bg contrast (which some
-     themes set nearly identical). */
-  --color-card-edge: rgba(0, 0, 0, 0.08);
+  --color-card-edge:   oklch(24% 0.014 50 / 14%);
 
   /* 4pt spacing scale */
   --space-3xs: 0.25rem;
@@ -57,12 +63,26 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 120ms;
   --dur-short: 200ms;
-
 }
 
-@supports (color: color-mix(in oklch, red, blue)) {
+/* Dark palette — follows the *device's* light/dark setting, not Telegram's
+   theme picker. Same hue anchors, only lightness/chroma move (color.md dark
+   mode recipe): never pure black, elevation via lightness not shadow. */
+@media (prefers-color-scheme: dark) {
   :root {
-    --color-card-edge: color-mix(in oklch, var(--tg-theme-hint-color, #999999) 30%, transparent);
+    --color-paper:      oklch(16% 0.012 50);
+    --color-paper-2:    oklch(20% 0.014 50);
+    --color-ink:        oklch(94% 0.008 50);
+    --color-hint:       oklch(66% 0.012 50);
+    --color-separator:  oklch(32% 0.012 50);
+    --color-card-edge:  oklch(94% 0.008 50 / 12%);
+
+    --color-accent:      oklch(66% 0.17 258);
+    --color-accent-deep: oklch(40% 0.15 258);
+    --color-success:     oklch(72% 0.15 152);
+    --color-danger:      oklch(68% 0.19  25);
+    --color-warning:     oklch(78% 0.14  70);
+    --color-purple:      oklch(66% 0.16 305);
   }
 }
 

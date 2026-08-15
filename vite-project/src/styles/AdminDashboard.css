@@ -2,7 +2,7 @@
 /* --- ОСНОВНОЙ КОНТЕЙНЕР --- */
 .admin-container {
     padding: 20px 16px 120px;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     min-height: 100vh;
 }
 
@@ -12,7 +12,7 @@
     font-weight: 600;
     letter-spacing: -0.01em;
     margin-bottom: 24px;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
 }
 
 /* --- СЕКЦИИ И АККОРДЕОН --- */
@@ -40,14 +40,14 @@
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     letter-spacing: 0.5px;
     margin: 0;
 }
 
 .arrow {
     font-size: 18px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     transition: transform 0.3s ease;
 }
 
@@ -57,7 +57,7 @@
 
 /* --- КАРТОЧКИ (ФОРМЫ) --- */
 .admin-card {
-    background: var(--tg-theme-bg-color);
+    background: var(--color-paper);
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -84,14 +84,14 @@
 
 .field label {
     font-size: 12px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-left: 4px;
     font-weight: 600;
 }
 
 .date-input, .time-input, .main-form select, select, input {
-    background: var(--tg-theme-bg-color) !important;
-    color: var(--tg-theme-text-color) !important;
+    background: var(--color-paper) !important;
+    color: var(--color-ink) !important;
     border: 1px solid rgba(0,0,0,0.05);
     padding: 14px;
     border-radius: 12px;
@@ -122,8 +122,8 @@
 .confirm-btn {
     width: 100%;
     padding: 16px;
-    background: var(--tg-theme-button-color);
-    color: var(--tg-theme-button-text-color, white);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
     border: none;
     border-radius: 16px;
     font-size: 16px;
@@ -132,7 +132,7 @@
 }
 
 .action-btn {
-    background: var(--tg-theme-button-color);
+    background: var(--color-accent);
     color: white;
     border: none;
     padding: 0 16px;
@@ -144,8 +144,8 @@
 .btn-secondary {
     width: 100%;
     background: transparent;
-    color: var(--tg-theme-hint-color);
-    border: 1px solid var(--tg-theme-hint-color);
+    color: var(--color-hint);
+    border: 1px solid var(--color-hint);
     padding: 10px;
     border-radius: 12px;
     margin-top: 8px;
@@ -161,7 +161,7 @@
 }
 
 .admin-date-group {
-    border-left: 2px solid var(--tg-theme-button-color, var(--color-accent));
+    border-left: 2px solid var(--color-accent);
     padding-left: 12px;
 }
 
@@ -169,7 +169,7 @@
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-bottom: 10px;
     letter-spacing: 0.5px;
 }
@@ -178,7 +178,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--tg-theme-secondary-bg-color, #f0f0f2);
+    background: var(--color-paper-2);
     padding: 12px 16px;
     border-radius: 12px;
     margin-bottom: 8px;
@@ -202,7 +202,7 @@
     font-family: var(--font-display);
     font-size: 16px;
     font-weight: 800;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     min-width: 45px;
 }
 
@@ -214,12 +214,12 @@
 
 .admin-item-text strong {
     font-size: 15px;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
 }
 
 .admin-item-teacher {
     font-size: 12px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
 }
 
 .badge-cancelled {
@@ -249,11 +249,11 @@
     border: none;
     cursor: pointer;
     font-size: 18px;
-    background: var(--tg-theme-bg-color, #fff);
+    background: var(--color-paper);
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.btn-icon.edit { color: var(--tg-theme-button-color); }
+.btn-icon.edit { color: var(--color-accent); }
 .btn-icon.cancel { color: #ff9500; }
 .btn-icon.delete { color: var(--color-danger); }
 
@@ -267,7 +267,7 @@
 }
 
 .modern-tag {
-    background: var(--tg-theme-button-color);
+    background: var(--color-accent);
     color: white;
     padding: 5px 12px;
     border-radius: 8px;
@@ -276,18 +276,18 @@
 }
 
 .teacher-chip {
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 13px;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     border: 1px solid rgba(0,0,0,0.05);
 }
 
 .duration-tabs {
     display: flex;
     gap: 8px;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     padding: 4px;
     border-radius: 12px;
     margin-bottom: 14px;
@@ -298,7 +298,7 @@
     padding: 10px;
     border: none;
     background: transparent;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 600;
     border-radius: 10px;
@@ -307,14 +307,14 @@
 }
 
 .duration-tab.active {
-    background: var(--tg-theme-bg-color);
-    color: var(--tg-theme-button-color);
+    background: var(--color-paper);
+    color: var(--color-accent);
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .end-time-display {
     font-size: 13px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-top: -8px;
     margin-bottom: 14px;
     padding-left: 4px;
@@ -342,7 +342,7 @@
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     letter-spacing: 0.5px;
     margin-left: 4px;
 }
@@ -375,7 +375,7 @@
     font-size: 14px;
     font-weight: 600;
     background: transparent;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -384,15 +384,15 @@
 
 /* Активный сегмент (выбранный) */
 .duration-segment.active {
-    background: var(--tg-theme-bg-color); /* Белый или фоновый цвет темы */
-    color: var(--tg-theme-button-color);
+    background: var(--color-paper); /* Белый или фоновый цвет темы */
+    color: var(--color-accent);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 /* Подсказка со временем окончания */
 .end-time-hint {
     font-size: 13px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     text-align: center;
     margin-top: 4px;
     padding: 4px;
@@ -401,7 +401,7 @@
 }
 
 .end-time-hint b {
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     font-weight: 700;
 }
 
@@ -423,7 +423,7 @@
     align-items: center;
     gap: 12px; /* Расстояние между текстом и кнопками */
     padding: 12px;
-    background: var(--tg-theme-bg-color);
+    background: var(--color-paper);
     border: 1px solid var(--color-card-edge);
     border-radius: 12px;
     margin-bottom: 8px;
@@ -451,12 +451,12 @@
     font-family: var(--font-display);
     font-size: 15px;
     font-weight: 800;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
 }
 
 .admin-item-endtime {
     font-size: 10px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-top: -2px;
 }
 
@@ -476,7 +476,7 @@
 
 .teacher-name {
     font-size: 12px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
 }
 
 /* Правая часть: Кнопки */
@@ -491,7 +491,7 @@
     height: 32px;
     border-radius: 8px;
     border: none;
-    background: var(--tg-theme-bg-color);
+    background: var(--color-paper);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -522,14 +522,14 @@
     font-family: var(--font-display);
     font-size: 15px;
     font-weight: 800;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     line-height: 1.1;
 }
 
 .admin-item-endtime {
     font-size: 11px;
     font-weight: 500;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-top: 2px;
 }
 
@@ -562,8 +562,8 @@
     padding: 12px;
     border-radius: 10px;
     border: 1px solid rgba(0,0,0,0.1);
-    background: var(--tg-theme-secondary-bg-color);
-    color: var(--tg-theme-text-color);
+    background: var(--color-paper-2);
+    color: var(--color-ink);
     margin-bottom: 12px;
 }
 
@@ -571,7 +571,7 @@
     max-height: 200px;
     overflow-y: auto;
     border-radius: 10px;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
 }
 
 .user-row {
@@ -584,20 +584,20 @@
 
 .user-row:active { background: rgba(0,0,0,0.05); }
 
-.user-phone-hint { font-size: 11px; color: var(--tg-theme-hint-color); }
+.user-phone-hint { font-size: 11px; color: var(--color-hint); }
 
 .selected-user-badge {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     padding: 10px 14px;
     border-radius: 10px;
     margin-bottom: 20px;
     font-size: 14px;
 }
 
-.btn-text { background: none; border: none; color: var(--tg-theme-button-color); font-weight: 600; }
+.btn-text { background: none; border: none; color: var(--color-accent); font-weight: 600; }
 
 /* Сетка занятий: 5 колонок, текст по центру */
 .lessons-grid-smart {
@@ -608,9 +608,9 @@
 }
 
 .opt-btn {
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     border: 1px solid rgba(0,0,0,0.05);
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     padding: 10px 0;
     border-radius: 8px;
     font-weight: 700;
@@ -618,18 +618,18 @@
 }
 
 .opt-btn.active {
-    background: var(--tg-theme-button-color);
-    color: var(--tg-theme-button-text-color);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
 }
 
 .opt-input {
     width: 100%;
     border-radius: 8px;
     border: 1px solid rgba(0,0,0,0.1);
-    background: var(--tg-theme-bg-color);
+    background: var(--color-paper);
     text-align: center;
     font-weight: 700;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
 }
 
 /* Быстрые табы для дат и заморозки */
@@ -646,12 +646,12 @@
     background: rgba(0,0,0,0.03);
     border: 1px solid rgba(0,0,0,0.05);
     border-radius: 6px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
 }
 
 .tab-btn.active {
-    border-color: var(--tg-theme-button-color);
-    color: var(--tg-theme-button-color);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
     background: transparent;
 }
 
@@ -660,8 +660,8 @@
     padding: 10px;
     border-radius: 8px;
     border: 1px solid rgba(0,0,0,0.1);
-    background: var(--tg-theme-bg-color);
-    color: var(--tg-theme-text-color);
+    background: var(--color-paper);
+    color: var(--color-ink);
 }
 
 /* Секция заморозки */
@@ -688,7 +688,7 @@
 /* Сегментированные табы (как в iOS) */
 .segmented-control {
     display: flex;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     padding: 3px;
     border-radius: 10px;
     margin-bottom: 8px;
@@ -702,14 +702,14 @@
     padding: 8px 0;
     font-size: 13px;
     font-weight: 600;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     border-radius: 8px;
     transition: all 0.2s ease;
 }
 
 .segment-btn.active, .segment-btn:focus {
-    background: var(--tg-theme-bg-color);
-    color: var(--tg-theme-button-color);
+    background: var(--color-paper);
+    color: var(--color-accent);
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
@@ -759,7 +759,7 @@
 }
 
 input:checked + .slider {
-    background-color: var(--tg-theme-button-color);
+    background-color: var(--color-accent);
 }
 
 input:checked + .slider:before {
@@ -795,7 +795,7 @@ input:checked + .slider:before {
     width: 50px;
     height: 46px;
     border-radius: 8px;
-    border: 2px solid var(--tg-theme-secondary-bg-color);
+    border: 2px solid var(--color-paper-2);
     font-size: 16px;
 }
 .sub-footer-info {
@@ -831,7 +831,7 @@ input:checked + .slider:before {
 .subscription-skeleton {
     width: 100%;
     height: 160px; /* Примерная высота твоей карточки */
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     border-radius: 20px;
     margin-bottom: 24px;
     position: relative;
@@ -861,14 +861,14 @@ input:checked + .slider:before {
     to { opacity: 1; transform: translateY(0); }
 }
 .lesson-booking-group {
-    background: var(--tg-theme-bg-color);
+    background: var(--color-paper);
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 12px;
     margin-bottom: 12px;
 }
 .lesson-mini-header {
     padding: 10px 12px;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     display: flex;
     justify-content: space-between;
     font-size: 14px;
@@ -883,7 +883,7 @@ input:checked + .slider:before {
 }
 .user-info { display: flex; flex-direction: column; }
 .user-name { font-weight: 600; font-size: 14px; }
-.user-phone { font-size: 12px; color: var(--tg-theme-hint-color); }
+.user-phone { font-size: 12px; color: var(--color-hint); }
 
 .debit-btn {
     border: none;
@@ -905,7 +905,7 @@ input:checked + .slider:before {
 .toggle-cancelled {
     background: none;
     border: none;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     font-size: 11px;
     text-decoration: underline;
     cursor: pointer;
@@ -925,20 +925,20 @@ input:checked + .slider:before {
 .status-label {
     font-size: 10px;
     text-transform: uppercase;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
 }
 .cancelled-divider {
     padding: 8px 12px;
     background: rgba(0,0,0,0.05);
     font-size: 11px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     text-transform: uppercase;
     font-weight: bold;
 }
 
 .cancelled-row {
     opacity: 0.6;
-    background: var(--tg-theme-bg-color);
+    background: var(--color-paper);
 }
 
 .debit-btn {
@@ -992,7 +992,7 @@ input:checked + .slider:before {
 .tg-hint {
     padding: 30px;
     text-align: center;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     font-size: 14px;
     font-style: italic;
 }
@@ -1004,7 +1004,7 @@ input:checked + .slider:before {
 
 /* Для красоты: если запись отменена, делаем её чуть менее заметной */
 .booking-admin-row.cancelled {
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     opacity: 0.6;
 }
 
@@ -1027,7 +1027,7 @@ input:checked + .slider:before {
     height: 34px;
     border-radius: 8px;
     border: 1px solid rgba(0,0,0,0.05);
-    background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+    background: var(--color-paper-2);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1075,7 +1075,7 @@ input:checked + .slider:before {
 
 /* Группа одного занятия */
 .lesson-booking-group {
-    background: var(--tg-theme-bg-color, #ffffff);
+    background: var(--color-paper);
     border-radius: 16px;
     margin-bottom: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -1085,7 +1085,7 @@ input:checked + .slider:before {
 
 /* Заголовок занятия (Время — Направление) */
 .lesson-mini-header {
-    background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+    background: var(--color-paper-2);
     padding: 12px 16px;
     display: flex;
     justify-content: space-between;
@@ -1095,11 +1095,11 @@ input:checked + .slider:before {
 
 .lesson-mini-header strong {
     font-size: 16px;
-    color: var(--tg-theme-text-color, #222);
+    color: var(--color-ink);
 }
 
 .count-badge {
-    background: var(--tg-theme-button-color, var(--color-accent));
+    background: var(--color-accent);
     color: #fff;
     padding: 2px 10px;
     border-radius: 20px;
@@ -1213,8 +1213,8 @@ input:checked + .slider:before {
     border: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 16px;
     font-family: inherit;
-    background: var(--tg-theme-secondary-bg-color, #f2f2f7);
-    color: var(--tg-theme-text-color);
+    background: var(--color-paper-2);
+    color: var(--color-ink);
     outline: none;
 }
 .freeze-grid {
@@ -1273,7 +1273,7 @@ input:checked + .slider:before {
 .sub-date { font-size: 12px; color: #666; }
 .freeze-manager-container {
     padding: 16px;
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--color-paper);
     min-height: 100vh;
 }
 
@@ -1281,14 +1281,14 @@ input:checked + .slider:before {
 .section-title {
     font-size: 13px;
     text-transform: uppercase;
-    color: var(--tg-theme-hint-color, #999);
+    color: var(--color-hint);
     margin: 20px 0 8px 8px;
     font-weight: 500;
 }
 
 /* Карточка пользователя */
 .freeze-user-card {
-    background-color: var(--tg-theme-secondary-bg-color, #efeff4);
+    background-color: var(--color-paper-2);
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 12px;
@@ -1296,20 +1296,20 @@ input:checked + .slider:before {
 }
 
 .user-fio {
-    color: var(--tg-theme-text-color, #000);
+    color: var(--color-ink);
     font-size: 16px;
     font-weight: 600;
     display: block;
 }
 
 .user-phone-sub {
-    color: var(--tg-theme-hint-color, #707579);
+    color: var(--color-hint);
     font-size: 13px;
 }
 
 /* Строка абонемента внутри карточки */
 .sub-freeze-row {
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--color-paper);
     border-radius: 10px;
     padding: 10px 12px;
     margin-top: 8px;
@@ -1321,26 +1321,26 @@ input:checked + .slider:before {
 
 /* Стиль для замороженного состояния */
 .sub-freeze-row.is-frozen {
-    background-color: var(--tg-theme-secondary-bg-color, #f1f1f1);
-    outline: 1.5px solid var(--tg-theme-button-color, #2481cc);
+    background-color: var(--color-paper-2);
+    outline: 1.5px solid var(--color-accent);
 }
 
 .sub-title {
-    color: var(--tg-theme-text-color, #000);
+    color: var(--color-ink);
     font-size: 14px;
     font-weight: 500;
 }
 
 .sub-date {
-    color: var(--tg-theme-hint-color, #707579);
+    color: var(--color-hint);
     font-size: 12px;
     display: block;
 }
 
 .used-days-tag {
     font-size: 11px;
-    background-color: var(--tg-theme-secondary-bg-color, #f4f4f7);
-    color: var(--tg-theme-hint-color, #707579);
+    background-color: var(--color-paper-2);
+    color: var(--color-hint);
     padding: 2px 6px;
     border-radius: 4px;
     margin-left: 8px;
@@ -1360,20 +1360,20 @@ input:checked + .slider:before {
 }
 
 .btn-freeze {
-    background-color: var(--tg-theme-secondary-bg-color, #ebedf0);
-    color: var(--tg-theme-button-color, #2481cc);
+    background-color: var(--color-paper-2);
+    color: var(--color-accent);
 }
 
 .btn-unfreeze {
-    background-color: var(--tg-theme-button-color, #2481cc);
-    color: var(--tg-theme-button-text-color, #fff);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
 }
 
 /* Поле поиска */
 .admin-search-input {
     width: 100%;
-    background-color: var(--tg-theme-secondary-bg-color, #efeff4);
-    color: var(--tg-theme-text-color, #000);
+    background-color: var(--color-paper-2);
+    color: var(--color-ink);
     border: none;
     padding: 12px 16px;
     border-radius: 10px;
@@ -1382,22 +1382,22 @@ input:checked + .slider:before {
 }
 
 .admin-search-input::placeholder {
-    color: var(--tg-theme-hint-color, #999);
+    color: var(--color-hint);
 }
 .freeze-manager-tg {
     padding: 8px 16px 30px 16px;
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--color-paper);
 }
 
 .tg-section-label {
     font-size: 13px;
-    color: var(--tg-theme-hint-color, #8e8e93);
+    color: var(--color-hint);
     margin: 24px 8px 8px 8px;
     font-weight: 500;
 }
 
 .tg-user-card {
-    background-color: var(--tg-theme-secondary-bg-color, #f0f0f2);
+    background-color: var(--color-paper-2);
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 12px;
@@ -1409,17 +1409,17 @@ input:checked + .slider:before {
 }
 
 .tg-text-main {
-    color: var(--tg-theme-text-color, #000);
+    color: var(--color-ink);
     font-weight: 600;
 }
 
 .tg-text-hint {
-    color: var(--tg-theme-hint-color, #8e8e93);
+    color: var(--color-hint);
     display: block;
 }
 
 .tg-sub-row {
-    background-color: var(--tg-theme-bg-color, #fff);
+    background-color: var(--color-paper);
     border-radius: 10px;
     padding: 12px;
     display: flex;
@@ -1429,8 +1429,8 @@ input:checked + .slider:before {
 }
 
 .tg-sub-row.is-frozen {
-    border: 1px solid var(--tg-theme-button-color, #2481cc);
-    background-color: var(--tg-theme-bg-color);
+    border: 1px solid var(--color-accent);
+    background-color: var(--color-paper);
 }
 
 .sub-top-line {
@@ -1441,8 +1441,8 @@ input:checked + .slider:before {
 
 .tg-freeze-badge {
     font-size: 10px;
-    background-color: var(--tg-theme-secondary-bg-color, #f0f0f2);
-    color: var(--tg-theme-hint-color);
+    background-color: var(--color-paper-2);
+    color: var(--color-hint);
     padding: 2px 6px;
     border-radius: 6px;
     font-weight: bold;
@@ -1464,26 +1464,26 @@ input:checked + .slider:before {
 .tg-action-button:active { transform: scale(0.9); }
 
 .tg-action-button.freeze {
-    background-color: var(--tg-theme-secondary-bg-color);
-    color: var(--tg-theme-button-color);
+    background-color: var(--color-paper-2);
+    color: var(--color-accent);
 }
 
 .tg-action-button.unfreeze {
-    background-color: var(--tg-theme-button-color);
-    color: var(--tg-theme-button-text-color, #fff);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
 }
 
 .tg-empty-hint {
     text-align: center;
     padding: 40px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     font-size: 14px;
 }
 
 /* Контейнер всей вкладки */
 .freeze-manager-tg {
     padding: 10px 0;
-    background-color: var(--tg-theme-bg-color, #ffffff);
+    background-color: var(--color-paper);
 }
 
 /* Заголовки секций (СЕЙЧАС НА ПАУЗЕ и т.д.) */
@@ -1491,13 +1491,13 @@ input:checked + .slider:before {
     font-size: 13px;
     font-weight: 500;
     text-transform: uppercase;
-    color: var(--tg-theme-hint-color, #707579);
+    color: var(--color-hint);
     margin: 20px 16px 8px;
 }
 
 /* Карточка ученика */
 .tg-user-card {
-    background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+    background-color: var(--color-paper-2);
     border-radius: 12px;
     padding: 12px;
     margin: 0 16px 12px;
@@ -1508,19 +1508,19 @@ input:checked + .slider:before {
 }
 
 .tg-text-main {
-    color: var(--tg-theme-text-color, #000000);
+    color: var(--color-ink);
     font-weight: 600;
     display: block;
 }
 
 .tg-text-hint {
-    color: var(--tg-theme-hint-color, #707579);
+    color: var(--color-hint);
     display: block;
 }
 
 /* Строка с абонементом */
 .tg-sub-row {
-    background-color: var(--tg-theme-bg-color, #ffffff);
+    background-color: var(--color-paper);
     border-radius: 10px;
     padding: 10px 12px;
     display: flex;
@@ -1530,7 +1530,7 @@ input:checked + .slider:before {
 }
 
 .tg-sub-row.is-frozen {
-    border: 1px solid var(--tg-theme-button-color, #2481cc);
+    border: 1px solid var(--color-accent);
 }
 
 /* Кнопка действия */
@@ -1547,13 +1547,13 @@ input:checked + .slider:before {
 }
 
 .tg-action-button.freeze {
-    background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
-    color: var(--tg-theme-button-color, #2481cc);
+    background-color: var(--color-paper-2);
+    color: var(--color-accent);
 }
 
 .tg-action-button.unfreeze {
-    background-color: var(--tg-theme-button-color, #2481cc);
-    color: var(--tg-theme-button-text-color, #ffffff);
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
 }
 
 /* Маленький бейдж с днями (0/7 дн.) */
@@ -1561,8 +1561,8 @@ input:checked + .slider:before {
     font-size: 11px;
     padding: 2px 6px;
     border-radius: 6px;
-    background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
-    color: var(--tg-theme-hint-color, #707579);
+    background-color: var(--color-paper-2);
+    color: var(--color-hint);
     font-weight: bold;
 }
 
@@ -1571,7 +1571,7 @@ input:checked + .slider:before {
     flex-direction: column;
 }
 .confirm-btn-small {
-    background: var(--tg-theme-button-color, #2481cc);
+    background: var(--color-accent);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -1590,7 +1590,7 @@ input:checked + .slider:before {
 .tg-empty-hint {
     text-align: center;
     padding: 40px 20px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     font-style: italic;
 }
 
@@ -1611,7 +1611,7 @@ input:checked + .slider:before {
 }
 
 .stat-card {
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     border: 1px solid var(--color-card-edge);
     border-radius: 14px;
     padding: 14px;
@@ -1640,13 +1640,13 @@ input:checked + .slider:before {
     font-size: 25px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     line-height: 1.1;
 }
 
 .stat-label {
     font-size: 11px;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-top: 4px;
     line-height: 1.3;
 }
@@ -1654,7 +1654,7 @@ input:checked + .slider:before {
 .stats-section-title {
     font-size: 13px;
     font-weight: 700;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     margin: 20px 0 10px;
 }
 
@@ -1668,7 +1668,7 @@ input:checked + .slider:before {
 .stats-totals-row {
     display: flex;
     justify-content: space-between;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     border-radius: 12px;
     padding: 12px 10px;
     margin-bottom: 14px;
@@ -1685,7 +1685,7 @@ input:checked + .slider:before {
 
 .stats-totals-row .item b {
     font-size: 16px;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
 }
 
 /* Карточки по месяцам */
@@ -1696,7 +1696,7 @@ input:checked + .slider:before {
 }
 
 .stats-month-card {
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--color-paper-2);
     border: 1px solid var(--color-card-edge);
     border-radius: 12px;
     padding: 12px 14px;
@@ -1713,7 +1713,7 @@ input:checked + .slider:before {
     font-family: var(--font-display);
     font-size: 16px;
     font-weight: 600;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     text-transform: capitalize;
 }
 
@@ -1722,13 +1722,13 @@ input:checked + .slider:before {
     font-size: 19px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
-    color: var(--tg-theme-button-color, var(--color-accent));
+    color: var(--color-accent);
 }
 
 .stats-month-attended small {
     font-size: 11px;
     font-weight: 500;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
     margin-left: 3px;
 }
 
@@ -1742,7 +1742,7 @@ input:checked + .slider:before {
 
 .stats-bucket-bar-fill {
     height: 100%;
-    background: var(--tg-theme-button-color, var(--color-accent));
+    background: var(--color-accent);
     border-radius: 6px;
     transition: width 0.4s ease;
 }
@@ -1762,7 +1762,7 @@ input:checked + .slider:before {
 }
 
 .stats-chip--warn { background: rgba(255, 149, 0, 0.14); color: #ff9500; }
-.stats-chip--muted { background: rgba(120, 120, 128, 0.14); color: var(--tg-theme-hint-color); }
+.stats-chip--muted { background: rgba(120, 120, 128, 0.14); color: var(--color-hint); }
 .stats-chip--good { background: rgba(52, 199, 89, 0.14); color: var(--color-success); }
 .stats-chip--info { background: rgba(0, 122, 255, 0.12); color: var(--color-accent); }
 
@@ -1784,7 +1784,7 @@ input:checked + .slider:before {
     width: 20px;
     font-size: 12px;
     text-align: center;
-    color: var(--tg-theme-hint-color);
+    color: var(--color-hint);
 }
 
 .stats-class-name {
@@ -1792,7 +1792,7 @@ input:checked + .slider:before {
     flex-shrink: 0;
     font-size: 12px;
     font-weight: 500;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1817,7 +1817,7 @@ input:checked + .slider:before {
     flex-shrink: 0;
     font-size: 12px;
     font-weight: 700;
-    color: var(--tg-theme-text-color);
+    color: var(--color-ink);
     min-width: 20px;
     text-align: right;
 }

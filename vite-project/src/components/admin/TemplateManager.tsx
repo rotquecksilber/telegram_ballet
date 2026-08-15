@@ -125,7 +125,7 @@ export const TemplateManager = ({ classes, teachers, onUpdate }: Props) => {
 
             {/* Форма добавления (стиль как у создания занятия) */}
             <div className="admin-card mb-16"
-                 style={{padding: '12px', border: '1px solid var(--tg-theme-secondary-bg-color)'}}>
+                 style={{padding: '12px', border: '1px solid var(--color-paper-2)'}}>
                 <div className="field">
                     <label className="field-label-mini">Направление</label>
                     <select value={formData.class_id}

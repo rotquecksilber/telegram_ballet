@@ -73,9 +73,9 @@ export const ReturnLessonsManager = ({ users }: Props) => {
                         style={{
                             width: '100%',
                             boxSizing: 'border-box',
-                            background: 'var(--tg-theme-bg-color)',
-                            color: 'var(--tg-theme-text-color)',
-                            border: '1px solid var(--tg-theme-hint-color)'
+                            background: 'var(--color-paper)',
+                            color: 'var(--color-ink)',
+                            border: '1px solid var(--color-hint)'
                         }}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -87,21 +87,21 @@ export const ReturnLessonsManager = ({ users }: Props) => {
                             maxHeight: '300px',
                             overflowY: 'auto',
                             marginTop: '8px',
-                            border: '1px solid var(--tg-theme-hint-color)',
+                            border: '1px solid var(--color-hint)',
                             borderRadius: '8px',
-                            background: 'var(--tg-theme-secondary-bg-color)'
+                            background: 'var(--color-paper-2)'
                         }}>
                             {filteredUsers.length > 0 ? filteredUsers.map(u => (
                                 <div
                                     key={u.id}
                                     className="user-row"
-                                    style={{ padding: '12px', borderBottom: '1px solid var(--tg-theme-hint-color)', cursor: 'pointer' }}
+                                    style={{ padding: '12px', borderBottom: '1px solid var(--color-hint)', cursor: 'pointer' }}
                                     onClick={() => setSelectedUser(u)}
                                 >
-                                    <div style={{ fontWeight: 600, color: 'var(--tg-theme-text-color)' }}>
+                                    <div style={{ fontWeight: 600, color: 'var(--color-ink)' }}>
                                         {u.last_name} {u.first_name}
                                     </div>
-                                    <div style={{ fontSize: '12px', color: 'var(--tg-theme-hint-color)' }}>
+                                    <div style={{ fontSize: '12px', color: 'var(--color-hint)' }}>
                                         {u.phone}
                                     </div>
                                 </div>
@@ -115,7 +115,7 @@ export const ReturnLessonsManager = ({ users }: Props) => {
                 </div>
             ) : (
                 <div className="subscription-form-active animate-fade">
-                    <div className="selected-user-badge" style={{ background: 'var(--tg-theme-secondary-bg-color)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                    <div className="selected-user-badge" style={{ background: 'var(--color-paper-2)', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between' }}>
                         <span>Ученик: <b>{selectedUser.last_name}</b></span>
                         <button className="btn-text" onClick={() => setSelectedUser(null)}>Изменить</button>
                     </div>
@@ -149,7 +149,7 @@ export const ReturnLessonsManager = ({ users }: Props) => {
                                     onChange={e => setCount(Number(e.target.value))}
                                 />
                             </div>
-                            <div style={{ fontSize: '12px', color: 'var(--tg-theme-hint-color)', marginTop: '6px' }}>
+                            <div style={{ fontSize: '12px', color: 'var(--color-hint)', marginTop: '6px' }}>
                                 Срок действия абонемента не изменится.
                             </div>
                             <button
