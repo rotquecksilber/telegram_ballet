@@ -1,3 +1,4 @@
+/* Hallmark · genre: editorial · design-system: design.md · designed-as-app */
 /* --- ОСНОВНОЙ КОНТЕЙНЕР --- */
 .admin-container {
     padding: 20px 16px 120px;
@@ -6,8 +7,10 @@
 }
 
 .admin-header {
-    font-size: 24px;
-    font-weight: 800;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     margin-bottom: 24px;
     color: var(--tg-theme-text-color);
 }
@@ -58,7 +61,7 @@
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-card-edge, rgba(0, 0, 0, 0.05));
 }
 
 /* Идентификация раздела уже даёт иконка в заголовке аккордеона (📅 🎓 🩰 …) —
@@ -196,6 +199,7 @@
 }
 
 .admin-item-time {
+    font-family: var(--font-display);
     font-size: 16px;
     font-weight: 800;
     color: var(--tg-theme-text-color);
@@ -419,7 +423,8 @@
     align-items: center;
     gap: 12px; /* Расстояние между текстом и кнопками */
     padding: 12px;
-    background: var(--tg-theme-secondary-bg-color);
+    background: var(--tg-theme-bg-color);
+    border: 1px solid var(--color-card-edge);
     border-radius: 12px;
     margin-bottom: 8px;
 }
@@ -443,6 +448,7 @@
 }
 
 .admin-item-time {
+    font-family: var(--font-display);
     font-size: 15px;
     font-weight: 800;
     color: var(--tg-theme-text-color);
@@ -513,6 +519,7 @@
 }
 
 .admin-item-time {
+    font-family: var(--font-display);
     font-size: 15px;
     font-weight: 800;
     color: var(--tg-theme-text-color);
@@ -1605,6 +1612,7 @@ input:checked + .slider:before {
 
 .stat-card {
     background: var(--tg-theme-secondary-bg-color);
+    border: 1px solid var(--color-card-edge);
     border-radius: 14px;
     padding: 14px;
     position: relative;
@@ -1628,8 +1636,10 @@ input:checked + .slider:before {
 }
 
 .stat-value {
-    font-size: 24px;
-    font-weight: 800;
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
     color: var(--tg-theme-text-color);
     line-height: 1.1;
 }
@@ -1687,6 +1697,7 @@ input:checked + .slider:before {
 
 .stats-month-card {
     background: var(--tg-theme-secondary-bg-color);
+    border: 1px solid var(--color-card-edge);
     border-radius: 12px;
     padding: 12px 14px;
 }
@@ -1699,15 +1710,18 @@ input:checked + .slider:before {
 }
 
 .stats-month-name {
-    font-size: 14px;
-    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
     color: var(--tg-theme-text-color);
     text-transform: capitalize;
 }
 
 .stats-month-attended {
-    font-size: 17px;
-    font-weight: 800;
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
     color: var(--tg-theme-button-color, var(--color-accent));
 }
 

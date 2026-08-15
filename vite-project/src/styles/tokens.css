@@ -1,10 +1,15 @@
-/* Hallmark · design tokens — single source of truth for the ballet studio Mini App.
+/* Hallmark · genre: editorial · design-system: design.md · designed-as-app
+ * Design tokens — single source of truth for the ballet studio Mini App.
  * Telegram supplies the paper/ink layer natively via --tg-theme-* (light/dark follow
  * the user's Telegram theme automatically). These tokens only cover what Telegram
- * doesn't: the semantic accent set, spacing, radius and motion — so every screen
- * stops inventing its own blue/green/red.
+ * doesn't: typography, the semantic accent set, spacing, radius and motion — so
+ * every screen stops inventing its own font/blue/green/red.
  */
 :root {
+  /* Typography — Fraunces (display + numerals) / IBM Plex Sans (body, UI) */
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-body:    "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
   /* Semantic accents — OKLCH, one hue each, no near-duplicates */
   --color-accent:        oklch(58% 0.19 258); /* primary actions, links, active state */
   --color-accent-ink:    oklch(99% 0.01  258);
@@ -26,6 +31,13 @@
   --color-border-soft: oklch(0% 0 0 / 5%);
   --color-shadow:      oklch(0% 0 0 / 6%);
 
+  /* Card edge that stays visible regardless of the user's Telegram colour theme.
+     hint-color is guaranteed readable against both bg and secondary-bg in every
+     Telegram theme, so mixing it in at low strength gives a border that adapts
+     automatically instead of relying on bg vs secondary-bg contrast (which some
+     themes set nearly identical). */
+  --color-card-edge: rgba(0, 0, 0, 0.08);
+
   /* 4pt spacing scale */
   --space-3xs: 0.25rem;
   --space-2xs: 0.375rem;
@@ -46,10 +58,12 @@
   --dur-fast: 120ms;
   --dur-short: 200ms;
 
-  /* Numeric/display face — used only for time, counters, big stat numbers.
-     Kept off body copy so the app still reads as native Telegram chrome. */
-  --font-numeric: "Space Grotesk", var(--font-body-fallback);
-  --font-body-fallback: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@supports (color: color-mix(in oklch, red, blue)) {
+  :root {
+    --color-card-edge: color-mix(in oklch, var(--tg-theme-hint-color, #999999) 30%, transparent);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

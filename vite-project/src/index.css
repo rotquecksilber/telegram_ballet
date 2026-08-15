@@ -9,7 +9,7 @@
 
 html, body {
   height: 100%;
-  font-family: system-ui, -apple-system, BlinkMacOSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
 }
 
 #root {
