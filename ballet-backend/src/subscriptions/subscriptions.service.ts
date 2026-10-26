@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { TelegramService } from '../telegram/telegram.service';
 
 @Injectable()
@@ -41,6 +42,19 @@ export class SubscriptionsService {
       console.error('Ошибка отправки уведомления:', e);
     }
 
+    return data;
+  }
+
+  // ================= РУЧНОЕ РЕДАКТИРОВАНИЕ (админ-правка) =================
+  async update(id: number, dto: UpdateSubscriptionDto) {
+    const { data, error } = await this.client
+        .from('subscriptions')
+        .update(dto)
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) throw new Error(error.message);
     return data;
   }
 

@@ -1,6 +1,7 @@
 import {Controller, Post, Body, Patch, Param, Get} from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
@@ -9,6 +10,11 @@ export class SubscriptionsController {
   @Post()
   create(@Body() dto: CreateSubscriptionDto) {
     return this.subscriptionsService.create(dto);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateSubscriptionDto) {
+    return this.subscriptionsService.update(+id, dto);
   }
 
   @Patch(':id/freeze')

@@ -17,6 +17,8 @@ telegram: `${API_URL}/telegram/send`,
     sendScheduleToAll: `${API_URL}/schedule/send-to-all`,
     forceSpendSubscription: (id: number | string) =>
         `${API_URL}/subscriptions/${id}/force-spend`,
+    updateSubscription: (id: number | string) =>
+        `${API_URL}/subscriptions/${id}`,
     addLessonsSubscription: (id: number | string) =>
         `${API_URL}/subscriptions/${id}/add-lessons`,
 
